@@ -6,7 +6,7 @@ DEPLOYMENTFOLDERS = folder_01
 # Additional import path used to resolve QML modules in Creator's code model
 QML_IMPORT_PATH =
 
-QT += sql core widgets
+QT += sql core gui widgets
 
 LIBS        += /usr/lib/libical.so.1
 
@@ -19,7 +19,9 @@ SOURCES += main.cpp \
     Database/EventRecurrence.cpp \
     Database/RecurrenceProcessor.cpp \
     CalendarComponents/Calendar.cpp \
-    CalendarComponents/DaysModel.cpp
+    CalendarComponents/DaysModel.cpp \
+    CalendarPlugin/plugin.cpp \
+    CalendarPlugin/Private/qquickrangeddate.cpp
 
 # Installation path
 # target.path =
@@ -37,7 +39,9 @@ HEADERS += \
     Database/RecurrenceProcessor.h \
     CalendarComponents/Calendar.h \
     CalendarComponents/DayData.h \
-    CalendarComponents/DaysModel.h
+    CalendarComponents/DaysModel.h \
+    CalendarPlugin/plugin.h \
+    CalendarPlugin/Private/qquickrangeddate_p.h
 
 RESOURCES += \
     resources/Calendar.qrc
