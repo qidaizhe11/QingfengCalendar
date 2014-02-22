@@ -20,8 +20,8 @@ SOURCES += main.cpp \
     Database/RecurrenceProcessor.cpp \
     CalendarComponents/Calendar.cpp \
     CalendarComponents/DaysModel.cpp \
-    CalendarPlugin/plugin.cpp \
-    CalendarPlugin/Private/qquickrangeddate.cpp
+#    CalendarPlugin/plugin.cpp \
+#    CalendarPlugin/Private/qquickrangeddate.cpp
 
 # Installation path
 # target.path =
@@ -40,11 +40,12 @@ HEADERS += \
     CalendarComponents/Calendar.h \
     CalendarComponents/DayData.h \
     CalendarComponents/DaysModel.h \
-    CalendarPlugin/plugin.h \
-    CalendarPlugin/Private/qquickrangeddate_p.h
+#    CalendarPlugin/plugin.h \
+#    CalendarPlugin/Private/qquickrangeddate_p.h
 
 RESOURCES += \
     resources/Calendar.qrc
 
 OTHER_FILES += \
-    README.md
+    README.md \
+    CalendarPlugin/qmldir

@@ -1,10 +1,42 @@
 import QtQuick 2.0
+import MyCalendar.Controls.Private 1.0
+import "CalendarUtils.js" as CalendarUtils
 
 Rectangle {
-  id: calendar
+    id: calendar
+    width: 960
+    height: 600
 
-  width: 800
-  height: 480
+    property alias selectedDate: rangedDate.date
+
+    property alias minimumDate: rangedDate.minimumDate
+
+    property alias maximumDate: rangedDate.maximumDate
+
+    property int visibleMonth: selectedDate.getMonth()
+
+    property int visibleYear: selectedDate.getFullYear()
+
+    onSelectedDateChanged: {
+        visibleMonth = selectedDate.getMonth();
+        visibleYear = selectedDate.getFullYear();
+    }
+
+    RangedDate {
+        id: rangedDate
+        date: new Date()
+        minimumDate: CalendarUtils.minimumCalendarDate
+        maximumDate: CalendarUtils.maximumCalendarDate
+    }
+
+    property bool gridVisible: true
+    property bool weekNumbersVisible: false
+
+    //
+    // enum: Calendar::dayOfWeekFormat
+    //
+    // The format in which the days of the week (in the header) are displayed.
 
 
+    property int dayOfWeekFormat: Locale.ShortFormat
 }
