@@ -1,24 +1,15 @@
+###QingfengCalendar###
+------------
+一个基于 Qt/C++ 的日历客户端，  
 
-QingfengCalendar
+初始版本基于 Qt Widgets，已废弃，
+正在基于 Qt Quick/ Qml 重建，  
 
-基于Qt/C++的日历客户端，
+发现Qt Orginazer，必须再次以此模块为基础重构了
 
+-------------------
+正在重构界面中，  
 
-初始版本基于Qt 5/ Qt Widgets，已废弃，
+仍旧卡在了月视图的事件显示上，尤其跨天提醒事件，实在想不出这个用Qml该如何表现...  
 
-正在基于Qt Quick/ Qml重建，
-
-
-所用Qt版本: Qt 5.2.0 (Qt Quick 2.1)
-
-涉及第三方依赖项：libical (0.48及以上版本)
-
-
-采用的SQLite数据库(Database目录下文件), 源自Android源码,
-
-CalendarComponents目录下文件，源自KDE项目同名模块,
-
-致以感谢！
-
-
-尚在重构界面中...
+或许该尝试手工绘制？也未可知...

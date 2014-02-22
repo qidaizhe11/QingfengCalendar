@@ -6,6 +6,10 @@ DEPLOYMENTFOLDERS = folder_01
 # Additional import path used to resolve QML modules in Creator's code model
 QML_IMPORT_PATH =
 
+QT += sql core widgets
+
+LIBS        += /usr/lib/libical.so.1
+
 # The .cpp file which was generated for your project. Feel free to hack it.
 SOURCES += main.cpp \
     Database/CalendarContract.cpp \
@@ -37,3 +41,6 @@ HEADERS += \
 
 RESOURCES += \
     resources/Calendar.qrc
+
+OTHER_FILES += \
+    README.md
