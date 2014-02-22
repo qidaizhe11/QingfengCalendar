@@ -44,4 +44,11 @@ Rectangle {
     property int dayOfWeekFormat: Locale.ShortFormat
 
     property var __locale: Qt.locale()
+
+    property CalendarModel __model: CalendarModel {
+        locale: calendar.__locale
+        visibleDate: new Date(visibleYear, visibleMonth, 1)
+    }
+
+
 }
