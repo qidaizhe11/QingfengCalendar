@@ -9,11 +9,13 @@ uri = MyCalendar.Controls.Private
 # Input
 SOURCES += \
     private_plugin.cpp \
-    qquickrangeddate.cpp
+    qquickrangeddate.cpp \
+    qquickcalendarmodel.cpp
 
 HEADERS += \
     private_plugin.h \
-    qquickrangeddate_p.h
+    qquickrangeddate_p.h \
+    qquickcalendarmodel_p.h
 
 OTHER_FILES = qmldir
 

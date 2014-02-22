@@ -36,7 +36,12 @@ Rectangle {
     // enum: Calendar::dayOfWeekFormat
     //
     // The format in which the days of the week (in the header) are displayed.
-
-
+    //
+    // Local.ShortFormat is the default and recommended format, as
+    // Local.NarrowFormat may not by fullly supported by each local and
+    // Local.LongFormat may not fit within the header cells.
+    //
     property int dayOfWeekFormat: Locale.ShortFormat
+
+    property var __locale: Qt.locale()
 }

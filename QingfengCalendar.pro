@@ -22,6 +22,9 @@ SOURCES += main.cpp \
     CalendarComponents/DaysModel.cpp \
 #    CalendarPlugin/plugin.cpp \
 #    CalendarPlugin/Private/qquickrangeddate.cpp
+    CalendarPlugin/Private/qquickrangeddate.cpp \
+    CalendarPlugin/Private/private_plugin.cpp \
+    CalendarPlugin/Private/qquickcalendarmodel.cpp
 
 # Installation path
 # target.path =
@@ -42,6 +45,9 @@ HEADERS += \
     CalendarComponents/DaysModel.h \
 #    CalendarPlugin/plugin.h \
 #    CalendarPlugin/Private/qquickrangeddate_p.h
+    CalendarPlugin/Private/private_plugin.h \
+    CalendarPlugin/Private/qquickrangeddate_p.h \
+    CalendarPlugin/Private/qquickcalendarmodel_p.h
 
 RESOURCES += \
     resources/Calendar.qrc
