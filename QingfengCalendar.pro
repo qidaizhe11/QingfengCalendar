@@ -50,7 +50,8 @@ HEADERS += \
     CalendarPlugin/Private/qquickrangeddate_p.h \
     CalendarPlugin/Private/qquickcalendarmodel_p.h \
     CalendarPlugin/Private/qquickabstractstyle_p.h \
-    CalendarPlugin/Private/qquickpadding_p.h
+    CalendarPlugin/Private/qquickpadding_p.h \
+    CalendarPlugin/Private/qquickcontrolsprivate_p.h
 
 RESOURCES += \
     resources/Calendar.qrc

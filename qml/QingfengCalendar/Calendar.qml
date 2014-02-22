@@ -2,7 +2,7 @@ import QtQuick 2.0
 import MyCalendar.Controls.Private 1.0
 import "CalendarUtils.js" as CalendarUtils
 
-Rectangle {
+Control {
     id: calendar
     width: 960
     height: 600
@@ -50,5 +50,5 @@ Rectangle {
         visibleDate: new Date(visibleYear, visibleMonth, 1)
     }
 
-
+//    style: Qt.createComponent(, calendar)
 }

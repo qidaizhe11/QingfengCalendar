@@ -3,6 +3,10 @@ TARGET = controlsprivateplugin
 QT += qml quick
 CONFIG += qt plugin
 
+DESTDIR = ../build
+OBJECTS_DIR = $$DESTDIR
+MOC_DIR = $$DESTDIR
+
 TARGET = $$qtLibraryTarget($$TARGET)
 uri = MyCalendar.Controls.Private
 
@@ -11,14 +15,16 @@ SOURCES += \
     private_plugin.cpp \
     qquickrangeddate.cpp \
     qquickcalendarmodel.cpp \
-    qquickabstractstyle.cpp
+    qquickabstractstyle.cpp \
+    qquickcontrolsettings.cpp
 
 HEADERS += \
     private_plugin.h \
     qquickrangeddate_p.h \
     qquickcalendarmodel_p.h \
     qquickabstractstyle_p.h \
-    qquickpadding_p.h
+    qquickpadding_p.h \
+    qquickcontrolsettings_p.h
 
 OTHER_FILES = qmldir
 
