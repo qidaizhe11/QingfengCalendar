@@ -50,5 +50,123 @@ Control {
         visibleDate: new Date(visibleYear, visibleMonth, 1)
     }
 
-//    style: Qt.createComponent(, calendar)
+    style: Qt.createComponent("CalendarStyle.qml", calendar)
+
+    signal hovered(date date)
+
+    signal pressed(date date)
+
+    signal released(date date)
+
+    signal clicked(date date)
+
+    signal doubleClicked(date date)
+
+    function showPreviousMonth() {
+        if (visibleMonth === 0) {
+            visibleMonth = CalendarUtils.monthsInYear - 1;
+            --visibleYear;
+        } else {
+            --visibleMonth;
+        }
+    }
+
+    function showNextMonth() {
+        if (visibleMonth === CalendarUtils.monthsInYear - 1) {
+            visibleMonth = 0;
+            ++visibleYear;
+        } else {
+            ++visibleMonth;
+        }
+    }
+
+    function showPreviousYear() {
+        if (visibleYear - 1 >= minimumDate.getFullYear()) {
+            --visibleYear;
+        }
+    }
+
+    function showNextYear() {
+        if (visibleYear + 1 <= maximumDate.getFullYear()) {
+            ++visibleYear;
+        }
+    }
+
+    function __selectPreviousMonth() {
+        calendar.selectedDate = CalendarUtils.setMonth(calendar.selectedDate,
+                                    calendar.selectedDate.getMonth() - 1);
+    }
+
+    function __selectNextMonth() {
+        calendar.selectedDate = CalendarUtils.setMonth(calendar.selectedDate,
+                                    calendar.selectedDate.getMonth() + 1);
+    }
+
+    function __selectPreviousWeek() {
+        var newDate = new Date(calendar.selectedDate);
+        newDate.setDate(newDate.getDate() - CalendarUtils.daysInWeek);
+        calendar.selectedDate = newDate;
+    }
+
+    function __selectNextWeek() {
+        var newDate = new Date(calendar.selectedDate);
+        newDate.setDate(newDate.getDate() + CalendarUtils.daysInWeek);
+        calendar.selectedDate = newDate;
+    }
+
+    function __selectedFirstDayOfMonth() {
+        var newDate = new Date(calendar.selectedDate);
+        newDate.setDate(1);
+        calendar.selectedDate = newDate;
+    }
+
+    function __selectedLastDayOfMonth() {
+        var newDate = new Date(calendar.selectedDate);
+        newDate.setDate(CalendarUtils.daysInMonth(newDate));
+        calendar.selectedDate = newDate;
+    }
+
+    function __selectedPreviousDay() {
+        var newDate = new Date(calendar.selectedDate);
+        newDate.setDate(newDate.getDate() - 1);
+        calendar.selectedDate = newDate;
+    }
+
+    function __selectedNextDay() {
+        var newDate = new Date(calendar.selectedDate);
+        newDate.setDate(newDate.getDate() + 1);
+        calendar.selectedDate = newDate;
+    }
+
+    Keys.onLeftPressed: {
+        calendar.__selectedPreviousDay();
+    }
+
+    Keys.onUpPressed: {
+        calendar.__selectPreviousWeek();
+    }
+
+    Keys.onDownPressed: {
+        calendar.__selectNextWeek();
+    }
+
+    Keys.onRightPressed: {
+        calendar.__selectedNextDay();
+    }
+
+    Keys.onPressed: {
+        if (event.key === Qt.Key_Home) {
+            calendar.__selectedFirstDayOfMonth();
+            event.accepted = true;
+        } else if (event.key === Qt.Key_End) {
+            calendar.__selectedLastDayOfMonth();
+            event.accepted = true;
+        } else if (event.key === Qt.Key_PageUp) {
+            calendar.__selectPreviousMonth();
+            event.accepted = true;
+        } else if (event.key === Qt.Key_PageDown) {
+            calendar.__selectNextMonth();
+            event.accepted = true;
+        }
+    }
 }
