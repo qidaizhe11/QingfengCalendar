@@ -95,3 +95,41 @@ int QQuickCalendarModel::weekNumberAt(int row) const
   return -1;
 }
 
+void QQuickCalendarModel::populateFromVisibleDate(const QDate &previousDate,
+                                                  bool force)
+{
+  if (!force && mVisibleDate.year() == previousDate.year() &&
+      mVisibleDate.month() == previousDate.month()) {
+    return;
+  }
+
+  bool isEmpty = mVisibleDates.isEmpty();
+  if (isEmpty) {
+    beginResetModel();
+    mVisibleDates.fill(QDate(), daysOnACalendarMonth);
+  }
+
+  // The actual first day of month.
+  QDate firstDayOfMonthDate(mVisibleDate.year(), mVisibleDate.month(), 1);
+  int difference = ((firstDayOfMonthDate.dayOfWeek() -
+                     mLocale.firstDayOfWeek()) + 7) % 7;
+  // The first day to display should never be the 1st of the month, as we want
+  // some days from the previous month to be visible.
+  if (difference == 0) {
+    difference += daysInAWeek;
+  }
+  QDate firstDayToDisplay = firstDayOfMonthDate.addDays(-difference);
+  for (int i = 0; i < daysOnACalendarMonth; ++i) {
+    mVisibleDates[i] = firstDayToDisplay.addDays(i);
+  }
+
+  mFirstVisibleDate = mVisibleDates.at(0);
+  mLastVisibleDate = mVisibleDates.at(mVisibleDates.size() - 1);
+
+  if (!isEmpty) {
+    emit dataChanged(index(0, 0), index(rowCount() - 1, 0));
+  } else {
+    endResetModel();
+    emit countChanged(rowCount());
+  }
+}

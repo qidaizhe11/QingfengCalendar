@@ -15,8 +15,8 @@ void PrivatePlugin::registerTypes(const char *uri)
   qmlRegisterType<QQuickRangedDate>(uri, 1, 0, "RangedDate");
   qmlRegisterType<QQuickCalendarModel>(uri, 1, 0, "CalendarModel");
 //  qmlRegisterType<QQuickControlSettings>(uri, 1, 0, "Settings")
-  qmlRegisterSingletonType<QQuickControlSettings>(uri, 1, 0, "Settings",
-                      QQuickControlsPrivate::registerSettingsModule);
+//  qmlRegisterSingletonType<QQuickControlSettings>(uri, 1, 0, "Settings",
+//                      QQuickControlsPrivate::registerSettingsModule);
 }
 
 

@@ -35,7 +35,7 @@ int main(int argc, char *argv[])
     qmlRegisterType<QAbstractListModel>();
 
     QtQuick2ApplicationViewer viewer;
-    viewer.setMainQmlFile(QStringLiteral("qml/QingfengCalendar/MonthView.qml"));
+    viewer.setMainQmlFile(QStringLiteral("qml/QingfengCalendar/mainCalendarExample.qml"));
     viewer.showExpanded();
 
     return app.exec();

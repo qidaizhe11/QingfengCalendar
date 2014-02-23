@@ -40,7 +40,8 @@ Style {
             anchors.left: parent.left
             anchors.verticalCenter: parent.verticalCenter
             anchors.leftMargin: (parent.height - height) / 2
-            iconSource: "qrc:///images/arrow-left.png"
+//            iconSource: "qrc:///images/arrow-left.png"
+            iconSource: "images/arrow-left.png"
 
             onClicked: control.showPreviousMonth()
         }
@@ -64,7 +65,8 @@ Style {
             anchors.right: parent.right
             anchors.verticalCenter: parent.verticalCenter
             anchors.rightMargin: (parent.height - height) / 2
-            iconSource: "qrc:///images/arrow-right.png"
+//            iconSource: "qrc:///images/arrow-right.png"
+            iconSource: "images/arrow-right.png"
 
             onClicked: control.showNextMonth()
         }
@@ -72,10 +74,10 @@ Style {
 
     property Component dayDelegate: Rectangle {
         color: styleData.date !== undefined &&
-               styleDate.selected ? selectedDateColor : "white"
+               styleData.selected ? selectedDateColor : "white"
         readonly property color sameMonthDateTextColor: "black"
         readonly property color selectedDateColor: __syspal.highlight
-        readonly property color seelctedDateTextColor: "white"
+        readonly property color selectedDateTextColor: "white"
         readonly property color differentMonthDateTextColor:
             Qt.darker("darkgray", 1.4);
         readonly property color invalidDateColor: "#dddddd"
@@ -391,7 +393,7 @@ Style {
 
                     property int currentIndex: -1
 
-                    model: contrl.__model
+                    model: control.__model
 
                     Component.onCompleted: selectedDateChanged()
 
@@ -420,7 +422,7 @@ Style {
 
                         readonly property bool valid: __isValidDate(date)
 
-                        property QtObject styleDate: QtObject {
+                        property QtObject styleData: QtObject {
                             readonly property alias index:
                                 delegateLoader.__index
                             readonly property bool selected:
@@ -432,6 +434,8 @@ Style {
                             // running when a new day begins.
                             readonly property bool today: date.getTime() ===
                                 new Date().setHours(0, 0, 0, 0)
+                            readonly property bool visibleMonth:
+                                date.getMonth() === control.visibleMonth
                             readonly property bool hovered:
                                 panelItem.hoveredCellIndex == index
                             readonly property bool pressed:

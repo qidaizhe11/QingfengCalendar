@@ -16,7 +16,7 @@ ListModel {
         daysOfWeek = shifted.concat(daysOfWeek);
 
         for (var i = 0; i < daysOfWeek.length; ++i) {
-            var element = { daysOfWeek: daysOfWeek[i] }
+            var element = { dayOfWeek: daysOfWeek[i] }
             root.append(element);
         }
     }

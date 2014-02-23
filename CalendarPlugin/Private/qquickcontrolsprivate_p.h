@@ -15,12 +15,12 @@ public:
 //        return new QQuickTooltip();
 //    }
 
-    inline static QObject *registerSettingsModule(QQmlEngine *engine, QJSEngine *jsEngine)
-    {
-        Q_UNUSED(engine);
-        Q_UNUSED(jsEngine);
-        return new QQuickControlSettings(engine);
-    }
+//    inline static QObject *registerSettingsModule(QQmlEngine *engine, QJSEngine *jsEngine)
+//    {
+//        Q_UNUSED(engine);
+//        Q_UNUSED(jsEngine);
+//        return new QQuickControlSettings(engine);
+//    }
 
 };
 

@@ -35,7 +35,7 @@ ApplicationWindow {
                            styleData.selected ? selectedDateColor : "white"
                     readonly property color sameMonthDateTextColor: "black"
                     readonly property color selectedDateColor: "#aaa"
-                    readonly property color seelctedDateTextColor: "white"
+                    readonly property color selectedDateTextColor: "white"
                     readonly property color differentMonthDateTextColor:
                         Qt.darker("darkgrey", 1.4)
                     readonly property color invalidDateColor: "#dddddd"
@@ -59,16 +59,16 @@ ApplicationWindow {
                         }
                     }
 
-                    Rectangle {
-                        color: styleData.selected ? "white" : "red"
-                        width: 4
-                        height: width
-                        radius: width / 2
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        anchors.top: dayDelegateText.bottom
-                        anchors.topMargin: 2
-                        visible: true
-                    }
+//                    Rectangle {
+//                        color: styleData.selected ? "white" : "red"
+//                        width: 4
+//                        height: width
+//                        radius: width / 2
+//                        anchors.horizontalCenter: parent.horizontalCenter
+//                        anchors.top: dayDelegateText.bottom
+//                        anchors.topMargin: 2
+//                        visible: true
+//                    }
                 }
             }
         }
