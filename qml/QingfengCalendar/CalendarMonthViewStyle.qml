@@ -4,7 +4,7 @@ import MyCalendar.Controls.Private 1.0
 import "CalendarUtils.js" as CalendarUtils
 
 Style {
-    id: calendarStyle
+    id: calendarMonthViewStyle
 
     property Calendar control: __control
 
@@ -31,17 +31,21 @@ Style {
     }
 
     property Component navigationBar: Item {
-        height: 50
+        height: 80
+
+        readonly property real bottom_margin: 10
 
         Button {
             id: previousMonth
-            width: parent.height * 0.6
+            width: parent.height * 0.5
             height: width
             anchors.left: parent.left
-            anchors.verticalCenter: parent.verticalCenter
+            anchors.bottom: parent.bottom
+//            anchors.verticalCenter: parent.verticalCenter
             anchors.leftMargin: (parent.height - height) / 2
+            anchors.bottomMargin: bottom_margin
 //            iconSource: "qrc:///images/arrow-left.png"
-            iconSource: "images/arrow-left.png"
+            iconSource: "images/arrow-left-mine.png"
 
             onClicked: control.showPreviousMonth()
         }
@@ -49,24 +53,28 @@ Style {
             id: dateText
             text: styleData.title
             elide: Text.ElideRight
-            horizontalAlignment: Text.AlignHCenter
+//            horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
-            font.pointSize: 14
-            anchors.verticalCenter: parent.verticalCenter
+            font.pointSize: 36
+//            anchors.verticalCenter: parent.verticalCenter
             anchors.left: previousMonth.right
-            anchors.leftMargin: 2
-            anchors.right: nextMonth.left
-            anchors.rightMargin: 2
+            anchors.leftMargin: 26
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: bottom_margin
+//            anchors.right: nextMonth.left
+//            anchors.rightMargin: 2
         }
         Button {
             id: nextMonth
-            width: parent.height * 0.6
+            width: parent.height * 0.5
             height: width
             anchors.right: parent.right
-            anchors.verticalCenter: parent.verticalCenter
+            anchors.bottom: parent.bottom
+//            anchors.verticalCenter: parent.verticalCenter
             anchors.rightMargin: (parent.height - height) / 2
+            anchors.bottomMargin: bottom_margin
 //            iconSource: "qrc:///images/arrow-right.png"
-            iconSource: "images/arrow-right.png"
+            iconSource: "images/arrow-right-mine.png"
 
             onClicked: control.showNextMonth()
         }
@@ -85,13 +93,18 @@ Style {
         Label {
             id: dayDelegateText
             text: styleData.date.getDate()
-            anchors.centerIn: parent
-            horizontalAlignment: Text.AlignRight
+            font.pixelSize: 14
+            //            anchors.centerIn: parent
+            anchors.top: parent.top
+            anchors.topMargin: parent.height * 0.1
+            anchors.left: parent.left
+            anchors.leftMargin: parent.width * 0.1
+                        horizontalAlignment: Text.AlignRight
             color: {
                 var theColor = invalidDateColor;
                 if (styleData.valid) {
                     theColor = styleData.visibleMonth ? sameMonthDateTextColor :
-                                                differentMonthDateTextColor;
+                                                        differentMonthDateTextColor;
                     if (styleData.selected) {
                         theColor = selectedDateColor;
                     }
@@ -106,7 +119,10 @@ Style {
         Label {
             text: control.__locale.dayName(styleData.dayOfWeek,
                                            control.dayOfWeekFormat)
-            anchors.centerIn: parent
+//            anchors.centerIn: parent
+            anchors.left: parent.left
+            anchors.leftMargin: parent.width * 0.1
+            anchors.verticalCenter: parent.verticalCenter
         }
     }
 
@@ -261,9 +277,9 @@ Style {
                                __cellRectAt(index).x :
                                __cellRectAt(panelItem.columns - 1).x +
                                __cellRectAt(panelItem.columns - 1).width
-                        y: 0
+                        y: -dayOfWeekHeaderRow.height + 5
                         width: __gridLineWidth
-                        height: viewContainer.height
+                        height: viewContainer.height + dayOfWeekHeaderRow.height
                         color: gridColor
                         visible: control.gridVisible
                     }

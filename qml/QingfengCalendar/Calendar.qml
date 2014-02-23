@@ -43,7 +43,8 @@ Control {
     // Local.NarrowFormat may not by fullly supported by each local and
     // Local.LongFormat may not fit within the header cells.
     //
-    property int dayOfWeekFormat: Locale.ShortFormat
+//    property int dayOfWeekFormat: Locale.ShortFormat
+    property int dayOfWeekFormat: Locale.LongFormat
 
     property var __locale: Qt.locale()
 

@@ -14,8 +14,8 @@ ApplicationWindow {
     Row {
         id: row
         anchors.fill: parent
-        anchors.margins: 20
-        spacing: 10
+//        anchors.margins: 20
+//        spacing: 10
 
 //        Rectangle {
 //            width: row.width * 0.4 - row.spacing / 2
@@ -24,12 +24,13 @@ ApplicationWindow {
 
         Calendar {
             id: calendar
-            width: parent.width * 0.6 - row.spacing / 2
+//            width: parent.width * 0.6 - row.spacing / 2
+            width: parent.width
             height: parent.height
             selectedDate: new Date(2014, 0, 1)
             focus: true
 
-            style: CalendarStyle {
+            style: CalendarMonthViewStyle {
                 dayDelegate: Rectangle {
                     color: styleData.date !== undefined &&
                            styleData.selected ? selectedDateColor : "white"
@@ -44,7 +45,11 @@ ApplicationWindow {
                         id: dayDelegateText
                         text: styleData.date.getDate()
                         font.pixelSize: 14
-                        anchors.centerIn: parent
+//                        anchors.centerIn: parent
+                        anchors.top: parent.top
+                        anchors.topMargin: parent.height * 0.1
+                        anchors.left: parent.left
+                        anchors.leftMargin: parent.width * 0.1
                         color: {
                             var color = invalidDateColor;
                             if (styleData.valid) {
