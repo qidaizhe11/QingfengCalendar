@@ -1,5 +1,7 @@
 <RCC>
     <qresource prefix="/">
         <file>sql/create.sql</file>
+        <file>images/arrow-left.png</file>
+        <file>images/arrow-right.png</file>
     </qresource>
 </RCC>
