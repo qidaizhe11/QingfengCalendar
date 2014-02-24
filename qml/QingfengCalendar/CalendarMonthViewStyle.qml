@@ -461,6 +461,38 @@ Style {
                         }
                     }
                 }
+
+                Component.onCompleted: createEvents()
+
+                function createEvents() {
+                    var component = Qt.createQmlObject('
+                        import QtQuick 2.1;
+                        Rectangle {
+                            width: parent.width / 7 * 3;
+                            height: parent.height / (3 * 6);
+                            x: parent.width / 7 * 2;
+                            y: parent.height / (3 * 6) * 7;
+                            color: "lightblue";
+                            Text {
+                                text: "I am here, always.";
+                                anchors.verticalCenter: parent.verticalCenter;
+                            }
+                        }', viewContainer, "dynamicEvents" );
+
+                    var component2 = Qt.createQmlObject('
+                        import QtQuick 2.1;
+                        Rectangle {
+                            width: parent.width / 7 * 2;
+                            height: parent.height / (3 * 6);
+                            x: parent.width / 7 * 3;
+                            y: parent.height / (3 * 6) * 10;
+                            color: "lightblue";
+                            Text {
+                                text: "I am here, always.";
+                                anchors.verticalCenter: parent.verticalCenter;
+                            }
+                        }', viewContainer, "dynamicEvents" );
+                }
             }
         }
     }

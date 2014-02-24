@@ -1,0 +1,4 @@
+module MyCalendar.Utils.Events
+plugin MyPlugins
+typeinfo plugins.qmltypes
+
