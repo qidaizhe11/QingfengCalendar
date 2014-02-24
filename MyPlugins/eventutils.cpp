@@ -31,7 +31,7 @@ EventUtils::~EventUtils()
 {
 }
 
-int EventUtils::calculateIndex(const QDate &date)
+int EventUtils::gridIndex(const QDate &date)
 {
   QDate first_day_of_month_date(date.year(), date.month(), 1);
   int difference = ((first_day_of_month_date.dayOfWeek() -
@@ -46,3 +46,7 @@ int EventUtils::calculateIndex(const QDate &date)
   return index;
 }
 
+int EventUtils::lastDays(const QDate &start_date, const QDate &end_date)
+{
+  return start_date.daysTo(end_date) + 1;
+}

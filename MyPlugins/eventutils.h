@@ -12,7 +12,8 @@ public:
   EventUtils(QQuickItem *parent = 0);
   ~EventUtils();
 
-  Q_INVOKABLE int calculateIndex(const QDate& date);
+  Q_INVOKABLE int gridIndex(const QDate& date);
+  Q_INVOKABLE int lastDays(const QDate& start_date, const QDate& end_date);
 };
 
 #endif // EVENTUTILS_H

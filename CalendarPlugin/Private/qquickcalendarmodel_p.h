@@ -14,6 +14,8 @@ class QQuickCalendarModel : public QAbstractListModel
              NOTIFY visibleDateChanged)
   Q_PROPERTY(QLocale locale READ locale WRITE setLocale NOTIFY localeChanged)
   Q_PROPERTY(int count READ rowCount NOTIFY countChanged)
+  Q_PROPERTY(QDate firstVisibleDate READ firstVisibleDate NOTIFY visibleDateChanged)
+  Q_PROPERTY(QDate lastVisibleDate READ lastVisibleDate NOTIFY visibleDateChanged)
 
 public:
   explicit QQuickCalendarModel(QObject* parent = 0);
@@ -25,6 +27,9 @@ public:
 
   QDate visibleDate() const;
   void setVisibleDate(const QDate& visibleDate);
+
+  QDate firstVisibleDate() const { return mFirstVisibleDate; }
+  QDate lastVisibleDate() const { return mLastVisibleDate; }
 
   QLocale locale() const;
   void setLocale(const QLocale& locale);

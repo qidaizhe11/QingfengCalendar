@@ -1,6 +1,7 @@
 import QtQuick 2.1
 import QtQuick.Controls 1.1
 import QtQuick.Controls.Styles 1.1
+import QtOrganizer 5.0
 
 ApplicationWindow {
     visible: true
@@ -10,6 +11,18 @@ ApplicationWindow {
     minimumWidth: 640
 
     title: "Calendar Example"
+
+    OrganizerModel {
+        id: organizer
+        startPeriod: new Date("1970-01-01")
+        endPeriod: new Date("2014-12-31")
+        manager: "memory"
+
+//        Component.onCompleted: {
+//            organizer.importItems(Qt.resolvedUrl(
+//                                      "content/qidaizhe11@gmail.com-2.ics"))
+//        }
+    }
 
     Row {
         id: row
@@ -21,6 +34,8 @@ ApplicationWindow {
 //            width: row.width * 0.4 - row.spacing / 2
 ////            height:
 //        }
+
+
 
         Calendar {
             id: calendar
@@ -77,5 +92,11 @@ ApplicationWindow {
                 }
             }
         }
+    }
+
+    Component.onCompleted: {
+        organizer.importItems(Qt.resolvedUrl(
+                                  "content/qidaizhe11@gmail.com-2.ics"));
+        console.log(organizer.itemCount);
     }
 }

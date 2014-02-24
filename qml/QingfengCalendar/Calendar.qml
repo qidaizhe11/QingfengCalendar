@@ -1,7 +1,9 @@
 import QtQuick 2.1
 import QtQuick.Controls 1.1
 import QtQuick.Controls.Styles 1.1
+//import MyCalendar.Controls.Private 1.0
 import MyCalendar.Controls.Private 1.0
+import QtOrganizer 5.0
 import "CalendarUtils.js" as CalendarUtils
 
 Control {
@@ -29,6 +31,20 @@ Control {
         date: new Date()
         minimumDate: CalendarUtils.minimumCalendarDate
         maximumDate: CalendarUtils.maximumCalendarDate
+    }
+
+    property OrganizerModel __organizer_model: OrganizerModel {
+        id: organizer
+        startPeriod: __model.firstVisibleDate
+        endPeriod: __model.lastVisibleDate
+        manager: "memory"
+
+        Component.onCompleted: {
+            organizer.importItems(Qt.resolvedUrl("qidaizhe11@gmail.com-2.ics"));
+            console.log("Ics.");
+
+            console.log(organizer.itemCount);
+        }
     }
 
     property bool gridVisible: true

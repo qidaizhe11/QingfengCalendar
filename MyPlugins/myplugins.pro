@@ -1,6 +1,6 @@
 TEMPLATE = lib
 TARGET = MyPlugins
-QT += qml quick
+QT += qml quick organizer
 CONFIG += qt plugin
 
 DESTDIR = ../build
@@ -13,11 +13,15 @@ uri = MyCalendar.Utils.Events
 # Input
 SOURCES += \
     myplugins_plugin.cpp \
-    eventutils.cpp
+    eventutils.cpp \
+    eventlistutils.cpp \
+    MyEvent.cpp
 
 HEADERS += \
     myplugins_plugin.h \
-    eventutils.h
+    eventutils.h \
+    eventlistutils.h \
+    MyEvent.h
 
 OTHER_FILES = qmldir
 

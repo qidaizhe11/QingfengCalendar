@@ -1,6 +1,7 @@
 import QtQuick 2.1
 import QtQuick.Controls 1.1
 import MyCalendar.Controls.Private 1.0
+import QtOrganizer 5.0
 import "CalendarUtils.js" as CalendarUtils
 
 Style {
@@ -465,34 +466,48 @@ Style {
                 Component.onCompleted: createEvents()
 
                 function createEvents() {
-                    var component = Qt.createQmlObject('
-                        import QtQuick 2.1;
-                        Rectangle {
-                            width: parent.width / 7 * 3;
-                            height: parent.height / (3 * 6);
-                            x: parent.width / 7 * 2;
-                            y: parent.height / (3 * 6) * 7;
-                            color: "lightblue";
-                            Text {
-                                text: "I am here, always.";
-                                anchors.verticalCenter: parent.verticalCenter;
-                            }
-                        }', viewContainer, "dynamicEvents" );
+                    console.log(control.__organizer_model.count);
 
-                    var component2 = Qt.createQmlObject('
-                        import QtQuick 2.1;
-                        Rectangle {
-                            width: parent.width / 7 * 2;
-                            height: parent.height / (3 * 6);
-                            x: parent.width / 7 * 3;
-                            y: parent.height / (3 * 6) * 10;
-                            color: "lightblue";
-                            Text {
-                                text: "I am here, always.";
-                                anchors.verticalCenter: parent.verticalCenter;
-                            }
-                        }', viewContainer, "dynamicEvents" );
+                    for (var i = 0; i < control.__organizer_model.itemCount;
+                         ++i) {
+                        var item = control.__organizer_model.items[i];
+                        var component = Qt.createComponent("TileEventLabel.qml",
+                                                           viewContainer);
+                        component.eventItem = item;
+                        console.log("here inside loop.");
+                    }
+                    console.log("Here outside loop.");
                 }
+
+//                function createEvents() {
+//                    var component = Qt.createQmlObject('
+//                        import QtQuick 2.1;
+//                        Rectangle {
+//                            width: parent.width / 7 * 3;
+//                            height: parent.height / (3 * 6);
+//                            x: parent.width / 7 * 2;
+//                            y: parent.height / (3 * 6) * 7;
+//                            color: "lightblue";
+//                            Text {
+//                                text: "I am here, always.";
+//                                anchors.verticalCenter: parent.verticalCenter;
+//                            }
+//                        }', viewContainer, "dynamicEvents" );
+
+//                    var component2 = Qt.createQmlObject('
+//                        import QtQuick 2.1;
+//                        Rectangle {
+//                            width: parent.width / 7 * 2;
+//                            height: parent.height / (3 * 6);
+//                            x: parent.width / 7 * 3;
+//                            y: parent.height / (3 * 6) * 10;
+//                            color: "lightblue";
+//                            Text {
+//                                text: "I am here, always.";
+//                                anchors.verticalCenter: parent.verticalCenter;
+//                            }
+//                        }', viewContainer, "dynamicEvents" );
+//                }
             }
         }
     }
