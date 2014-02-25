@@ -3,9 +3,17 @@
 
 #include <QQuickItem>
 #include <QDateTime>
+#include <QQmlProperty>
 #include <QtOrganizer/qorganizerglobal.h>
+#include <QtVersitOrganizer/qversitorganizerglobal.h>
+#include "MyEvent.h"
 
 QTORGANIZER_USE_NAMESPACE
+QTVERSITORGANIZER_USE_NAMESPACE
+
+QT_BEGIN_NAMESPACE_ORGANIZER
+class QOrganizerManager;
+QT_END_NAMESPACE_ORGANIZER
 
 class EventListUtils : public QQuickItem
 {
@@ -14,7 +22,7 @@ class EventListUtils : public QQuickItem
   Q_PROPERTY(QDate startDate READ startDate WRITE setStartDate
              NOTIFY startDateChanged)
   Q_PROPERTY(QDate endDate READ endDate WRITE setEndDate NOTIFY endDateChanged)
-  Q_PROPERTY(QList<QVariant> events READ events NOTIFY eventsChanged)
+  Q_PROPERTY(QVariantList events READ events NOTIFY eventsChanged)
 
 public:
   EventListUtils(QQuickItem* parent = 0);
@@ -26,9 +34,19 @@ public:
   QDate endDate() const { return m_end_date; }
   void setEndDate(const QDate& end_date);
 
-  QList<QVariant> events() const;
+//  QList<QObject*> events() const { return m_events; }
+  QVariantList events();
+
+Q_SIGNALS:
+  void startDateChanged(const QDate& date);
+  void endDateChanged(const QDate& date);
+  void eventsChanged();
 
 private:
+  void getEvents();
+
+  QOrganizerManager* m_manager;
+
   QDate m_start_date;
   QDate m_end_date;
   QVariantList m_events;

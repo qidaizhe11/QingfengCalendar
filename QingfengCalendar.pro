@@ -6,7 +6,7 @@ DEPLOYMENTFOLDERS = folder_01
 # Additional import path used to resolve QML modules in Creator's code model
 QML_IMPORT_PATH =
 
-QT += sql core gui widgets
+QT += sql core gui widgets organizer versit versitorganizer
 
 #LIBS        += /usr/lib/libical.so.1
 
@@ -25,7 +25,11 @@ SOURCES += main.cpp \
     CalendarPlugin/Private/qquickrangeddate.cpp \
     CalendarPlugin/Private/private_plugin.cpp \
     CalendarPlugin/Private/qquickcalendarmodel.cpp \
-    CalendarPlugin/Private/qquickabstractstyle.cpp
+    CalendarPlugin/Private/qquickabstractstyle.cpp \
+    MyPlugins/eventlistutils.cpp \
+    MyPlugins/MyEvent.cpp \
+#    MyPlugins/myplugins_plugin.cpp
+    MyPlugins/eventutils.cpp
 
 # Installation path
 # target.path =
@@ -51,7 +55,11 @@ HEADERS += \
     CalendarPlugin/Private/qquickcalendarmodel_p.h \
     CalendarPlugin/Private/qquickabstractstyle_p.h \
     CalendarPlugin/Private/qquickpadding_p.h \
-    CalendarPlugin/Private/qquickcontrolsprivate_p.h
+    CalendarPlugin/Private/qquickcontrolsprivate_p.h \
+    MyPlugins/eventlistutils.h \
+    MyPlugins/MyEvent.h \
+#    MyPlugins/myplugins_plugin.h
+    MyPlugins/eventutils.h
 
 RESOURCES += \
     resources/Calendar.qrc

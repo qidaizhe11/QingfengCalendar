@@ -2,27 +2,44 @@ import QtQuick 2.1
 import QtQuick.Controls 1.1
 import QtQuick.Controls.Styles 1.1
 import QtOrganizer 5.0
+import MyCalendar2.Utils.Events 1.0
 
-ApplicationWindow {
+Rectangle {
     visible: true
     width: 960
     height: 600
-    minimumHeight: 480
-    minimumWidth: 640
+//    minimumHeight: 480
+//    minimumWidth: 640
 
-    title: "Calendar Example"
+//    title: "Calendar Example"
 
-    OrganizerModel {
-        id: organizer
-        startPeriod: new Date("1970-01-01")
-        endPeriod: new Date("2014-12-31")
-        manager: "memory"
+//    OrganizerModel {
+//        id: organizer
+//        startPeriod: new Date("1970-01-01")
+//        endPeriod: new Date("2014-12-31")
+//        manager: "memory"
+
+////        Component.onCompleted: {
+////            organizer.importItems(Qt.resolvedUrl(
+////                                      "content/qidaizhe11@gmail.com-2.ics"))
+////        }
+//    }
+
+//    property var array: my_event_list.events
+
+//    EventListUtils {
+//        id: my_event_list
+////        startDate: __model.firstVisibleDate
+//        startDate: new Date("2011-01-01")
+////        endDate: __model.lastVisibleDate
+//        endDate: new Date("2014-02-15")
 
 //        Component.onCompleted: {
-//            organizer.importItems(Qt.resolvedUrl(
-//                                      "content/qidaizhe11@gmail.com-2.ics"))
+//            console.log("mainEvents.")
+////            console.log(endDate)
+////            console.log(array.lengh)
 //        }
-    }
+//    }
 
     Row {
         id: row
@@ -35,10 +52,17 @@ ApplicationWindow {
 ////            height:
 //        }
 
-
+        function refreshData(arrData) {
+            console.log(arrData);
+            for (var i = 0; i < arrData.length; ++i) {
+                console.log(arrData[i].description + ", " + arrData[i].displayLabel);
+    //            console.log(arrData[i].displayLabel);
+            }
+        }
 
         Calendar {
             id: calendar
+            objectName: "calendar"
 //            width: parent.width * 0.6 - row.spacing / 2
             width: parent.width
             height: parent.height
@@ -94,9 +118,21 @@ ApplicationWindow {
         }
     }
 
+//    function refreshData(arrData) {
+//        console.log(arrData);
+//        for (var i = 0; i < arrData.length; ++i) {
+//            console.log(arrData[i].description + ", " + arrData[i].displayLabel);
+////            console.log(arrData[i].displayLabel);
+//        }
+//    }
+
     Component.onCompleted: {
-        organizer.importItems(Qt.resolvedUrl(
-                                  "content/qidaizhe11@gmail.com-2.ics"));
-        console.log(organizer.itemCount);
+        console.log("The last");
+//        console.log(calendar.event_list.events)
+//        for (var i = 0; i < calendar.event_list.events.length; ++i) {
+//            console.log(calendar.event_list.events[i])
+//        }
+//        refreshData();
+//        console.log(refreshData())
     }
 }

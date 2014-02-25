@@ -1,6 +1,6 @@
 TEMPLATE = lib
 TARGET = MyPlugins
-QT += qml quick organizer
+QT += qml quick core gui widgets organizer versit versitorganizer
 CONFIG += qt plugin
 
 DESTDIR = ../build
@@ -15,13 +15,29 @@ SOURCES += \
     myplugins_plugin.cpp \
     eventutils.cpp \
     eventlistutils.cpp \
-    MyEvent.cpp
+    MyEvent.cpp \
+    ../QDeclarativeOrganizer/qdeclarativeorganizercollection.cpp \
+    ../QDeclarativeOrganizer/qdeclarativeorganizeritem.cpp \
+    ../QDeclarativeOrganizer/qdeclarativeorganizeritemdetail.cpp \
+    ../QDeclarativeOrganizer/qdeclarativeorganizeritemfetchhint.cpp \
+    ../QDeclarativeOrganizer/qdeclarativeorganizeritemfilter.cpp \
+    ../QDeclarativeOrganizer/qdeclarativeorganizeritemsortorder.cpp \
+    ../QDeclarativeOrganizer/qdeclarativeorganizermodel.cpp \
+    ../QDeclarativeOrganizer/qdeclarativeorganizerrecurrencerule.cpp
 
 HEADERS += \
     myplugins_plugin.h \
     eventutils.h \
     eventlistutils.h \
-    MyEvent.h
+    MyEvent.h \
+    ../QDeclarativeOrganizer/qdeclarativeorganizercollection_p.h \
+    ../QDeclarativeOrganizer/qdeclarativeorganizeritem_p.h \
+    ../QDeclarativeOrganizer/qdeclarativeorganizeritemdetail_p.h \
+    ../QDeclarativeOrganizer/qdeclarativeorganizeritemfetchhint_p.h \
+    ../QDeclarativeOrganizer/qdeclarativeorganizeritemfilter_p.h \
+    ../QDeclarativeOrganizer/qdeclarativeorganizeritemsortorder_p.h \
+    ../QDeclarativeOrganizer/qdeclarativeorganizermodel_p.h \
+    ../QDeclarativeOrganizer/qdeclarativeorganizerrecurrencerule_p.h
 
 OTHER_FILES = qmldir
 

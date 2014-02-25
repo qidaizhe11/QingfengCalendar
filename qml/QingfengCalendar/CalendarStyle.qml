@@ -106,6 +106,7 @@ Style {
         Label {
             text: control.__locale.dayName(styleData.dayOfWeek,
                                            control.dayOfWeekFormat)
+//            text: styleData.dayOfWeek
             anchors.centerIn: parent
         }
     }

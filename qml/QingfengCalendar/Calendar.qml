@@ -3,6 +3,7 @@ import QtQuick.Controls 1.1
 import QtQuick.Controls.Styles 1.1
 //import MyCalendar.Controls.Private 1.0
 import MyCalendar.Controls.Private 1.0
+import MyCalendar2.Utils.Events 1.0
 import QtOrganizer 5.0
 import "CalendarUtils.js" as CalendarUtils
 
@@ -33,19 +34,32 @@ Control {
         maximumDate: CalendarUtils.maximumCalendarDate
     }
 
-    property OrganizerModel __organizer_model: OrganizerModel {
-        id: organizer
-        startPeriod: __model.firstVisibleDate
-        endPeriod: __model.lastVisibleDate
-        manager: "memory"
+//    property EventListUtils event_list: EventListUtils {
+////        id: my_event_list
+////        startDate: __model.firstVisibleDate
+//        startDate: new Date("2010-01-01")
+//        endDate: __model.lastVisibleDate
 
-        Component.onCompleted: {
-            organizer.importItems(Qt.resolvedUrl("qidaizhe11@gmail.com-2.ics"));
-            console.log("Ics.");
+//        Component.onCompleted: {
+//            console.log("Event List.")
+//            console.log(endDate)
+////            console.log(my_event_list.events[0])
+//        }
+//    }
 
-            console.log(organizer.itemCount);
-        }
-    }
+//    property OrganizerModel __organizer_model: OrganizerModel {
+//        id: organizer
+//        startPeriod: __model.firstVisibleDate
+//        endPeriod: __model.lastVisibleDate
+//        manager: "memory"
+
+//        Component.onCompleted: {
+//            organizer.importItems(Qt.resolvedUrl("qidaizhe11@gmail.com-2.ics"));
+//            console.log("Ics.");
+
+//            console.log(organizer.itemCount);
+//        }
+//    }
 
     property bool gridVisible: true
     property bool weekNumbersVisible: false
@@ -62,10 +76,10 @@ Control {
 //    property int dayOfWeekFormat: Locale.ShortFormat
     property int dayOfWeekFormat: Locale.LongFormat
 
-    property var __locale: Qt.locale()
+//    property var __locale: Qt.locale()
 
     property CalendarModel __model: CalendarModel {
-        locale: calendar.__locale
+//        locale: calendar.__locale
         visibleDate: new Date(visibleYear, visibleMonth, 1)
     }
 

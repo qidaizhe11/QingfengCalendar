@@ -1,11 +1,13 @@
 import QtQuick 2.1
 import QtQuick.Controls 1.1
 import MyCalendar.Controls.Private 1.0
+import MyCalendar2.Utils.Events 1.0
 import QtOrganizer 5.0
 import "CalendarUtils.js" as CalendarUtils
 
 Style {
     id: calendarMonthViewStyle
+    objectName: "calendar_style"
 
     property Calendar control: __control
 
@@ -30,6 +32,19 @@ Style {
     property Component background: Rectangle {
         color: "#fff"
     }
+
+//    property EventListUtils eventList: EventListUtils {
+////        id: my_event_list
+////        startDate: __model.firstVisibleDate
+//        startDate: new Date("2010-01-01")
+//        endDate: control.__model.lastVisibleDate
+
+//        Component.onCompleted: {
+//            console.log("Events.")
+//            console.log(endDate)
+////            console.log(my_event_list.events[0])
+//        }
+//    }
 
     property Component navigationBar: Item {
         height: 80
@@ -118,8 +133,9 @@ Style {
     property Component dayOfWeekDelegate: Rectangle {
         color: "white"
         Label {
-            text: control.__locale.dayName(styleData.dayOfWeek,
-                                           control.dayOfWeekFormat)
+//            text: control.__locale.dayName(styleData.dayOfWeek,
+//                                           control.dayOfWeekFormat)
+            text: styleData.dayOfWeek
 //            anchors.centerIn: parent
             anchors.left: parent.left
             anchors.leftMargin: parent.width * 0.1
@@ -172,8 +188,11 @@ Style {
 
             property QtObject styleData: QtObject {
                 readonly property string title:
-                    control.__locale.standaloneMonthName(control.visibleMonth) +
-                    new Date(control.visibleYear, control.visibleMonth, 1). toLocaleDateString(control.__locale, " yyyy")
+//                    control.__locale.standaloneMonthName(control.visibleMonth) +
+//                    new Date(control.visibleYear, control.visibleMonth, 1). toLocaleDateString(control.__locale, " yyyy")
+                    Qt.locale().standaloneMonthName(control.visibleMonth) +
+                    new Date(control.visibleYear, control.visibleMonth, 1).
+                toLocaleDateString(Qt.locale(), " yyyy")
             }
         }
 
@@ -191,7 +210,7 @@ Style {
             Repeater {
                 id: repeater
                 model: CalendarHeaderModel {
-                    locale: control.__locale
+//                    locale: control.__locale
                 }
                 Loader {
                     id: dayOfWeekDelegateLoader
@@ -466,17 +485,22 @@ Style {
                 Component.onCompleted: createEvents()
 
                 function createEvents() {
-                    console.log(control.__organizer_model.count);
+//                    console.log(control.__organizer_model.count);
 
-                    for (var i = 0; i < control.__organizer_model.itemCount;
-                         ++i) {
-                        var item = control.__organizer_model.items[i];
-                        var component = Qt.createComponent("TileEventLabel.qml",
-                                                           viewContainer);
-                        component.eventItem = item;
-                        console.log("here inside loop.");
-                    }
-                    console.log("Here outside loop.");
+//                    for (var i = 0; i < control.__organizer_model.itemCount;
+//                         ++i) {
+//                        var item = control.__organizer_model.items[i];
+//                        var component = Qt.createComponent("TileEventLabel.qml",
+//                                                           viewContainer);
+//                        component.eventItem = item;
+//                        console.log("here inside loop.");
+//                    }
+//                    console.log("Here outside loop.");
+
+                    console.log("Here.");
+
+//                    console.log(control.event_array.length);
+//                    console.log(eventList.events);
                 }
 
 //                function createEvents() {
@@ -509,6 +533,14 @@ Style {
 //                        }', viewContainer, "dynamicEvents" );
 //                }
             }
+        }
+    }
+
+    function refreshData(arrData) {
+        console.log(arrData);
+        for (var i = 0; i < arrData.length; ++i) {
+            console.log(arrData[i].description + ", " + arrData[i].displayLabel);
+            //            console.log(arrData[i].displayLabel);
         }
     }
 }
