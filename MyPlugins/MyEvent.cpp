@@ -5,11 +5,14 @@ MyEvent::MyEvent(QObject *parent) :
 {
 }
 
-MyEvent::MyEvent(const QOrganizerItem &item)
+MyEvent::MyEvent(const QOrganizerEvent &event)
 {
 //  m_item_id = item.id().toString();
-  m_description = item.description();
-  m_display_label = item.displayLabel();
+  m_description = event.description();
+  m_display_label = event.displayLabel();
+  m_all_day = event.isAllDay();
+  m_start_date_time = event.startDateTime();
+  m_end_date_time = event.endDateTime();
 }
 
 MyEvent::MyEvent(const QString &description, const QString& display_label)

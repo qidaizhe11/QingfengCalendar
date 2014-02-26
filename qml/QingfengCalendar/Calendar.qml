@@ -22,9 +22,15 @@ Control {
 
     property int visibleYear: selectedDate.getFullYear()
 
+    signal refreshEvents()
+
     onSelectedDateChanged: {
         visibleMonth = selectedDate.getMonth();
         visibleYear = selectedDate.getFullYear();
+//        console.log("Selected Date Changed.");
+//        console.log(event_list.startDate);
+//        console.log(event_list.endDate);
+//        console.log("In Calendar.qml, onSelectedDateChanged took effect here.");
     }
 
     RangedDate {
@@ -34,18 +40,7 @@ Control {
         maximumDate: CalendarUtils.maximumCalendarDate
     }
 
-//    property EventListUtils event_list: EventListUtils {
-////        id: my_event_list
-////        startDate: __model.firstVisibleDate
-//        startDate: new Date("2010-01-01")
-//        endDate: __model.lastVisibleDate
-
-//        Component.onCompleted: {
-//            console.log("Event List.")
-//            console.log(endDate)
-////            console.log(my_event_list.events[0])
-//        }
-//    }
+//    property variant events_array: event_list.events
 
 //    property OrganizerModel __organizer_model: OrganizerModel {
 //        id: organizer
@@ -83,6 +78,22 @@ Control {
         visibleDate: new Date(visibleYear, visibleMonth, 1)
     }
 
+    property EventListUtils event_list: EventListUtils {
+//        id: my_event_list
+//        startDate: __model.firstVisibleDate
+//        startDate: new Date("2010-01-01")
+        startDate: __model.firstVisibleDate
+        endDate: __model.lastVisibleDate
+
+        Component.onCompleted: {
+//            console.log("Event List.")
+//            console.log("StartDate: " + startDate)
+//            console.log("EndDate: " + endDate)
+//            console.log(my_event_list.events[0])
+//            console.log(event_list.events)
+        }
+    }
+
     style: Qt.createComponent("CalendarStyle.qml", calendar)
 
     signal hovered(date date)
@@ -96,12 +107,18 @@ Control {
     signal doubleClicked(date date)
 
     function showPreviousMonth() {
+        console.log("Come to showPreviousMonth function.");
         if (visibleMonth === 0) {
             visibleMonth = CalendarUtils.monthsInYear - 1;
             --visibleYear;
         } else {
             --visibleMonth;
         }
+        console.log("Show previous month.");
+        console.log("Now the Start Date: " + event_list.startDate);
+        console.log("Now the event numbers in qml: " + event_list.events.length);
+
+        refreshEvents();
     }
 
     function showNextMonth() {
@@ -111,6 +128,8 @@ Control {
         } else {
             ++visibleMonth;
         }
+
+        refreshEvents();
     }
 
     function showPreviousYear() {

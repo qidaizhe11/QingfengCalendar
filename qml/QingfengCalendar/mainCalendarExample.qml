@@ -4,14 +4,14 @@ import QtQuick.Controls.Styles 1.1
 import QtOrganizer 5.0
 import MyCalendar2.Utils.Events 1.0
 
-Rectangle {
+ApplicationWindow {
     visible: true
     width: 960
     height: 600
-//    minimumHeight: 480
-//    minimumWidth: 640
+    minimumHeight: 560
+    minimumWidth: 800
 
-//    title: "Calendar Example"
+    title: "QingfengCalendar"
 
 //    OrganizerModel {
 //        id: organizer
@@ -51,14 +51,6 @@ Rectangle {
 //            width: row.width * 0.4 - row.spacing / 2
 ////            height:
 //        }
-
-        function refreshData(arrData) {
-            console.log(arrData);
-            for (var i = 0; i < arrData.length; ++i) {
-                console.log(arrData[i].description + ", " + arrData[i].displayLabel);
-    //            console.log(arrData[i].displayLabel);
-            }
-        }
 
         Calendar {
             id: calendar
@@ -134,5 +126,6 @@ Rectangle {
 //        }
 //        refreshData();
 //        console.log(refreshData())
+//        console.log(calendar.events_array)
     }
 }

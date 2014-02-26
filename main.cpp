@@ -1,7 +1,7 @@
 
 #include <QtGui/QGuiApplication>
 #include <QQmlEngine>
-#include "qtquick2applicationviewer.h"
+#include "qtquick2controlsapplicationviewer.h"
 #include <QQuickWindow>
 #include <QVariant>
 
@@ -41,10 +41,10 @@ int main(int argc, char *argv[])
     qRegisterMetaType< QList<QObject*> >();
     qRegisterMetaType< QList<MyEvent*> >();
 
-    EventListUtils* event_list = new EventListUtils();
-    event_list->setStartDate(QDate(2010, 01, 03));
-    event_list->setEndDate(QDate(2014, 11, 25));
-    qDebug() << "This. " + QString::number(event_list->events().length());
+//    EventListUtils* event_list = new EventListUtils();
+//    event_list->setStartDate(QDate(2010, 01, 03));
+//    event_list->setEndDate(QDate(2014, 11, 25));
+//    qDebug() << "This. " + QString::number(event_list->events().length());
 
     QVariantList list;
     list << 10 << "blue" << "bottles";
@@ -66,18 +66,18 @@ int main(int argc, char *argv[])
     events.append(QVariant::fromValue((QObject*)new MyEvent("Date1", "Display1")));
     events.append(QVariant::fromValue((QObject*)new MyEvent("Again and again", "O.O")));
 
-    QtQuick2ApplicationViewer viewer;
+    QtQuick2ControlsApplicationViewer viewer;
     viewer.setMainQmlFile(QStringLiteral("qml/QingfengCalendar/mainCalendarExample.qml"));
-    QObject* style_object = viewer.rootObject()->findChild<QObject*>("calendar_style");
+//    QObject* style_object = viewer.rootObject()->findChild<QObject*>("calendar_style");
 //    QMetaObject::invokeMethod(viewer.rootObject(), "refreshData",
 //                              Q_ARG(QVariant, event_list->events()));
-    QMetaObject::invokeMethod(style_object, "refreshData",
-                              Q_ARG(QVariant, event_list->events()));
+//    QMetaObject::invokeMethod(style_object, "refreshData",
+//                              Q_ARG(QVariant, event_list->events()));
 //    QMetaObject::invokeMethod(viewer.rootObject(), "refreshData",
 //                              Q_ARG(QVariant, events));
 
 
-    viewer.showExpanded();
+    viewer.show();
 
     return app.exec();
 }

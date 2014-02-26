@@ -15,6 +15,14 @@ Style {
 
     property real __gridLineWidth: 1
 
+    signal refreshEvents()
+
+//    property var event_label_arrays: []
+
+    ListModel {
+        id: event_label_list
+    }
+
     function __cellRectAt(index) {
         return CalendarUtils.cellRectAt(index,
                                         control.__panel.columns,
@@ -33,19 +41,6 @@ Style {
         color: "#fff"
     }
 
-//    property EventListUtils eventList: EventListUtils {
-////        id: my_event_list
-////        startDate: __model.firstVisibleDate
-//        startDate: new Date("2010-01-01")
-//        endDate: control.__model.lastVisibleDate
-
-//        Component.onCompleted: {
-//            console.log("Events.")
-//            console.log(endDate)
-////            console.log(my_event_list.events[0])
-//        }
-//    }
-
     property Component navigationBar: Item {
         height: 80
 
@@ -63,7 +58,9 @@ Style {
 //            iconSource: "qrc:///images/arrow-left.png"
             iconSource: "images/arrow-left-mine.png"
 
-            onClicked: control.showPreviousMonth()
+            onClicked: {
+                control.showPreviousMonth();
+            }
         }
         Label {
             id: dateText
@@ -76,7 +73,7 @@ Style {
             anchors.left: previousMonth.right
             anchors.leftMargin: 26
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: bottom_margin
+//            anchors.bottomMargin: bottom_margin
 //            anchors.right: nextMonth.left
 //            anchors.rightMargin: 2
         }
@@ -482,65 +479,37 @@ Style {
                     }
                 }
 
-                Component.onCompleted: createEvents()
+                Connections {
+                    target: control
+                    onRefreshEvents: {
+                        console.log("Come into create events function.");
+                        console.log(event_label_list);
+                        console.log(event_label_list.count);
 
-                function createEvents() {
-//                    console.log(control.__organizer_model.count);
+//                        for (var i = 0; i< event_label_arrays.length; ++i) {
+//                            event_label_arrays[i].destroy();
+//                        }
 
-//                    for (var i = 0; i < control.__organizer_model.itemCount;
-//                         ++i) {
-//                        var item = control.__organizer_model.items[i];
-//                        var component = Qt.createComponent("TileEventLabel.qml",
-//                                                           viewContainer);
-//                        component.eventItem = item;
-//                        console.log("here inside loop.");
-//                    }
-//                    console.log("Here outside loop.");
+                        while (event_label_list.count > 0) {
+                            event_label_list.get(0).obj.destroy();
+                            event_label_list.remove(0);
+                        }
 
-                    console.log("Here.");
+                        var component = Qt.createComponent("TileEventLabel.qml");
 
-//                    console.log(control.event_array.length);
-//                    console.log(eventList.events);
+                        for (var i = 0; i < control.event_list.events.length; ++i) {
+                            var event = control.event_list.events[i];
+                            var label = component.createObject(viewContainer, {"eventItem" : event});
+//                            console.log(label);
+//                            event_label_arrays.push(label);
+//                            label.destroy();
+                            event_label_list.append({"obj": label, "source": "TileEventLabel"});
+                        }
+
+                        component.destroy();
+                    }
                 }
-
-//                function createEvents() {
-//                    var component = Qt.createQmlObject('
-//                        import QtQuick 2.1;
-//                        Rectangle {
-//                            width: parent.width / 7 * 3;
-//                            height: parent.height / (3 * 6);
-//                            x: parent.width / 7 * 2;
-//                            y: parent.height / (3 * 6) * 7;
-//                            color: "lightblue";
-//                            Text {
-//                                text: "I am here, always.";
-//                                anchors.verticalCenter: parent.verticalCenter;
-//                            }
-//                        }', viewContainer, "dynamicEvents" );
-
-//                    var component2 = Qt.createQmlObject('
-//                        import QtQuick 2.1;
-//                        Rectangle {
-//                            width: parent.width / 7 * 2;
-//                            height: parent.height / (3 * 6);
-//                            x: parent.width / 7 * 3;
-//                            y: parent.height / (3 * 6) * 10;
-//                            color: "lightblue";
-//                            Text {
-//                                text: "I am here, always.";
-//                                anchors.verticalCenter: parent.verticalCenter;
-//                            }
-//                        }', viewContainer, "dynamicEvents" );
-//                }
             }
-        }
-    }
-
-    function refreshData(arrData) {
-        console.log(arrData);
-        for (var i = 0; i < arrData.length; ++i) {
-            console.log(arrData[i].description + ", " + arrData[i].displayLabel);
-            //            console.log(arrData[i].displayLabel);
         }
     }
 }
