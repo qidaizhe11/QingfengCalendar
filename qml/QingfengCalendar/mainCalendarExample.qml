@@ -58,7 +58,7 @@ ApplicationWindow {
 //            width: parent.width * 0.6 - row.spacing / 2
             width: parent.width
             height: parent.height
-            selectedDate: new Date(2014, 0, 1)
+            selectedDate: new Date()
             focus: true
 
             style: CalendarMonthViewStyle {

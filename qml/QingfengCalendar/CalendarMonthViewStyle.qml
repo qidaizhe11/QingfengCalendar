@@ -23,6 +23,10 @@ Style {
         id: event_label_list
     }
 
+    EventUtils {
+        id: event_utils
+    }
+
     function __cellRectAt(index) {
         return CalendarUtils.cellRectAt(index,
                                         control.__panel.columns,
@@ -156,11 +160,13 @@ Style {
 
         property alias navigationBarItem: navigationBarLoader.item
 
-        readonly property real dayOfWeekHeaderRowHeight: 40
+        readonly property real dayOfWeekHeaderRowHeight: 30
 
         readonly property int weeksToshow: 6
         readonly property int rows: weeksToshow
         readonly property int columns: CalendarUtils.daysInWeek
+
+        readonly property int max_events_to_show: 2
 
         readonly property real availableWidth:
             (viewContainer.width - (control.gridVisible ? __gridLineWidth : 0))
@@ -486,6 +492,14 @@ Style {
                         console.log(event_label_list);
                         console.log(event_label_list.count);
 
+                        var total_cells = panelItem.rows * panelItem.columns;
+                        var visible_date = control.__model.visibleDate;
+
+                        var event_number_of_day = [];
+                        for (var i = 0; i < total_cells; ++i) {
+                            event_number_of_day.push(0);
+                        }
+
 //                        for (var i = 0; i< event_label_arrays.length; ++i) {
 //                            event_label_arrays[i].destroy();
 //                        }
@@ -497,13 +511,30 @@ Style {
 
                         var component = Qt.createComponent("TileEventLabel.qml");
 
-                        for (var i = 0; i < control.event_list.events.length; ++i) {
+                        for (i = 0; i < control.event_list.events.length; ++i) {
                             var event = control.event_list.events[i];
-                            var label = component.createObject(viewContainer, {"eventItem" : event});
-//                            console.log(label);
-//                            event_label_arrays.push(label);
-//                            label.destroy();
-                            event_label_list.append({"obj": label, "source": "TileEventLabel"});
+
+                            var grid_index = event_utils.gridIndex(event.startDateTime,
+                                                                   visible_date);
+                            console.log("Grid Index: " + grid_index);
+                            var existed_events = event_number_of_day[grid_index];
+
+                            if (existed_events < panelItem.max_events_to_show) {
+                                var last_days = event_utils.lastDays(event.startDateTime,
+                                                                     event.endDateTime);
+
+                                var label = component.createObject(viewContainer, {"eventItem" : event, "day_index": existed_events, "grid_index": grid_index, "last_days": last_days});
+    //                            event_label_arrays.push(label);
+    //                            label.destroy();
+                                event_label_list.append({"obj": label, "source": "TileEventLabel.qml"});
+
+                                event_number_of_day[grid_index] += 1;
+                                for (var j = 1; j < last_days; ++j) {
+                                    if (grid_index + j < total_cells) {
+                                        event_number_of_day[grid_index + j] += 1;
+                                    }
+                                }
+                            }
                         }
 
                         component.destroy();

@@ -31,9 +31,9 @@ EventUtils::~EventUtils()
 {
 }
 
-int EventUtils::gridIndex(const QDate &date)
+int EventUtils::gridIndex(const QDate &date, const QDate& visible_date)
 {
-  QDate first_day_of_month_date(date.year(), date.month(), 1);
+  QDate first_day_of_month_date(visible_date.year(), visible_date.month(), 1);
   int difference = ((first_day_of_month_date.dayOfWeek() -
                      QLocale::system().firstDayOfWeek()) + 7) % 7;
   if (difference == 0) {

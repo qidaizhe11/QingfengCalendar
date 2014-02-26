@@ -107,16 +107,16 @@ Control {
     signal doubleClicked(date date)
 
     function showPreviousMonth() {
-        console.log("Come to showPreviousMonth function.");
+//        console.log("Come to showPreviousMonth function.");
         if (visibleMonth === 0) {
             visibleMonth = CalendarUtils.monthsInYear - 1;
             --visibleYear;
         } else {
             --visibleMonth;
         }
-        console.log("Show previous month.");
-        console.log("Now the Start Date: " + event_list.startDate);
-        console.log("Now the event numbers in qml: " + event_list.events.length);
+//        console.log("Show previous month.");
+//        console.log("Now the Start Date: " + event_list.startDate);
+//        console.log("Now the event numbers in qml: " + event_list.events.length);
 
         refreshEvents();
     }
@@ -221,4 +221,6 @@ Control {
             event.accepted = true;
         }
     }
+
+    Component.onCompleted: refreshEvents()
 }

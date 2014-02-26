@@ -21,7 +21,8 @@ EventListUtils::EventListUtils(QQuickItem* parent) :
   //  QString file_name = QFileDialog::getOpenFileName(
   //        this, tr("Select iCalendar file"), ".", tr("iCalendar files (*.ics)"));
 
-  QString file_name = "/home/daizhe/organizer_ical_test.ics";
+//  QString file_name = "/home/daizhe/organizer_ical_test.ics";
+  QString file_name = "/home/daizhe/qidaizhe11@gmail.com-2.ics";
 
   if (file_name.isEmpty()) {
     return;
@@ -100,6 +101,19 @@ void EventListUtils::getEvents()
   qDebug() << "Begin to search events from manager.";
 
   if (m_end_date >= m_start_date) {
+    QOrganizerItemSortOrder sort_order;
+    sort_order.setDetail(QOrganizerItemDetail::TypeEventTime,
+                           QOrganizerEventTime::FieldStartDateTime);
+    sort_order.setDirection(Qt::AscendingOrder);
+    sort_order.setCaseSensitivity(Qt::CaseInsensitive);
+    sort_order.setBlankPolicy(QOrganizerItemSortOrder::BlanksLast);
+    QList<QOrganizerItemSortOrder> sort_order_list;
+    sort_order_list.append(sort_order);
+
+//    QList<QOrganizerItem> event_items = m_manager->items(
+//          QDateTime(m_start_date, QTime(0, 0, 0)),
+//          QDateTime(m_end_date, QTime(23, 59, 59)),
+//          QOrganizerItemFilter(), -1, sort_order_list);
     QList<QOrganizerItem> event_items = m_manager->items(
           QDateTime(m_start_date, QTime(0, 0, 0)),
           QDateTime(m_end_date, QTime(23, 59, 59)));
@@ -113,9 +127,13 @@ void EventListUtils::getEvents()
 
 //    QList<QObject*> events;
     for (int i = 0; i < event_items.length(); ++i) {
+//      qDebug() << "Events: " + event_items[i]
 
       if (event_items[i].type() == QOrganizerItemType::TypeEvent) {
         QOrganizerEvent event = static_cast<QOrganizerEvent>(event_items[i]);
+
+        qDebug() << "Events Start: " + event.startDateTime().toString() + " " + event.displayLabel() + " , End: " +
+                    event.endDateTime().toString();
 
         MyEvent* my_event = new MyEvent(event);
         QString description = QString("Description: ") + QString::number(i);

@@ -9,9 +9,13 @@ Rectangle {
     color: base_color
     property variant eventItem
 
+    property int day_index: 0
+    property int grid_index
+    property int last_days: 1
+
     property bool is_all_day: eventItem.allDay
-    property int last_days: event_utils.lastDays(eventItem.startDateTime,
-                                                 eventItem.endDateTime)
+//    property int last_days: event_utils.lastDays(eventItem.startDateTime,
+//                                                 eventItem.endDateTime)
     property bool is_multi_days: (last_days === 1) ? true : false
 
     property color base_color: "lightblue"
@@ -20,14 +24,14 @@ Rectangle {
 
     readonly property int display_weeks: CalendarUtils.weeksOnCalendarMonth
     readonly property int days_in_week: CalendarUtils.daysInWeek
-    property int grid_index: event_utils.gridIndex(eventItem.startDateTime)
+//    property int grid_index: event_utils.gridIndex(eventItem.startDateTime)
     property int horizontal_index: grid_index % days_in_week
     property int vertical_index: grid_index / days_in_week
 
     width: parent.width / days_in_week * last_days;
     height: parent.height / ( 3 * display_weeks)
     x: parent.width / days_in_week * horizontal_index
-    y: parent.height / display_weeks * vertical_index + height
+    y: parent.height / display_weeks * vertical_index + height * (day_index + 1)
 
     EventUtils {
         id: event_utils
@@ -58,8 +62,8 @@ Rectangle {
         }
         Rectangle {
             id: mask_block
-            width: 20
-            height: 20
+            width: parent.height
+            height: parent.height
             anchors.verticalCenter: parent.verticalCenter
             anchors.right: parent.right
             gradient: Gradient {
