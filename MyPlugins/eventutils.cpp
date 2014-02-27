@@ -31,22 +31,23 @@ EventUtils::~EventUtils()
 {
 }
 
-int EventUtils::gridIndex(const QDate &date, const QDate& visible_date)
-{
-  QDate first_day_of_month_date(visible_date.year(), visible_date.month(), 1);
-  int difference = ((first_day_of_month_date.dayOfWeek() -
-                     QLocale::system().firstDayOfWeek()) + 7) % 7;
-  if (difference == 0) {
-    difference += daysInAWeek;
-  }
+//int EventUtils::gridIndex(const QDate &date, const QDate& visible_date)
+//{
+//  QDate first_day_of_month_date(visible_date.year(), visible_date.month(), 1);
+//  int difference = ((first_day_of_month_date.dayOfWeek() -
+//                     QLocale::system().firstDayOfWeek()) + 7) % 7;
+//  if (difference == 0) {
+//    difference += daysInAWeek;
+//  }
 
-  QDate first_day_to_display = first_day_of_month_date.addDays(-difference);
+//  QDate first_day_to_display = first_day_of_month_date.addDays(-difference);
 
-  int index = first_day_to_display.daysTo(date);
-  return index;
-}
+//  int index = first_day_to_display.daysTo(date);
+//  return index;
+//}
 
 int EventUtils::lastDays(const QDate &start_date, const QDate &end_date)
 {
+//  qDebug() << "Calculate last days: " + start_date.toString() + end_date.toString();
   return start_date.daysTo(end_date) + 1;
 }

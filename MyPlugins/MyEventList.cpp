@@ -1,4 +1,4 @@
-#include "eventlistutils.h"
+#include "MyEventList.h"
 #include <QtOrganizer>
 #include <QOrganizerManager>
 #include <QVersitReader>
@@ -10,7 +10,7 @@
 
 //#define QT_NO_DEBUG_OUTPUT
 
-EventListUtils::EventListUtils(QQuickItem* parent) :
+MyEventList::MyEventList(QQuickItem* parent) :
   QQuickItem(parent)
 {
   m_start_date = QDate();
@@ -27,8 +27,6 @@ EventListUtils::EventListUtils(QQuickItem* parent) :
   if (file_name.isEmpty()) {
     return;
   }
-
-//  qDebug() << file_name;
 
   QFile file(file_name);
   if (!file.open(QIODevice::ReadOnly) || !file.isReadable()) {
@@ -57,8 +55,6 @@ EventListUtils::EventListUtils(QQuickItem* parent) :
     }
   }
 
-//  qDebug() << "All_items: " + QString::number(all_items.length());
-
   if (!error_message.isEmpty()) {
 //    QMessageBox::warning(this, "Message", error_message);
     qDebug() << error_message;
@@ -69,25 +65,22 @@ EventListUtils::EventListUtils(QQuickItem* parent) :
   }
 }
 
-void EventListUtils::setStartDate(const QDate &start_date)
+void MyEventList::setStartDate(const QDate &start_date)
 {
   if (start_date != m_start_date && start_date.isValid()) {
     m_start_date = start_date;
   }
-//  qDebug() << "startDate: " + m_start_date.toString();
 }
 
-void EventListUtils::setEndDate(const QDate &end_date)
+void MyEventList::setEndDate(const QDate &end_date)
 {
   if (end_date != m_end_date && end_date.isValid()) {
     m_end_date = end_date;
     getEvents();
   }
-
-//  qDebug() << "endDate: " + m_end_date.toString();
 }
 
-QVariantList EventListUtils::events()
+QVariantList MyEventList::events()
 {
 //  return QQmlListProperty<MyEvent>(this, m_events);
   return m_events;
@@ -96,7 +89,7 @@ QVariantList EventListUtils::events()
 //-------------------------------------------------------------------------
 // private
 
-void EventListUtils::getEvents()
+void MyEventList::getEvents()
 {
   qDebug() << "Begin to search events from manager.";
 
@@ -117,23 +110,21 @@ void EventListUtils::getEvents()
     QList<QOrganizerItem> event_items = m_manager->items(
           QDateTime(m_start_date, QTime(0, 0, 0)),
           QDateTime(m_end_date, QTime(23, 59, 59)));
+
+    foreach (QVariant var, m_events) {
+      MyEvent* object = var.value<MyEvent*>();
+//      object->deleteLater();
+      QObject::destroyed(object);
+//      delete object;
+//      qDebug() << "try to delete Events: " + object->displayLabel() + " " + object->startDateTime().toString();
+    }
+
     m_events.clear();
 
-//    qDebug() << "Event_items length: " + QString::number(event_items.length());
-//    qDebug() << "QOrganizerItem: ";
-//    qDebug() << event_items.at(0).id();
-//    qDebug() << event_items.at(0).description();
-//    qDebug() << event_items.at(0).displayLabel();
 
-//    QList<QObject*> events;
     for (int i = 0; i < event_items.length(); ++i) {
-//      qDebug() << "Events: " + event_items[i]
-
       if (event_items[i].type() == QOrganizerItemType::TypeEvent) {
         QOrganizerEvent event = static_cast<QOrganizerEvent>(event_items[i]);
-
-        qDebug() << "Events Start: " + event.startDateTime().toString() + " " + event.displayLabel() + " , End: " +
-                    event.endDateTime().toString();
 
         MyEvent* my_event = new MyEvent(event);
         QString description = QString("Description: ") + QString::number(i);
@@ -143,11 +134,9 @@ void EventListUtils::getEvents()
   //      QObject* item_object = static_cast<QObject*>(&my_event);
         m_events.append(QVariant::fromValue<QObject*>(my_event));
   //      m_events.append(QVariant::fromValue(str));
-  //      m_events.append(&my_event);
       }
     }
 
-    qDebug() << "Date range: " + m_start_date.toString() + " " + m_end_date.toString();
     qDebug() << "Find event numbers: " + QString::number(m_events.length());
   } else {
     qDebug() << "Error: endDate < startDate";

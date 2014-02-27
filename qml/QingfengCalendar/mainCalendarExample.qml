@@ -11,7 +11,7 @@ ApplicationWindow {
     minimumHeight: 560
     minimumWidth: 800
 
-    title: "QingfengCalendar"
+    title: "Qingfeng Calendar"
 
 //    OrganizerModel {
 //        id: organizer

@@ -4,6 +4,7 @@ import MyCalendar.Controls.Private 1.0
 import MyCalendar2.Utils.Events 1.0
 import QtOrganizer 5.0
 import "CalendarUtils.js" as CalendarUtils
+import "EventJsUtils.js" as EventJsUtils
 
 Style {
     id: calendarMonthViewStyle
@@ -17,10 +18,9 @@ Style {
 
     signal refreshEvents()
 
-//    property var event_label_arrays: []
 
     ListModel {
-        id: event_label_list
+        id: label_list_model
     }
 
     EventUtils {
@@ -55,9 +55,8 @@ Style {
             width: parent.height * 0.5
             height: width
             anchors.left: parent.left
-            anchors.bottom: parent.bottom
-//            anchors.verticalCenter: parent.verticalCenter
             anchors.leftMargin: (parent.height - height) / 2
+            anchors.bottom: parent.bottom
             anchors.bottomMargin: bottom_margin
 //            iconSource: "qrc:///images/arrow-left.png"
             iconSource: "images/arrow-left-mine.png"
@@ -70,16 +69,12 @@ Style {
             id: dateText
             text: styleData.title
             elide: Text.ElideRight
-//            horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
             font.pointSize: 36
-//            anchors.verticalCenter: parent.verticalCenter
             anchors.left: previousMonth.right
             anchors.leftMargin: 26
             anchors.bottom: parent.bottom
 //            anchors.bottomMargin: bottom_margin
-//            anchors.right: nextMonth.left
-//            anchors.rightMargin: 2
         }
         Button {
             id: nextMonth
@@ -87,7 +82,6 @@ Style {
             height: width
             anchors.right: parent.right
             anchors.bottom: parent.bottom
-//            anchors.verticalCenter: parent.verticalCenter
             anchors.rightMargin: (parent.height - height) / 2
             anchors.bottomMargin: bottom_margin
 //            iconSource: "qrc:///images/arrow-right.png"
@@ -111,7 +105,6 @@ Style {
             id: dayDelegateText
             text: styleData.date.getDate()
             font.pixelSize: 14
-            //            anchors.centerIn: parent
             anchors.top: parent.top
             anchors.topMargin: parent.height * 0.1
             anchors.left: parent.left
@@ -134,10 +127,9 @@ Style {
     property Component dayOfWeekDelegate: Rectangle {
         color: "white"
         Label {
-//            text: control.__locale.dayName(styleData.dayOfWeek,
-//                                           control.dayOfWeekFormat)
-            text: styleData.dayOfWeek
-//            anchors.centerIn: parent
+            text: Qt.locale().dayName(styleData.dayOfWeek,
+                                           control.dayOfWeekFormat)
+//            text: styleData.dayOfWeek
             anchors.left: parent.left
             anchors.leftMargin: parent.width * 0.1
             anchors.verticalCenter: parent.verticalCenter
@@ -152,7 +144,6 @@ Style {
         }
     }
 
-
     property Component panel: Item {
         id: panelItem
         implicitHeight: 200
@@ -162,11 +153,11 @@ Style {
 
         readonly property real dayOfWeekHeaderRowHeight: 30
 
-        readonly property int weeksToshow: 6
+        readonly property int weeksToshow: CalendarUtils.weeksOnCalendarMonth
         readonly property int rows: weeksToshow
         readonly property int columns: CalendarUtils.daysInWeek
 
-        readonly property int max_events_to_show: 2
+        readonly property int max_show_events_of_day: 2
 
         readonly property real availableWidth:
             (viewContainer.width - (control.gridVisible ? __gridLineWidth : 0))
@@ -484,62 +475,94 @@ Style {
                         }
                     }
                 }
+            }
+        }
 
-                Connections {
-                    target: control
-                    onRefreshEvents: {
-                        console.log("Come into create events function.");
-                        console.log(event_label_list);
-                        console.log(event_label_list.count);
+        Connections {
+            target: control
+            onRefreshEvents: {
+//                console.log("Come to RefreshEvents function, Label model count: " + label_list_model.count);
+//                console.log("Visible date: " + control.__model.visibleDate);
 
-                        var total_cells = panelItem.rows * panelItem.columns;
-                        var visible_date = control.__model.visibleDate;
-
-                        var event_number_of_day = [];
-                        for (var i = 0; i < total_cells; ++i) {
-                            event_number_of_day.push(0);
-                        }
-
-//                        for (var i = 0; i< event_label_arrays.length; ++i) {
-//                            event_label_arrays[i].destroy();
-//                        }
-
-                        while (event_label_list.count > 0) {
-                            event_label_list.get(0).obj.destroy();
-                            event_label_list.remove(0);
-                        }
-
-                        var component = Qt.createComponent("TileEventLabel.qml");
-
-                        for (i = 0; i < control.event_list.events.length; ++i) {
-                            var event = control.event_list.events[i];
-
-                            var grid_index = event_utils.gridIndex(event.startDateTime,
-                                                                   visible_date);
-                            console.log("Grid Index: " + grid_index);
-                            var existed_events = event_number_of_day[grid_index];
-
-                            if (existed_events < panelItem.max_events_to_show) {
-                                var last_days = event_utils.lastDays(event.startDateTime,
-                                                                     event.endDateTime);
-
-                                var label = component.createObject(viewContainer, {"eventItem" : event, "day_index": existed_events, "grid_index": grid_index, "last_days": last_days});
-    //                            event_label_arrays.push(label);
-    //                            label.destroy();
-                                event_label_list.append({"obj": label, "source": "TileEventLabel.qml"});
-
-                                event_number_of_day[grid_index] += 1;
-                                for (var j = 1; j < last_days; ++j) {
-                                    if (grid_index + j < total_cells) {
-                                        event_number_of_day[grid_index + j] += 1;
-                                    }
-                                }
-                            }
-                        }
-
-                        component.destroy();
-                    }
+                while (label_list_model.count > 0) {
+                    label_list_model.get(0).obj.destroy();
+                    label_list_model.remove(0);
                 }
+
+                control.event_list.startDate = control.__model.firstVisibleDate;
+                control.event_list.endDate = control.__model.lastVisibleDate;
+
+                var total_cells = panelItem.rows * panelItem.columns;
+                var visible_date = control.__model.visibleDate;
+
+                var event_counts_of_day = [];
+//                for (var i = 0; i < total_cells; ++i) {
+//                    event_number_of_day.push(0);
+//                }
+                var show_flags_of_day = [];
+                EventJsUtils.initEventCountArray(event_counts_of_day, total_cells);
+                EventJsUtils.initShowFlagsArray(show_flags_of_day, total_cells,
+                                                panelItem.max_show_events_of_day);
+
+//                for (var i = 0; i< event_label_arrays.length; ++i) {
+//                    event_label_arrays[i].destroy();
+//                }
+
+                var component = Qt.createComponent("TileEventLabel.qml");
+
+
+                console.log("control.event_list.events.length: " + control.event_list.events.length);
+
+                for (var i = 0; i < control.event_list.events.length; ++i) {
+                    var event = control.event_list.events[i];
+
+//                    var index_of_cell = event_utils.gridIndex(event.startDateTime,
+//                                                              visible_date);
+                    var index_of_cell = event_utils.lastDays(
+                                control.__model.firstVisibleDate, event.startDateTime) - 1;
+                    var day_event_count = event_counts_of_day[index_of_cell];
+
+                    if (day_event_count >= panelItem.max_show_events_of_day) {
+                        event_counts_of_day[index_of_cell] += 1;
+                        continue;
+                    }
+
+                    var show_flag_of_day = EventJsUtils.calculateShowFlag(show_flags_of_day, index_of_cell, panelItem.max_show_events_of_day);
+                    var last_days = event_utils.lastDays(event.startDateTime,
+                                                         event.endDateTime);
+
+                    if (index_of_cell + last_days > total_cells) {
+                        last_days -= (index_of_cell + last_days - total_cells);
+                    }
+
+                    EventJsUtils.increaseEventCount(event_counts_of_day, index_of_cell, last_days, total_cells);
+                    EventJsUtils.increaseShowFlag(show_flags_of_day,
+                                                  show_flag_of_day,
+                                                  index_of_cell,
+                                                  last_days,
+                                                  total_cells);
+
+                    var col = panelItem.columns;
+                    while (index_of_cell % col + last_days > col) {
+                        var clipped_days = col - index_of_cell % col;
+                        var clipped_label = component.createObject(viewContainer, {"eventItem" : event, "show_flag_of_day": show_flag_of_day, "grid_index": index_of_cell, "last_days": clipped_days});
+
+
+                        label_list_model.append({"obj": clipped_label,
+                                                    "source":"TileEventLabel.qml"});
+                        index_of_cell += clipped_days;
+                        last_days -= clipped_days;
+                    }
+
+//                    console.log("event start: " + event.startDateTime + " " + event.displayLabel);
+                    var label = component.createObject(viewContainer, {"eventItem" : event, "show_flag_of_day": show_flag_of_day, "grid_index": index_of_cell, "last_days": last_days});
+
+                    label_list_model.append({"obj": label,
+                                                "source":"TileEventLabel.qml"});
+                }
+
+                component.destroy();
+//                console.log("Outside the events loop.");
             }
         }
     }

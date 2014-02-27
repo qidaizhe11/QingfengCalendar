@@ -26,10 +26,10 @@ SOURCES += main.cpp \
     CalendarPlugin/Private/private_plugin.cpp \
     CalendarPlugin/Private/qquickcalendarmodel.cpp \
     CalendarPlugin/Private/qquickabstractstyle.cpp \
-    MyPlugins/eventlistutils.cpp \
     MyPlugins/MyEvent.cpp \
 #    MyPlugins/myplugins_plugin.cpp
-    MyPlugins/eventutils.cpp
+    MyPlugins/eventutils.cpp \
+    MyPlugins/MyEventList.cpp
 
 # Installation path
 # target.path =
@@ -56,10 +56,10 @@ HEADERS += \
     CalendarPlugin/Private/qquickabstractstyle_p.h \
     CalendarPlugin/Private/qquickpadding_p.h \
     CalendarPlugin/Private/qquickcontrolsprivate_p.h \
-    MyPlugins/eventlistutils.h \
     MyPlugins/MyEvent.h \
 #    MyPlugins/myplugins_plugin.h
-    MyPlugins/eventutils.h
+    MyPlugins/eventutils.h \
+    MyPlugins/MyEventList.h
 
 RESOURCES += \
     resources/Calendar.qrc

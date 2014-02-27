@@ -6,16 +6,16 @@ ListModel {
 //    property var locale
 
     Component.onCompleted: {
-//        var daysOfWeek = [Locale.Sunday, Locale.Monday, Locale.Tuesday,
-//                Locale.Wednesday, Locale.Thursday, Locale.Friday,
-//                Locale.Saturday];
-        var daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday",
-                "Thursday", "Friday", "Saturday"];
-//        var firstDayOfWeek = root.locale.firstDayOfWeek;
+        var daysOfWeek = [Locale.Sunday, Locale.Monday, Locale.Tuesday,
+                Locale.Wednesday, Locale.Thursday, Locale.Friday,
+                Locale.Saturday];
+//        var daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday",
+//                "Thursday", "Friday", "Saturday"];
+        var firstDayOfWeek = Qt.locale().firstDayOfWeek;
 
-//        var shifted = daysOfWeek.splice(firstDayOfWeek,
-//                                        daysOfWeek.length - firstDayOfWeek);
-//        daysOfWeek = shifted.concat(daysOfWeek);
+        var shifted = daysOfWeek.splice(firstDayOfWeek,
+                                        daysOfWeek.length - firstDayOfWeek);
+        daysOfWeek = shifted.concat(daysOfWeek);
 
         for (var i = 0; i < daysOfWeek.length; ++i) {
             var element = { dayOfWeek: daysOfWeek[i] }

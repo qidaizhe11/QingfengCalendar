@@ -7,9 +7,9 @@ import "CalendarUtils.js" as CalendarUtils
 Rectangle {
     id: event_label
     color: base_color
-    property variant eventItem
+    property var eventItem
 
-    property int day_index: 0
+    property int show_flag_of_day: 0
     property int grid_index
     property int last_days: 1
 
@@ -31,7 +31,7 @@ Rectangle {
     width: parent.width / days_in_week * last_days;
     height: parent.height / ( 3 * display_weeks)
     x: parent.width / days_in_week * horizontal_index
-    y: parent.height / display_weeks * vertical_index + height * (day_index + 1)
+    y: parent.height / display_weeks * vertical_index + height * (show_flag_of_day + 1)
 
     EventUtils {
         id: event_utils

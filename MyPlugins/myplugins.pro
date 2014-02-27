@@ -14,7 +14,7 @@ uri = MyCalendar.Utils.Events
 SOURCES += \
     myplugins_plugin.cpp \
     eventutils.cpp \
-    eventlistutils.cpp \
+    MyEventList.cpp \
     MyEvent.cpp \
     ../QDeclarativeOrganizer/qdeclarativeorganizercollection.cpp \
     ../QDeclarativeOrganizer/qdeclarativeorganizeritem.cpp \
@@ -28,7 +28,7 @@ SOURCES += \
 HEADERS += \
     myplugins_plugin.h \
     eventutils.h \
-    eventlistutils.h \
+    MyEventList.h \
     MyEvent.h \
     ../QDeclarativeOrganizer/qdeclarativeorganizercollection_p.h \
     ../QDeclarativeOrganizer/qdeclarativeorganizeritem_p.h \
