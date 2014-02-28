@@ -299,6 +299,7 @@ Style {
                                     mouseArea, mouseX, mouseY);
                         var child = viewContainer.childAt(viewContainerPos,x,
                                                           viewContainerPos.y);
+//                        console.log("Child: " + child);
                         return child && child !== mouseArea ? child.__index : -1;
                     }
 

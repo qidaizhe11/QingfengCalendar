@@ -91,6 +91,10 @@ Control {
 
     signal doubleClicked(date date)
 
+    onClicked: {
+//        calendar.selectedDate = date
+    }
+
     function showPreviousMonth() {
         if (visibleMonth === 0) {
             visibleMonth = CalendarUtils.monthsInYear - 1;

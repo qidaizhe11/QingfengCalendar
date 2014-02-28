@@ -63,14 +63,32 @@ ApplicationWindow {
 
             style: CalendarMonthViewStyle {
                 dayDelegate: Rectangle {
-                    color: styleData.date !== undefined &&
-                           styleData.selected ? selectedDateColor : "white"
+//                    color: styleData.date !== undefined &&
+//                           styleData.selected ? selectedDateColor : "white"
+                    readonly property color base_color: "lightgray"
                     readonly property color sameMonthDateTextColor: "black"
-                    readonly property color selectedDateColor: "#aaa"
+                    readonly property color selectedDateColor: Qt.darker("darkgray", 1.4)
                     readonly property color selectedDateTextColor: "white"
                     readonly property color differentMonthDateTextColor:
-                        Qt.darker("darkgrey", 1.4)
+                        Qt.darker("darkgray", 1.4)
+                    readonly property color different_month_date_color:
+                        Qt.darker("lightgray", 1.05)
+//                    readonly property color different_month_date_color: "lightgray"
                     readonly property color invalidDateColor: "#dddddd"
+
+                    color: {
+                        var the_color = invalidDateColor;
+                        if (styleData.valid) {
+                            the_color = styleData.visibleMonth ? base_color :
+                                                                 different_month_date_color;
+                            if (styleData.selected) {
+                                the_color = selectedDateColor;
+                            }
+                        }
+//                        console.log("Color: " + the_color);
+                        console.log("Difference month color: " + different_month_date_color);
+                        the_color;
+                    }
 
                     Label {
                         id: dayDelegateText

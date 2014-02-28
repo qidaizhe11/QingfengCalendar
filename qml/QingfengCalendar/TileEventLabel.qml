@@ -13,12 +13,14 @@ Rectangle {
     property int grid_index
     property int last_days: 1
 
+    property int __index: -1
+
     property bool is_all_day: eventItem.allDay
 //    property int last_days: event_utils.lastDays(eventItem.startDateTime,
 //                                                 eventItem.endDateTime)
     property bool is_multi_days: (last_days === 1) ? true : false
 
-    property color base_color: "lightblue"
+    property color base_color: Qt.darker("lightblue", 1.3)
     property color left_block_color: "yellow"
     property color font_color: "white"
 
@@ -72,6 +74,13 @@ Rectangle {
                 GradientStop { position: 1.0; color: base_color }
             }
             rotation: -90
+        }
+    }
+
+    MouseArea {
+        anchors.fill: parent
+        onClicked: {
+            event_label.color = Qt.darker(base_color, 1.5);
         }
     }
 

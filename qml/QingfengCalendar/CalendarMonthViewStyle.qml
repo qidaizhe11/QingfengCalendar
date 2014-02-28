@@ -13,6 +13,7 @@ Style {
     property Calendar control: __control
 
     property color gridColor: "#f0f0f0"
+    property color base_color: "lightgray"
 
     property real __gridLineWidth: 1
 
@@ -42,24 +43,28 @@ Style {
     }
 
     property Component background: Rectangle {
-        color: "#fff"
+        color: base_color
     }
 
-    property Component navigationBar: Item {
-        height: 80
+    property Component navigationBar: Rectangle {
+        height: 100
 
-        readonly property real bottom_margin: 10
+        color: base_color
+
+        readonly property real bottom_margin: 15
 
         Button {
             id: previousMonth
-            width: parent.height * 0.5
+            width: parent.height * 0.4
             height: width
             anchors.left: parent.left
-            anchors.leftMargin: (parent.height - height) / 2
+            anchors.leftMargin: (parent.height - height) / 5
             anchors.bottom: parent.bottom
             anchors.bottomMargin: bottom_margin
+//            anchors.verticalCenter: parent.verticalCenter
 //            iconSource: "qrc:///images/arrow-left.png"
             iconSource: "images/arrow-left-mine.png"
+            opacity: 0.6
 
             onClicked: {
                 control.showPreviousMonth();
@@ -72,34 +77,49 @@ Style {
             verticalAlignment: Text.AlignVCenter
             font.pointSize: 36
             anchors.left: previousMonth.right
-            anchors.leftMargin: 26
+            anchors.leftMargin: 40
             anchors.bottom: parent.bottom
-//            anchors.bottomMargin: bottom_margin
+            anchors.bottomMargin: 8
         }
         Button {
             id: nextMonth
-            width: parent.height * 0.5
+            width: parent.height * 0.4
             height: width
             anchors.right: parent.right
             anchors.bottom: parent.bottom
-            anchors.rightMargin: (parent.height - height) / 2
+            anchors.rightMargin: (parent.height - height) / 5
             anchors.bottomMargin: bottom_margin
 //            iconSource: "qrc:///images/arrow-right.png"
             iconSource: "images/arrow-right-mine.png"
+            opacity: 0.6
 
             onClicked: control.showNextMonth()
         }
     }
 
     property Component dayDelegate: Rectangle {
-        color: styleData.date !== undefined &&
-               styleData.selected ? selectedDateColor : "white"
+//        color: styleData.date !== undefined &&
+//               styleData.selected ? selectedDateColor : "orangle"
         readonly property color sameMonthDateTextColor: "black"
         readonly property color selectedDateColor: __syspal.highlight
+        readonly property color different_month_date_color:
+            Qt.darker("darkgray", 1.1)
         readonly property color selectedDateTextColor: "white"
         readonly property color differentMonthDateTextColor:
-            Qt.darker("darkgray", 1.4);
+            Qt.lighter("lightgray", 1.15)
         readonly property color invalidDateColor: "#dddddd"
+
+        color: {
+            var the_color = invalidDateColor;
+            if (styleData.valid) {
+                the_color = styleData.visibleMonth ? base_color :
+                                                     different_month_date_color;
+                if (styleData.selected) {
+                    the_color = selectedDateColor;
+                }
+            }
+            the_color;
+        }
 
         Label {
             id: dayDelegateText
@@ -118,14 +138,15 @@ Style {
                     if (styleData.selected) {
                         theColor = selectedDateColor;
                     }
-                    theColor;
                 }
+                theColor;
             }
         }
     }
 
     property Component dayOfWeekDelegate: Rectangle {
-        color: "white"
+//        color: Qt.darker("darkgray", 1.5)
+        color: base_color
         Label {
             text: Qt.locale().dayName(styleData.dayOfWeek,
                                            control.dayOfWeekFormat)
@@ -184,9 +205,12 @@ Style {
                 readonly property string title:
 //                    control.__locale.standaloneMonthName(control.visibleMonth) +
 //                    new Date(control.visibleYear, control.visibleMonth, 1). toLocaleDateString(control.__locale, " yyyy")
-                    Qt.locale().standaloneMonthName(control.visibleMonth) +
+//                    Qt.locale().standaloneMonthName(control.visibleMonth) +
+//                    new Date(control.visibleYear, control.visibleMonth, 1).
+//                toLocaleDateString(Qt.locale(), " yyyy")
                     new Date(control.visibleYear, control.visibleMonth, 1).
-                toLocaleDateString(Qt.locale(), " yyyy")
+                toLocaleDateString(Qt.locale(), "yyyy  ") +
+                Qt.locale().standaloneMonthName(control.visibleMonth)
             }
         }
 
@@ -285,10 +309,10 @@ Style {
 
                 Repeater {
                     id: verticalGridLineRepeater
-                    model: panelItem.columns + 1
+                    model: panelItem.columns -1
                     delegate: Rectangle {
                         x: index < panelItem.columns ?
-                               __cellRectAt(index).x :
+                               __cellRectAt(index).x + __cellRectAt(index).width :
                                __cellRectAt(panelItem.columns - 1).x +
                                __cellRectAt(panelItem.columns - 1).width
                         y: -dayOfWeekHeaderRow.height + 5
@@ -301,7 +325,7 @@ Style {
 
                 Repeater {
                     id: horizontalGridLineRepeater
-                    model: panelItem.rows + 1
+                    model: panelItem.rows
                     delegate: Rectangle {
                         x: 0
                         y: index < panelItem.columns - 1 ?
@@ -326,8 +350,10 @@ Style {
                     function cellIndexAt(mouseX, mouseY) {
                         var viewContainerPos = viewContainer.mapFromItem(
                                     mouseArea, mouseX, mouseY);
-                        var child = viewContainer.childAt(viewContainerPos,x,
+                        var child = viewContainer.childAt(viewContainerPos.x,
                                                           viewContainerPos.y);
+//                        console.log("X: " + viewContainerPos.x + ", Y: " +
+//                                    viewContainerPos.y + "  Child:: " + child);
                         return child && child !== mouseArea ? child.__index : -1;
                     }
 
@@ -348,7 +374,7 @@ Style {
                     }
 
                     onPositionChanged: {
-                        var indexOfCell = cellIndexAt(mouse.x, mouse,y);
+                        var indexOfCell = cellIndexAt(mouseX, mouseY);
                         var previousHoveredCellIndex = hoveredCellIndex;
                         hoveredCellIndex = indexOfCell;
                         if (indexOfCell !== -1) {
@@ -370,7 +396,7 @@ Style {
                     }
 
                     onPressed: {
-                        var indexOfCell = cellIndexAt(mouse.x, mouse.y);
+                        var indexOfCell = cellIndexAt(mouseX, mouseY);
                         if (indexOfCell !== -1) {
                             var date = view.model.dateAt(indexOfCell);
                             pressedCellIndex = indexOfCell;
@@ -382,7 +408,7 @@ Style {
                     }
 
                     onReleased: {
-                        var indexOfCell = cellIndexAt(mouse.x, mouse.y);
+                        var indexOfCell = cellIndexAt(mouseX, mouseY);
                         if (indexOfCell !== -1) {
                             var date = view.model.dateAt(indexOfCell);
                             if (__isValidDate(date)) {
@@ -393,23 +419,28 @@ Style {
                     }
 
                     onClicked: {
-                        var indexOfCell = cellIndexAt(mouse.x, mouse.y);
+                        console.log("Mouse position: " + mouse.x + ", " + mouse.y);
+                        var indexOfCell = cellIndexAt(mouseX, mouseY);
                         if (indexOfCell !== -1) {
                             var date = view.model.dateAt(indexOfCell);
                             if (__isValidDate(date)) {
                                 control.clicked(date);
                             }
                         }
+                        console.log("OnClicked, indexOfCell: " + indexOfCell);
+                        console.log("Date at this point: " + date);
                     }
 
                     onDoubleClicked: {
-                        var indexOfCell = cellIndexAt(mouse.x, mouse.y);
+                        var indexOfCell = cellIndexAt(mouseX, mouseY);
                         if (indexOfCell !== -1) {
                             var date = view.model.dateAt(indexOfCell);
                             if (__isValidDate(date)) {
                                 control.doubleClicked(date);
                             }
                         }
+                        console.log("OnDoubleClicked, indexOfCell: " + indexOfCell);
+                        console.log("Date at this point: " + date);
                     }
                 }
 
