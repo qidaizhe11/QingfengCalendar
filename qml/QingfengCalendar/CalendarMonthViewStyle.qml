@@ -1,9 +1,11 @@
 import QtQuick 2.1
 import QtQuick.Controls 1.1
+import QtQuick.Window 2.1
 import MyCalendar.Controls.Private 1.0
-import MyCalendar2.Utils.Events 1.0
+import MyCalendar.Utils.Events 1.0
 import QtOrganizer 5.0
-import "CalendarUtils.js" as CalendarUtils
+import "Private"
+import "Private/CalendarUtils.js" as CalendarUtils
 import "EventJsUtils.js" as EventJsUtils
 
 Style {
@@ -124,7 +126,7 @@ Style {
         Label {
             id: dayDelegateText
             text: styleData.date.getDate()
-            font.pixelSize: 14
+            font.pointSize: 14
             anchors.top: parent.top
             anchors.topMargin: parent.height * 0.1
             anchors.left: parent.left
@@ -208,11 +210,16 @@ Style {
 //                    Qt.locale().standaloneMonthName(control.visibleMonth) +
 //                    new Date(control.visibleYear, control.visibleMonth, 1).
 //                toLocaleDateString(Qt.locale(), " yyyy")
-                    new Date(control.visibleYear, control.visibleMonth, 1).
-                toLocaleDateString(Qt.locale(), "yyyy  ") +
-                Qt.locale().standaloneMonthName(control.visibleMonth)
+                    (new Date(control.visibleYear, control.visibleMonth, 1).toLocaleDateString(Qt.locale(), "yyyy  ")) +
+                    Qt.locale().standaloneMonthName(control.visibleMonth)
             }
         }
+
+//        Loader {
+//            id: event_editor_loader
+//            source: "FloatEventEditView.qml"
+//        }
+
 
         Row {
             id: dayOfWeekHeaderRow
@@ -352,8 +359,12 @@ Style {
                                     mouseArea, mouseX, mouseY);
                         var child = viewContainer.childAt(viewContainerPos.x,
                                                           viewContainerPos.y);
-//                        console.log("X: " + viewContainerPos.x + ", Y: " +
-//                                    viewContainerPos.y + "  Child:: " + child);
+//                        console.log("X: " + mouseX + ", Y: " +
+//                                    mouseY);
+//                        console.log("viewcontainerPos, X: " + viewContainerPos.x
+//                                    + ", Y: " + viewContainerPos.y);
+//                        var parentPos = viewContainer.mapToItem(null, mouseX, mouseY);
+//                        console.log("Parent pos, X: " + parentPos.x + ", Y: " + parentPos.y);
                         return child && child !== mouseArea ? child.__index : -1;
                     }
 
@@ -365,7 +376,7 @@ Style {
 
                         var date = view.model.dateAt(hoveredCellIndex);
                         if (__isValidDate(date)) {
-                            control.hovered(date);
+//                            control.hovered(date);
                         }
                     }
 
@@ -382,14 +393,14 @@ Style {
                             if (__isValidDate(date)) {
                                 if (hoveredCellIndex !==
                                         previousHoveredCellIndex) {
-                                    control.hovered(date);
+//                                    control.hovered(date);
                                 }
 
                                 if (pressed && date.getTime() !==
                                         control.selectedDate.getTime()) {
                                     control.selectedDate = date;
                                     pressedCellIndex = indexOfCell;
-                                    control.pressed(date);
+//                                    control.pressed(date);
                                 }
                             }
                         }
@@ -401,8 +412,8 @@ Style {
                             var date = view.model.dateAt(indexOfCell);
                             pressedCellIndex = indexOfCell;
                             if (__isValidDate(date)) {
-                                control.selectedDate = date;
-                                control.pressed(date);
+//                                control.selectedDate = date;
+//                                control.pressed(date);
                             }
                         }
                     }
@@ -412,7 +423,7 @@ Style {
                         if (indexOfCell !== -1) {
                             var date = view.model.dateAt(indexOfCell);
                             if (__isValidDate(date)) {
-                                control.released(date);
+//                                control.released(date);
                             }
                         }
                         pressedCellIndex = -1;
@@ -424,11 +435,24 @@ Style {
                         if (indexOfCell !== -1) {
                             var date = view.model.dateAt(indexOfCell);
                             if (__isValidDate(date)) {
-                                control.clicked(date);
+//                                control.clicked(date);
                             }
+
+                            var global_pos = viewContainer.mapToItem(null, mouseX, mouseY);
+
+                            var show_pos_x = EventJsUtils.getEditViewPosX(
+                                        global_pos.x, float_event_edit.width,
+                                        panelItem.width);
+                            var show_pos_y = EventJsUtils.getEditViewPosY(
+                                        global_pos.y, float_event_edit.height,
+                                        indexOfCell, panelItem.columns);
+                            float_event_edit.x = show_pos_x;
+                            float_event_edit.y = show_pos_y;
+                            float_event_edit.event_date = date;
+                            float_event_edit.opacity = 1;
                         }
                         console.log("OnClicked, indexOfCell: " + indexOfCell);
-                        console.log("Date at this point: " + date);
+//                        console.log("Date at this point: " + date);
                     }
 
                     onDoubleClicked: {
@@ -439,14 +463,29 @@ Style {
                                 control.doubleClicked(date);
                             }
                         }
-                        console.log("OnDoubleClicked, indexOfCell: " + indexOfCell);
-                        console.log("Date at this point: " + date);
+//                        console.log("OnDoubleClicked, indexOfCell: " + indexOfCell);
+//                        console.log("Date at this point: " + date);
                     }
                 }
 
                 Connections {
                     target: control
                     onSelectedDateChanged: view.selectedDateChanged()
+                }
+
+                Rectangle {
+                    id: popup_event_edit
+                    height: 200
+                    width: 200
+                    color: "lightblue"
+                    z: 1
+//                    flags: Qt.Popup
+                    visible: false
+//                    onActiveChanged: {
+//                        if (!active) {
+//                            popup_event_edit.visible = false;
+//                        }
+//                    }
                 }
 
                 Repeater {
@@ -595,6 +634,11 @@ Style {
                 component.destroy();
 //                console.log("Outside the events loop.");
             }
+        }
+
+        FloatEventEditView {
+            id: float_event_edit
+            opacity: 0
         }
     }
 }

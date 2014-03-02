@@ -2,7 +2,7 @@ import QtQuick 2.1
 import QtQuick.Controls 1.1
 import QtOrganizer 5.0
 import MyCalendar.Utils.Events 1.0
-import "CalendarUtils.js" as CalendarUtils
+import "Private/CalendarUtils.js" as CalendarUtils
 
 Rectangle {
     id: event_label
@@ -54,7 +54,7 @@ Rectangle {
         Label {
             id: title_label
             text: eventItem.displayLabel
-            font.pixelSize: 14
+            font.pointSize: 12
             clip: true
             color: font_color
             anchors.left: color_block.right

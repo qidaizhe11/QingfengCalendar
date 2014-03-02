@@ -41,3 +41,29 @@ function increaseShowFlag(show_flag_array, flag, start_day, last_days, max_grid_
         }
     }
 }
+
+function getEditViewPosY(mouse_y, view_height, index_of_cell, cell_cols) {
+    var show_pos_y = mouse_y;
+
+    if (index_of_cell < cell_cols) {
+        show_pos_y = mouse_y + view_height;
+    } else {
+        show_pos_y = mouse_y - view_height;
+    }
+
+    return show_pos_y;
+}
+
+function getEditViewPosX(mouse_x, view_width, root_width) {
+    var show_pos_x = mouse_x;
+
+    if (mouse_x - view_width / 2 < 0) {
+        show_pos_x = 0;
+    } else if (mouse_x + view_width / 2 > root_width) {
+        show_pos_x = root_width - view_width;
+    } else {
+        show_pos_x = mouse_x - view_width / 2;
+    }
+
+    return show_pos_x;
+}

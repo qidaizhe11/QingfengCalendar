@@ -2,7 +2,7 @@ import QtQuick 2.1
 import QtQuick.Controls 1.1
 import QtQuick.Controls.Styles 1.1
 import QtOrganizer 5.0
-import MyCalendar2.Utils.Events 1.0
+import MyCalendar.Utils.Events 1.0
 
 ApplicationWindow {
     visible: true
@@ -69,6 +69,7 @@ ApplicationWindow {
                     readonly property color sameMonthDateTextColor: "black"
                     readonly property color selectedDateColor: Qt.darker("darkgray", 1.4)
                     readonly property color selectedDateTextColor: "white"
+//                    readonly property color hoveredDateColor: Qt.darker("darkgray", 1.2)
                     readonly property color differentMonthDateTextColor:
                         Qt.darker("darkgray", 1.4)
                     readonly property color different_month_date_color:
@@ -84,16 +85,19 @@ ApplicationWindow {
                             if (styleData.selected) {
                                 the_color = selectedDateColor;
                             }
+                            if (styleData.hovered) {
+                                the_color = Qt.darker(the_color, 1.1);
+                            }
                         }
 //                        console.log("Color: " + the_color);
-                        console.log("Difference month color: " + different_month_date_color);
+//                        console.log("Difference month color: " + different_month_date_color);
                         the_color;
                     }
 
                     Label {
                         id: dayDelegateText
                         text: styleData.date.getDate()
-                        font.pixelSize: 14
+                        font.pointSize: 14
 //                        anchors.centerIn: parent
                         anchors.top: parent.top
                         anchors.topMargin: parent.height * 0.1

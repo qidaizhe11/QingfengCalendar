@@ -67,3 +67,4 @@ RESOURCES += \
 OTHER_FILES += \
     README.md \
 #    CalendarPlugin/qmldir
+    qml/QingfengCalendar/Content/MyTextLinkButton.qml

@@ -11,7 +11,7 @@ void MyPluginsPlugin::registerTypes(const char *uri)
   qmlRegisterType<EventUtils>(uri, 1, 0, "EventUtils");
   qmlRegisterType<MyEventList>(uri, 1, 0, "MyEventList");
   qmlRegisterType<MyEvent>(uri, 1, 0, "MyEvent");
-  qRegisterMetaType<QDeclarativeOrganizerItem*>();
+//  qRegisterMetaType<QDeclarativeOrganizerItem*>();
   qRegisterMetaType<QObject*>();
   qRegisterMetaType<MyEvent*>();
   qRegisterMetaType< QList<QObject*> >();

@@ -60,7 +60,7 @@ Rectangle {
             Text {
                 text: parent.parent.value
                 color: "white"
-                font.pixelSize: 16
+                font.pointSize: 16
                 anchors {
                     left: parent.left; top: parent.top
                     leftMargin: 6; topMargin: 6
