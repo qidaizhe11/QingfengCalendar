@@ -36,11 +36,14 @@ Rectangle {
         anchors.fill: parent
         hoverEnabled: true
 
-        onEntered: button.color = hovered_color
-//        onHoveredChanged:
-        onExited: button.color = button_color
-
-//        onPressAndHold: button_color = clicked_color
+        onEntered: {
+            button.color = hovered_color;
+            cursorShape = Qt.OpenHandCursor;
+        }
+        onExited: {
+            button.color = button_color;
+            cursorShape = Qt.ArrowCursor;
+        }
 
 //        onClicked: {
 //            button.color = clicked_color

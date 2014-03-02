@@ -8,6 +8,7 @@ ApplicationWindow {
     visible: true
     width: 960
     height: 600
+
     minimumHeight: 560
     minimumWidth: 800
 
@@ -66,7 +67,8 @@ ApplicationWindow {
 //                    color: styleData.date !== undefined &&
 //                           styleData.selected ? selectedDateColor : "white"
                     readonly property color base_color: "lightgray"
-                    readonly property color sameMonthDateTextColor: "black"
+                    readonly property color sameMonthDateTextColor:
+                        Qt.darker("darkgray", 3.0)
                     readonly property color selectedDateColor: Qt.darker("darkgray", 1.4)
                     readonly property color selectedDateTextColor: "white"
 //                    readonly property color hoveredDateColor: Qt.darker("darkgray", 1.2)
@@ -97,12 +99,12 @@ ApplicationWindow {
                     Label {
                         id: dayDelegateText
                         text: styleData.date.getDate()
-                        font.pointSize: 14
+                        font.pointSize: 12
 //                        anchors.centerIn: parent
                         anchors.top: parent.top
-                        anchors.topMargin: parent.height * 0.1
+                        anchors.topMargin: dayDelegateText.width * 0.4
                         anchors.left: parent.left
-                        anchors.leftMargin: parent.width * 0.1
+                        anchors.leftMargin: dayDelegateText.height * 0.5
                         color: {
                             var color = invalidDateColor;
                             if (styleData.valid) {

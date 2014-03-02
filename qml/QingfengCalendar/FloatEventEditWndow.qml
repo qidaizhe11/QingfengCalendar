@@ -1,17 +1,16 @@
 import QtQuick 2.1
+import QtQuick.Window 2.1
 import QtQuick.Controls 1.1
-import QtQuick.Controls.Styles 1.1
 //import QtQuick.Layouts 1.1
 import QtGraphicalEffects 1.0
 import MyCalendar.Utils.Events 1.0
 import "Content"
 
-Item {
+Window {
     id: float_event_edit
+    flags: Qt.FramelessWindowHint
     width: 500
     height: 220
-
-//    color: "white"
 
     property date event_date: new Date()
 //    property string event_title
@@ -19,29 +18,16 @@ Item {
     property int left_margin: 30
     property real font_size: 14
 
-    property real shadow_radius: 8
-
-    RectangularGlow {
-        id: border_shadow
-        anchors.fill: parent
-        color: "darkgray"
-        cornerRadius: 6
-        glowRadius: shadow_radius
-        spread: 0
-    }
-
     Rectangle {
-        id: rect
-//        anchors.fill: parent
-        width: parent.width - shadow_radius
-        height: parent.height - shadow_radius
-        anchors.centerIn: parent
-        color: "white"
+        id: rectangle
 
-        MouseArea {
-            id: mouse_area
-            anchors.fill: parent
-        }
+        color: "white"
+        anchors.fill: parent
+
+    //    MouseArea {
+    //        id: mouse_area
+    //        anchors.fill: parent
+    //    }
 
         Label {
             id: view_title
@@ -57,46 +43,18 @@ Item {
 
         Button {
             id: close_button
-            width: 25
-            height: 25
+            width: 30
+            height: 30
 
             anchors.right: parent.right
-            anchors.rightMargin: 20
+            anchors.rightMargin: 10
             anchors.top: parent.top
             anchors.topMargin: 15
 
-//            opacity: 0.6
+            opacity: 0.6
             iconSource: "images/close.png"
 
-            style: ButtonStyle {
-                background: Item {
-                    Rectangle {
-                        anchors.fill: parent
-                        color: "transparent"
-                    }
-                }
-                label: Item {
-//                    implicitWidth: row.implicitWidth
-//                    implicitHeight: row.implicitHeight
-//                    baselineOffset: row.y + text.y + text.baselineOffset
-
-                    Image {
-                        anchors.centerIn: parent
-                        source: control.iconSource
-                        anchors.verticalCenter: parent.verticalCenter
-                        opacity: 0.6
-                    }
-                }
-            }
-
-            MouseArea {
-                anchors.fill: parent
-                hoverEnabled: true
-//                        cursorShape: hovered ? Qt.ClosedHandCursor : Qt.ArrowCursor
-                onEntered: cursorShape = Qt.OpenHandCursor
-                onExited: cursorShape = Qt.ArrowCursor
-                onClicked: float_event_edit.visible = false
-            }
+            onClicked: float_event_edit.visible = false
         }
 
         Grid {
@@ -122,15 +80,32 @@ Item {
             }
 
             Label {
-                id: title_tip
+                id: event_title_tip
                 text: qsTr("What: ")
                 font.pointSize: font_size
             }
-            TextField {
-                id: title_edit
+            Rectangle {
+                id: title_edit_rectangle
+                border.color: Qt.darker("lightblue", 1.1)
+                border.width: 2
                 width: 360
-                font.pointSize: font_size
-                focus: true
+                height: title_edit.height * 1.3
+    //            focus: true
+                TextInput {
+                    id: title_edit
+                    anchors.verticalCenter: parent.verticalCenter
+                    font.pointSize: font_size
+                    focus: true
+    //                cursorVisible: cur
+    //                activeFocus: true
+                    KeyNavigation.tab: close_button
+                    KeyNavigation.backtab: close_button
+                    wrapMode: TextEdit.Wrap
+                }
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: title_edit.selectAll()
+                }
             }
         }
 
@@ -144,7 +119,7 @@ Item {
             anchors.left: parent.left
             anchors.leftMargin: left_margin
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: 16
+            anchors.bottomMargin: 20
 
         }
 
@@ -155,11 +130,9 @@ Item {
             text_size: font_size
 
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: 16 + edit_button.height * 0.25
+            anchors.bottomMargin: 20 + edit_button.height * 0.25
             anchors.left: create_button.right
             anchors.leftMargin: 12
         }
     }
-
-//    Component.onCompleted: title_edit.forceActiveFocus()
 }

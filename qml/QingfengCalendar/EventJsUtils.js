@@ -46,7 +46,7 @@ function getEditViewPosY(mouse_y, view_height, index_of_cell, cell_cols) {
     var show_pos_y = mouse_y;
 
     if (index_of_cell < cell_cols) {
-        show_pos_y = mouse_y + view_height;
+        show_pos_y = mouse_y;
     } else {
         show_pos_y = mouse_y - view_height;
     }
