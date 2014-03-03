@@ -3,6 +3,7 @@ import QtQuick.Controls 1.1
 import QtOrganizer 5.0
 import MyCalendar.Utils.Events 1.0
 import "Private/CalendarUtils.js" as CalendarUtils
+import "Content"
 
 Rectangle {
     id: event_label
@@ -35,9 +36,9 @@ Rectangle {
     x: parent.width / days_in_week * horizontal_index
     y: parent.height / display_weeks * vertical_index + height * (show_flag_of_day + 1)
 
-    EventUtils {
-        id: event_utils
-    }
+//    EventUtils {
+//        id: event_utils
+//    }
 
     Item {
         id: view
@@ -77,8 +78,11 @@ Rectangle {
         }
     }
 
-    MouseArea {
+    MyMouseArea {
         anchors.fill: parent
+        hoverEnabled: true
+        onEntered: event_label.color = Qt.lighter(base_color, 1.1);
+        onExited: event_label.color = base_color;
         onClicked: {
             event_label.color = Qt.darker(base_color, 1.5);
         }

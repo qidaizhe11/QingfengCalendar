@@ -465,8 +465,7 @@ Style {
                             console.log("Shown Pos: " + show_pos_x + ", " + show_pos_y);
                             float_event_edit.x = show_pos_x;
                             float_event_edit.y = show_pos_y;
-                            float_event_edit.event_date = date;
-                            float_event_edit.visible = true;
+                            float_event_edit.show(date);
                         }
                         console.log("OnClicked, indexOfCell: " + indexOfCell);
 //                        console.log("Date at this point: " + date);
@@ -572,7 +571,7 @@ Style {
             target: navigationbar_mouseArea
             onClicked: {
                 if (float_event_edit.visible) {
-                    float_event_edit.visible = false;
+                    float_event_edit.hide();
                 }
             }
         }
@@ -581,8 +580,15 @@ Style {
             target: background_mouseArea
             onClicked: {
                 if (float_event_edit.visible) {
-                    float_event_edit.visible = false;
+                    float_event_edit.hide();
                 }
+            }
+        }
+
+        Connections {
+            target: float_event_edit
+            onHide: {
+                hoveredCellIndex = -1;
             }
         }
 

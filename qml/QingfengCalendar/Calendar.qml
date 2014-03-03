@@ -96,6 +96,13 @@ Control {
 //        calendar.selectedDate = date
     }
 
+    Connections {
+        target: float_event_edit
+        onSaveEventClicked: {
+            event_list.saveEvent(my_event);
+        }
+    }
+
     function showPreviousMonth() {
         if (visibleMonth === 0) {
             visibleMonth = CalendarUtils.monthsInYear - 1;

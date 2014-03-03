@@ -37,13 +37,15 @@ public:
 //  QList<QObject*> events() const { return m_events; }
   QVariantList events();
 
+  Q_INVOKABLE void saveEvent(const MyEvent& event);
+
 Q_SIGNALS:
   void startDateChanged(const QDate& date);
   void endDateChanged(const QDate& date);
   void eventsChanged();
 
 private:
-  void getEvents();
+  void updateEvents();
 
   QOrganizerManager* m_manager;
 

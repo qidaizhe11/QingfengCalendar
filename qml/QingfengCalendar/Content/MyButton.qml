@@ -31,19 +31,13 @@ Rectangle {
         color: text_color
     }
 
-    MouseArea {
+    MyMouseArea {
         id: mouse_area
         anchors.fill: parent
         hoverEnabled: true
 
-        onEntered: {
-            button.color = hovered_color;
-            cursorShape = Qt.OpenHandCursor;
-        }
-        onExited: {
-            button.color = button_color;
-            cursorShape = Qt.ArrowCursor;
-        }
+        onEntered: button.color = hovered_color;
+        onExited: button.color = button_color;
 
 //        onClicked: {
 //            button.color = clicked_color

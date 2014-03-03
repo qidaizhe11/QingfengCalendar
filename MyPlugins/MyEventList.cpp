@@ -7,8 +7,7 @@
 #include <QtVersitOrganizer/QVersitOrganizerExporter>
 #include <QList>
 #include <QVariant>
-
-//#define QT_NO_DEBUG_OUTPUT
+#include <QMessageBox>
 
 MyEventList::MyEventList(QQuickItem* parent) :
   QQuickItem(parent)
@@ -65,6 +64,9 @@ MyEventList::MyEventList(QQuickItem* parent) :
   }
 }
 
+//-------------------------------------------------------------------------
+// public
+
 void MyEventList::setStartDate(const QDate &start_date)
 {
   if (start_date != m_start_date && start_date.isValid()) {
@@ -76,7 +78,7 @@ void MyEventList::setEndDate(const QDate &end_date)
 {
   if (end_date != m_end_date && end_date.isValid()) {
     m_end_date = end_date;
-    getEvents();
+    updateEvents();
   }
 }
 
@@ -87,9 +89,37 @@ QVariantList MyEventList::events()
 }
 
 //-------------------------------------------------------------------------
+// Q_INVOKABLE
+
+
+// TODO: 此save函数当前极易崩溃，或者造成Event事件信息的丢失！
+
+void MyEventList::saveEvent(const MyEvent &my_event)
+{
+  QOrganizerEvent organizer_event;
+
+  if (my_event.startDateTime().isValid()) {
+    organizer_event.setStartDateTime(my_event.startDateTime());
+  //  organizer_event.setDisplayLabel(my_event.displayLabel());
+    organizer_event.setEndDateTime(my_event.endDateTime());
+    organizer_event.setAllDay(my_event.allDay());
+    if (my_event.displayLabel().isEmpty()) {
+      my_event.displayLabel() = tr("(No title)");
+    }
+
+    m_manager->saveItem(&organizer_event);
+    if (m_manager->error()) {
+//      QMessageBox::warning(this, tr("Failed!"), QString("Failed to save event!\n(error code %1)").arg(m_manager->error()));
+    } else {
+      updateEvents();
+    }
+  }
+}
+
+//-------------------------------------------------------------------------
 // private
 
-void MyEventList::getEvents()
+void MyEventList::updateEvents()
 {
   qDebug() << "Begin to search events from manager.";
 

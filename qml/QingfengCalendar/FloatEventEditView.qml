@@ -14,12 +14,29 @@ Item {
 //    color: "white"
 
     property date event_date: new Date()
-//    property string event_title
+    property string event_title
 
     property int left_margin: 30
     property real font_size: 14
 
     property real shadow_radius: 8
+
+    signal show(date event_start_date)
+    signal hide()
+    signal saveEventClicked(MyEvent my_event)
+
+    MyEvent {
+        id: my_event
+    }
+
+    onShow: {
+        event_date = event_start_date;
+        title_edit.text = "";
+        float_event_edit.visible = true;
+    }
+    onHide: {
+        float_event_edit.visible = false;
+    }
 
     RectangularGlow {
         id: border_shadow
@@ -31,12 +48,12 @@ Item {
     }
 
     Rectangle {
-        id: rect
+        id: edit_rectangle
 //        anchors.fill: parent
         width: parent.width - shadow_radius
         height: parent.height - shadow_radius
         anchors.centerIn: parent
-        color: "white"
+        color: Qt.lighter("lightgray", 1.15)
 
         MouseArea {
             id: mouse_area
@@ -57,8 +74,8 @@ Item {
 
         Button {
             id: close_button
-            width: 25
-            height: 25
+            width: 20
+            height: 20
 
             anchors.right: parent.right
             anchors.rightMargin: 20
@@ -76,10 +93,6 @@ Item {
                     }
                 }
                 label: Item {
-//                    implicitWidth: row.implicitWidth
-//                    implicitHeight: row.implicitHeight
-//                    baselineOffset: row.y + text.y + text.baselineOffset
-
                     Image {
                         anchors.centerIn: parent
                         source: control.iconSource
@@ -89,13 +102,9 @@ Item {
                 }
             }
 
-            MouseArea {
+            MyMouseArea {
                 anchors.fill: parent
-                hoverEnabled: true
-//                        cursorShape: hovered ? Qt.ClosedHandCursor : Qt.ArrowCursor
-                onEntered: cursorShape = Qt.OpenHandCursor
-                onExited: cursorShape = Qt.ArrowCursor
-                onClicked: float_event_edit.visible = false
+                onClicked: float_event_edit.hide()
             }
         }
 
@@ -129,6 +138,7 @@ Item {
             TextField {
                 id: title_edit
                 width: 360
+                text: event_title
                 font.pointSize: font_size
                 focus: true
             }
@@ -146,6 +156,12 @@ Item {
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 16
 
+            onClicked: {
+                my_event.startDateTime = event_date;
+                my_event.displayLabel = title_edit.text;
+                my_event.allDay = true;
+                float_event_edit.saveEventClicked(my_event);
+            }
         }
 
         MyTextLinkButton {
@@ -161,5 +177,5 @@ Item {
         }
     }
 
-//    Component.onCompleted: title_edit.forceActiveFocus()
+    Component.onCompleted: title_edit.forceActiveFocus()
 }

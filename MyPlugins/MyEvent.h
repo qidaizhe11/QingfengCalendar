@@ -14,8 +14,8 @@ class MyEvent : public QObject
   Q_OBJECT
 
 //  Q_PROPERTY(QString itemId READ itemId WRITE setItemId NOTIFY valueChanged)
-  Q_PROPERTY(QString description READ description WRITE setDescription
-             NOTIFY valueChanged)
+//  Q_PROPERTY(QString description READ description WRITE setDescription
+//             NOTIFY valueChanged)
   Q_PROPERTY(QString displayLabel READ displayLabel WRITE setDisplayLabel
              NOTIFY valueChanged)
   Q_PROPERTY(bool allDay READ allDay WRITE setAllDay NOTIFY valueChanged)
@@ -32,10 +32,10 @@ public:
 //  QString itemId() const { return m_item_id; }
 //  void setItemId(const QString& id) { m_item_id = id; }
 
-  QString description() const { return m_description; }
-  void setDescription(const QString& description) {
-    m_description = description;
-  }
+//  QString description() const { return m_description; }
+//  void setDescription(const QString& description) {
+//    m_description = description;
+//  }
 
   QString displayLabel() const { return m_display_label; }
   void setDisplayLabel(const QString& display_label) {
@@ -60,7 +60,7 @@ public:
 
 private:
   QString m_item_id;
-  QString m_description;
+//  QString m_description;
   QString m_display_label;
   bool m_all_day;
   QDateTime m_start_date_time;
