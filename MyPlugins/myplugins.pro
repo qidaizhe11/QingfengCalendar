@@ -14,13 +14,13 @@ uri = MyCalendar.Utils.Events
 SOURCES += \
     myplugins_plugin.cpp \
     eventutils.cpp \
-    MyEventList.cpp \
+    MyEventModel.cpp \
     MyEvent.cpp \
 
 HEADERS += \
     myplugins_plugin.h \
     eventutils.h \
-    MyEventList.h \
+    MyEventModel.h \
     MyEvent.h \
 
 OTHER_FILES = qmldir

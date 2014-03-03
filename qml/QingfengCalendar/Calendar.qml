@@ -1,8 +1,8 @@
 import QtQuick 2.1
-import QtQuick.Controls 1.1
-import QtQuick.Controls.Styles 1.1
+import QtQuick.Controls 1.0
+import QtQuick.Controls.Styles 1.0
 import MyCalendar.Controls.Private 1.0
-import MyCalendar.Utils.Events 1.0
+import MyCalendar2.Utils.Events 1.0
 import QtOrganizer 5.0
 import "Private"
 import "Private/CalendarUtils.js" as CalendarUtils
@@ -94,13 +94,6 @@ Control {
 
     onClicked: {
 //        calendar.selectedDate = date
-    }
-
-    Connections {
-        target: float_event_edit
-        onSaveEventClicked: {
-            event_model.saveEvent(my_event);
-        }
     }
 
     function showPreviousMonth() {

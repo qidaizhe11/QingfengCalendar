@@ -4,7 +4,9 @@
 #include <QQuickItem>
 #include <QDateTime>
 #include <QQmlProperty>
+#include <QtOrganizer/QOrganizerManager>
 #include <QtOrganizer/qorganizerglobal.h>
+#include <QtOrganizer/qorganizerabstractrequest.h>
 #include <QtVersitOrganizer/qversitorganizerglobal.h>
 #include "MyEvent.h"
 
@@ -12,46 +14,57 @@ QTORGANIZER_USE_NAMESPACE
 QTVERSITORGANIZER_USE_NAMESPACE
 
 QT_BEGIN_NAMESPACE_ORGANIZER
-class QOrganizerManager;
+//class QOrganizerManager;
 QT_END_NAMESPACE_ORGANIZER
 
 class MyEventModel : public QQuickItem
 {
   Q_OBJECT
 
-  Q_PROPERTY(QDate startDate READ startDate WRITE setStartDate
+  Q_PROPERTY(QDateTime startDate READ startDate WRITE setStartDate
              NOTIFY startDateChanged)
-  Q_PROPERTY(QDate endDate READ endDate WRITE setEndDate NOTIFY endDateChanged)
+  Q_PROPERTY(QDateTime endDate READ endDate WRITE setEndDate NOTIFY endDateChanged)
   Q_PROPERTY(QVariantList events READ events NOTIFY eventsChanged)
+  Q_PROPERTY(QString error READ error NOTIFY errorChanged)
 
 public:
   MyEventModel(QQuickItem* parent = 0);
   ~MyEventModel() {}
 
-  QDate startDate() const { return m_start_date; }
-  void setStartDate(const QDate& start_date);
+  QDateTime startDate() const { return m_start_date; }
+  void setStartDate(const QDateTime& start_date);
 
-  QDate endDate() const { return m_end_date; }
-  void setEndDate(const QDate& end_date);
+  QDateTime endDate() const { return m_end_date; }
+  void setEndDate(const QDateTime& end_date);
 
 //  QList<QObject*> events() const { return m_events; }
-  QVariantList events();
+  QVariantList events() const;
 
-  Q_INVOKABLE void saveEvent(const MyEvent& event);
+  QString error() const;
+
+  Q_INVOKABLE void saveEvent(MyEvent* my_event);
 
 Q_SIGNALS:
-  void startDateChanged(const QDate& date);
-  void endDateChanged(const QDate& date);
+  void startDateChanged();
+  void endDateChanged();
   void eventsChanged();
+  void errorChanged();
+
+public slots:
+  void updateEvents();
+
+private slots:
+  void onRequestStateChanged(QOrganizerAbstractRequest::State new_state);
 
 private:
-  void updateEvents();
+  void checkError(const QOrganizerAbstractRequest* request);
 
   QOrganizerManager* m_manager;
 
-  QDate m_start_date;
-  QDate m_end_date;
+  QDateTime m_start_date;
+  QDateTime m_end_date;
   QVariantList m_events;
+  QOrganizerManager::Error m_error;
 };
 
 #endif // EVENTLISTUTILS_H

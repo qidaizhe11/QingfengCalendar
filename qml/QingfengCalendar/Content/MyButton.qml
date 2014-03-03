@@ -17,7 +17,7 @@ Rectangle {
 
     property real text_size: 14
 
-    signal clicked
+    signal clicked()
 
     width: button_width
     height: button_height
@@ -39,6 +39,7 @@ Rectangle {
         onEntered: button.color = hovered_color;
         onExited: button.color = button_color;
 
+        onClicked: parent.clicked()
 //        onClicked: {
 //            button.color = clicked_color
 //        }

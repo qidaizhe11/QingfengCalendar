@@ -1,9 +1,9 @@
 import QtQuick 2.1
-import QtQuick.Controls 1.1
-import QtQuick.Controls.Styles 1.1
+import QtQuick.Controls 1.0
+import QtQuick.Controls.Styles 1.0
 //import QtQuick.Layouts 1.1
 import QtGraphicalEffects 1.0
-import MyCalendar.Utils.Events 1.0
+import MyCalendar2.Utils.Events 1.0
 import "Content"
 
 Item {
@@ -13,7 +13,7 @@ Item {
 
 //    color: "white"
 
-    property date event_date: new Date()
+    property date event_date
     property string event_title
 
     property int left_margin: 30
@@ -21,13 +21,11 @@ Item {
 
     property real shadow_radius: 8
 
+    property variant event_item
+
     signal show(date event_start_date)
     signal hide()
-    signal saveEventClicked(MyEvent my_event)
-
-    MyEvent {
-        id: my_event
-    }
+    signal saveEventClicked(var my_event)
 
     onShow: {
         event_date = event_start_date;
@@ -157,10 +155,23 @@ Item {
             anchors.bottomMargin: 16
 
             onClicked: {
-                my_event.startDateTime = event_date;
-                my_event.displayLabel = title_edit.text;
-                my_event.allDay = true;
-                float_event_edit.saveEventClicked(my_event);
+                var new_event = Qt.createQmlObject(
+                            "import QtQuick 2.1; import MyCalendar2.Utils.Events 1.0; MyEvent {}", float_event_edit);
+                console.log("New Event: " + new_event);
+
+                new_event.startDateTime = event_date;
+//                console.log(new_event.startDateTime);
+                if (new_event.startDateTime) {
+                    new_event.displayLabel = title_edit.text;
+                    new_event.allDay = true;
+                    console.log("Start Datetime: " + new_event.startDateTime);
+                    console.log("Display Label: " + new_event.displayLabel);
+                    console.log("All day: " + new_event.allDay);
+                    control.event_model.saveEvent(new_event);
+                    float_event_edit.hide();
+                    control.refreshEvents();
+//                    float_event_edit.saveEventClicked(new_event);
+                }
             }
         }
 

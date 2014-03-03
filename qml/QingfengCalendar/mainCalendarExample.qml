@@ -1,8 +1,8 @@
 import QtQuick 2.1
-import QtQuick.Controls 1.1
-import QtQuick.Controls.Styles 1.1
+import QtQuick.Controls 1.0
+import QtQuick.Controls.Styles 1.0
 import QtOrganizer 5.0
-import MyCalendar.Utils.Events 1.0
+import MyCalendar2.Utils.Events 1.0
 
 ApplicationWindow {
     visible: true

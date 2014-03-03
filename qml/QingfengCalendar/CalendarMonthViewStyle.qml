@@ -1,8 +1,8 @@
 import QtQuick 2.1
-import QtQuick.Controls 1.1
+import QtQuick.Controls 1.0
 //import QtQuick.Window 2.1
 import MyCalendar.Controls.Private 1.0
-import MyCalendar.Utils.Events 1.0
+import MyCalendar2.Utils.Events 1.0
 import QtOrganizer 5.0
 import "Private"
 import "Private/CalendarUtils.js" as CalendarUtils
@@ -378,7 +378,7 @@ Style {
 //                                    + ", Y: " + viewContainerPos.y);
 //                        var parentPos = viewContainer.mapToItem(null, mouseX, mouseY);
 //                        console.log("Parent pos, X: " + parentPos.x + ", Y: " + parentPos.y);
-                        console.log("Child: " + child);
+//                        console.log("Child: " + child);
                         return child && child !== mouseArea ? child.__index : -1;
                     }
 
@@ -444,7 +444,7 @@ Style {
                     }
 
                     onClicked: {
-                        console.log("Mouse position: " + mouse.x + ", " + mouse.y);
+//                        console.log("Mouse position: " + mouse.x + ", " + mouse.y);
                         var indexOfCell = cellIndexAt(mouseX, mouseY);
                         if (indexOfCell !== -1) {
                             var date = view.model.dateAt(indexOfCell);
@@ -454,7 +454,7 @@ Style {
                             }
 
                             var global_pos = viewContainer.mapToItem(null, mouseX, mouseY);
-                            console.log("Global position: " + global_pos.x + ", " + global_pos.y);
+//                            console.log("Global position: " + global_pos.x + ", " + global_pos.y);
 
                             var show_pos_x = EventJsUtils.getEditViewPosX(
                                         global_pos.x, float_event_edit.width,
@@ -462,12 +462,12 @@ Style {
                             var show_pos_y = EventJsUtils.getEditViewPosY(
                                         global_pos.y, float_event_edit.height,
                                         indexOfCell, panelItem.columns);
-                            console.log("Shown Pos: " + show_pos_x + ", " + show_pos_y);
+//                            console.log("Shown Pos: " + show_pos_x + ", " + show_pos_y);
                             float_event_edit.x = show_pos_x;
                             float_event_edit.y = show_pos_y;
                             float_event_edit.show(date);
                         }
-                        console.log("OnClicked, indexOfCell: " + indexOfCell);
+//                        console.log("OnClicked, indexOfCell: " + indexOfCell);
 //                        console.log("Date at this point: " + date);
                     }
 
@@ -587,6 +587,15 @@ Style {
 
         Connections {
             target: float_event_edit
+            onSaveEventClicked: {
+                console.log("SaveEventClicked.");
+                console.log("MyEvent: " + my_event);
+                control.event_model.saveEvent(my_event);
+            }
+        }
+
+        Connections {
+            target: float_event_edit
             onHide: {
                 hoveredCellIndex = -1;
             }
@@ -595,16 +604,19 @@ Style {
         Connections {
             target: control
             onRefreshEvents: {
-//                console.log("Come to RefreshEvents function, Label model count: " + label_list_model.count);
+                console.log("Come to RefreshEvents function, Label model count: " + label_list_model.count);
 //                console.log("Visible date: " + control.__model.visibleDate);
 
+//                console.log("Label list model count: " + label_list_model.count);
                 while (label_list_model.count > 0) {
+                    console.log("Label list model, try to destroy.");
                     label_list_model.get(0).obj.destroy();
                     label_list_model.remove(0);
                 }
 
                 control.event_model.startDate = control.__model.firstVisibleDate;
                 control.event_model.endDate = control.__model.lastVisibleDate;
+                control.event_model.updateEvents();
 
                 var total_cells = panelItem.rows * panelItem.columns;
                 var visible_date = control.__model.visibleDate;
@@ -625,7 +637,7 @@ Style {
                 var component = Qt.createComponent("TileEventLabel.qml");
 
 
-                console.log("control.event_list.events.length: " + control.event_model.events.length);
+//                console.log("control.event_list.events.length: " + control.event_model.events.length);
 
                 for (var i = 0; i < control.event_model.events.length; ++i) {
                     var event = control.event_model.events[i];
@@ -668,9 +680,10 @@ Style {
                         last_days -= clipped_days;
                     }
 
-//                    console.log("event start: " + event.startDateTime + " " + event.displayLabel);
+                    console.log("Event start: " + event.startDateTime + " " + event.displayLabel);
                     var label = component.createObject(viewContainer, {"eventItem" : event, "show_flag_of_day": show_flag_of_day, "grid_index": index_of_cell, "last_days": last_days});
 
+                    console.log("Create successed?");
                     label_list_model.append({"obj": label,
                                                 "source":"TileEventLabel.qml"});
                 }

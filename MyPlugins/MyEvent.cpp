@@ -1,15 +1,19 @@
 #include "MyEvent.h"
+#include <QDateTime>
 
 MyEvent::MyEvent(QObject *parent) :
   QObject(parent)
 {
-  m_start_date_time = QDateTime();
-  m_end_date_time = QDateTime();
+//  qDebug() << QDateTime::currentDateTime();
+  m_start_date_time = QDateTime::currentDateTime();
+  m_end_date_time = QDateTime::currentDateTime();
   m_all_day = false;
-  m_display_label = QString();
+  m_display_label = "";
+//  qDebug() <<
 }
 
-MyEvent::MyEvent(const QOrganizerEvent &event)
+MyEvent::MyEvent(const QOrganizerEvent &event, QObject* parent)
+  : QObject(parent)
 {
 //  m_item_id = item.id().toString();
 //  m_description = event.description();
@@ -17,6 +21,11 @@ MyEvent::MyEvent(const QOrganizerEvent &event)
   m_all_day = event.isAllDay();
   m_start_date_time = event.startDateTime();
   m_end_date_time = event.endDateTime();
+}
+
+QDateTime MyEvent::startDateTime() const
+{
+  return m_start_date_time;
 }
 
 //MyEvent::MyEvent(const QString &description, const QString& display_label)

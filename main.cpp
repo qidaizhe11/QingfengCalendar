@@ -9,6 +9,7 @@
 #include "MyPlugins/MyEventModel.h"
 #include "MyPlugins/eventutils.h"
 #include "MyPlugins/MyEvent.h"
+#include "MyPlugins/MyTestEvent.h"
 
 int main(int argc, char *argv[])
 {
@@ -19,14 +20,20 @@ int main(int argc, char *argv[])
     qmlRegisterType<EventUtils>(uri, 1, 0, "EventUtils");
     qmlRegisterType<MyEventModel>(uri, 1, 0, "MyEventModel");
     qmlRegisterType<MyEvent>(uri, 1, 0, "MyEvent");
-    qRegisterMetaType<QObject*>();
-    qRegisterMetaType<MyEvent*>();
+//    qRegisterMetaType<QObject*>();
     qRegisterMetaType< QList<QObject*> >();
     qRegisterMetaType< QList<MyEvent*> >();
 
-    QVariantList events;
-    events.append(QVariant::fromValue((QObject*)new MyEvent("Date1", "Display1")));
-    events.append(QVariant::fromValue((QObject*)new MyEvent("Again and again", "O.O")));
+//    MyTestEvent event;
+//    event.setStartDateTime(QDateTime::currentDateTime());
+//    QDateTime time = event.startDateTime();
+
+    MyEvent my_event;
+    my_event.setDisplayLabel("hello");
+    my_event.setStartDateTime(QDateTime::currentDateTime());
+
+    QDateTime temp = my_event.startDateTime();
+//    qDebug() << temp;
 
     QtQuick2ControlsApplicationViewer viewer;
     viewer.setMainQmlFile(QStringLiteral("qml/QingfengCalendar/mainCalendarExample.qml"));
