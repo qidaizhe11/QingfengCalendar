@@ -1,4 +1,4 @@
-#include "MyEventList.h"
+#include "MyEventModel.h"
 #include <QtOrganizer>
 #include <QOrganizerManager>
 #include <QVersitReader>
@@ -7,9 +7,8 @@
 #include <QtVersitOrganizer/QVersitOrganizerExporter>
 #include <QList>
 #include <QVariant>
-#include <QMessageBox>
 
-MyEventList::MyEventList(QQuickItem* parent) :
+MyEventModel::MyEventModel(QQuickItem* parent) :
   QQuickItem(parent)
 {
   m_start_date = QDate();
@@ -67,14 +66,14 @@ MyEventList::MyEventList(QQuickItem* parent) :
 //-------------------------------------------------------------------------
 // public
 
-void MyEventList::setStartDate(const QDate &start_date)
+void MyEventModel::setStartDate(const QDate &start_date)
 {
   if (start_date != m_start_date && start_date.isValid()) {
     m_start_date = start_date;
   }
 }
 
-void MyEventList::setEndDate(const QDate &end_date)
+void MyEventModel::setEndDate(const QDate &end_date)
 {
   if (end_date != m_end_date && end_date.isValid()) {
     m_end_date = end_date;
@@ -82,7 +81,7 @@ void MyEventList::setEndDate(const QDate &end_date)
   }
 }
 
-QVariantList MyEventList::events()
+QVariantList MyEventModel::events()
 {
 //  return QQmlListProperty<MyEvent>(this, m_events);
   return m_events;
@@ -94,7 +93,7 @@ QVariantList MyEventList::events()
 
 // TODO: 此save函数当前极易崩溃，或者造成Event事件信息的丢失！
 
-void MyEventList::saveEvent(const MyEvent &my_event)
+void MyEventModel::saveEvent(const MyEvent &my_event)
 {
   QOrganizerEvent organizer_event;
 
@@ -119,7 +118,7 @@ void MyEventList::saveEvent(const MyEvent &my_event)
 //-------------------------------------------------------------------------
 // private
 
-void MyEventList::updateEvents()
+void MyEventModel::updateEvents()
 {
   qDebug() << "Begin to search events from manager.";
 

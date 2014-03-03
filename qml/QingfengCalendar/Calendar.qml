@@ -72,7 +72,7 @@ Control {
         visibleDate: new Date(visibleYear, visibleMonth, 1)
     }
 
-    property MyEventList event_list: MyEventList {
+    property MyEventModel event_model: MyEventModel {
 //        id: my_event_list
 //        startDate: __model.firstVisibleDate
 //        endDate: __model.lastVisibleDate
@@ -99,7 +99,7 @@ Control {
     Connections {
         target: float_event_edit
         onSaveEventClicked: {
-            event_list.saveEvent(my_event);
+            event_model.saveEvent(my_event);
         }
     }
 

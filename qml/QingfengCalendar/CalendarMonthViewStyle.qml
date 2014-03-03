@@ -603,8 +603,8 @@ Style {
                     label_list_model.remove(0);
                 }
 
-                control.event_list.startDate = control.__model.firstVisibleDate;
-                control.event_list.endDate = control.__model.lastVisibleDate;
+                control.event_model.startDate = control.__model.firstVisibleDate;
+                control.event_model.endDate = control.__model.lastVisibleDate;
 
                 var total_cells = panelItem.rows * panelItem.columns;
                 var visible_date = control.__model.visibleDate;
@@ -625,10 +625,10 @@ Style {
                 var component = Qt.createComponent("TileEventLabel.qml");
 
 
-                console.log("control.event_list.events.length: " + control.event_list.events.length);
+                console.log("control.event_list.events.length: " + control.event_model.events.length);
 
-                for (var i = 0; i < control.event_list.events.length; ++i) {
-                    var event = control.event_list.events[i];
+                for (var i = 0; i < control.event_model.events.length; ++i) {
+                    var event = control.event_model.events[i];
 
 //                    var index_of_cell = event_utils.gridIndex(event.startDateTime,
 //                                                              visible_date);

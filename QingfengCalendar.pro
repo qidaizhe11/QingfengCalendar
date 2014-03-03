@@ -29,7 +29,7 @@ SOURCES += main.cpp \
     MyPlugins/MyEvent.cpp \
 #    MyPlugins/myplugins_plugin.cpp
     MyPlugins/eventutils.cpp \
-    MyPlugins/MyEventList.cpp
+    MyPlugins/MyEventModel.cpp
 
 # Installation path
 # target.path =
@@ -59,7 +59,7 @@ HEADERS += \
     MyPlugins/MyEvent.h \
 #    MyPlugins/myplugins_plugin.h
     MyPlugins/eventutils.h \
-    MyPlugins/MyEventList.h
+    MyPlugins/MyEventModel.h
 
 RESOURCES += \
     resources/Calendar.qrc

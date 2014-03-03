@@ -7,7 +7,8 @@
 初始版本基于 Qt Widgets，已废弃，
 正在基于 Qt Quick/ Qml 重建，
 
-此次重构版本基于 [Qt Organizer](https://qt.gitorious.org/qt/qtpim/) 和 [QtQuick.Controls.Calendar](https://qt.gitorious.org/qt/qtquickcontrols/)，其中后者会出现在 [Qt 5.3](http://qt-project.org/wiki/New-Features-in-Qt-5.3)，至于前者何时会推到正式版，我真的不知道。
+此次重构版本基于 [Qt Organizer](https://qt.gitorious.org/qt/qtpim/) 和 [QtQuick.Controls.Calendar](https://qt.gitorious.org/qt/qtquickcontrols/)，
+其中后者会出现在 [Qt 5.3](http://qt-project.org/wiki/New-Features-in-Qt-5.3)，至于前者何时会推到正式版，我真的不知道。
 </br>
 
 -------------------
@@ -44,14 +45,16 @@ git clone 后 qmake, make, make install
 
 ####Qingfeng Calendar
 
-修改文件 [MyEventList.cpp](https://github.com/qidaizhe11/QingfengCalendar/blob/master/MyPlugins/MyEventList.cpp) 中代码：
+修改文件 [MyEventModel.cpp](https://github.com/qidaizhe11/QingfengCalendar/blob/master/MyPlugins/MyEventModel.cpp) 中代码：
 ```
 QString file_name = "/home/daizhe/qidaizhe11@gmail.com-2.ics";
 ```
 自行指定吧，应该基础的ics文件都能处理？这是Qt Organizer的事情，留待以后测试。
+
 qmake, make，应该可以看到当前程序运行效果了。
 </br>
 
 ---------------
 
-正在完善中...
+
+尚在完善中...

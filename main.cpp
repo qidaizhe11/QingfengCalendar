@@ -6,7 +6,7 @@
 #include <QQuickView>
 #include <QVariant>
 
-#include "MyPlugins/MyEventList.h"
+#include "MyPlugins/MyEventModel.h"
 #include "MyPlugins/eventutils.h"
 #include "MyPlugins/MyEvent.h"
 
@@ -17,7 +17,7 @@ int main(int argc, char *argv[])
     const char* uri = "MyCalendar2.Utils.Events";
     // @uri MyCalendar.Utils.Events
     qmlRegisterType<EventUtils>(uri, 1, 0, "EventUtils");
-    qmlRegisterType<MyEventList>(uri, 1, 0, "MyEventList");
+    qmlRegisterType<MyEventModel>(uri, 1, 0, "MyEventModel");
     qmlRegisterType<MyEvent>(uri, 1, 0, "MyEvent");
     qRegisterMetaType<QObject*>();
     qRegisterMetaType<MyEvent*>();

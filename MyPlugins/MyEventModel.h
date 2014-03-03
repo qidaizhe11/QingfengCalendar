@@ -15,7 +15,7 @@ QT_BEGIN_NAMESPACE_ORGANIZER
 class QOrganizerManager;
 QT_END_NAMESPACE_ORGANIZER
 
-class MyEventList : public QQuickItem
+class MyEventModel : public QQuickItem
 {
   Q_OBJECT
 
@@ -25,8 +25,8 @@ class MyEventList : public QQuickItem
   Q_PROPERTY(QVariantList events READ events NOTIFY eventsChanged)
 
 public:
-  MyEventList(QQuickItem* parent = 0);
-  ~MyEventList() {}
+  MyEventModel(QQuickItem* parent = 0);
+  ~MyEventModel() {}
 
   QDate startDate() const { return m_start_date; }
   void setStartDate(const QDate& start_date);
