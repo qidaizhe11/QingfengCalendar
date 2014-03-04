@@ -1,23 +1,25 @@
-.pragma library
+//.pragma library
 
-function initEventCountArray(array, number) {
-    for( var i = 0; i < number; ++i) {
+function initEventCountArray(array) {
+    for( var i = 0; i < panelItem.total_cells; ++i) {
         array.push(0);
     }
 }
 
-function initShowFlagsArray(array, max_gird_cells, max_show_events_of_day) {
-    for( var i = 0; i < max_gird_cells; ++i) {
+function initShowFlagsArray(array) {
+    for( var i = 0; i < panelItem.total_cells; ++i) {
         array[i] = [];
-        for (var flag = 0; flag < max_show_events_of_day; ++flag) {
+        for (var flag = 0; flag < panelItem.max_show_events_of_day; ++flag) {
             array[i][flag] = 0;
         }
     }
 }
 
-function calculateShowFlag(flag_array, index_of_cell, max_show_events_of_day) {
+function calculateShowFlag(flag_array, index_of_cell) {
     var flag = 0;
-    for (var i = 0; i < max_show_events_of_day; ++i) {
+//    console.log("In calculateShowFlag function, flag_array: ",
+//                flag_array);
+    for (var i = 0; i < panelItem.max_show_events_of_day; ++i) {
         if (flag_array[index_of_cell][i] === 0) {
             flag = i;
             break;
@@ -26,7 +28,8 @@ function calculateShowFlag(flag_array, index_of_cell, max_show_events_of_day) {
     return flag;
 }
 
-function increaseEventCount(count_array, begin, last_days, max_size) {
+function increaseEventCount(count_array, begin, last_days) {
+    var max_size = panelItem.total_cells;
     for (var i = 0; i < last_days; ++i) {
         if (begin + i < max_size) {
             count_array[begin + i] += 1;
@@ -34,7 +37,8 @@ function increaseEventCount(count_array, begin, last_days, max_size) {
     }
 }
 
-function increaseShowFlag(show_flag_array, flag, start_day, last_days, max_grid_cells) {
+function increaseShowFlag(show_flag_array, flag, start_day, last_days) {
+    var max_grid_cells = panelItem.total_cells;
     for (var i = 0; i < last_days; ++i) {
         if (start_day + last_days < max_grid_cells) {
             show_flag_array[start_day + i][flag] = 1;
@@ -42,20 +46,10 @@ function increaseShowFlag(show_flag_array, flag, start_day, last_days, max_grid_
     }
 }
 
-function getEditViewPosY(mouse_y, view_height, index_of_cell, cell_cols) {
-    var show_pos_y = mouse_y;
-
-    if (index_of_cell < cell_cols) {
-        show_pos_y = mouse_y;
-    } else {
-        show_pos_y = mouse_y - view_height;
-    }
-
-    return show_pos_y;
-}
-
-function getEditViewPosX(mouse_x, view_width, root_width) {
+function getEditViewPosX(mouse_x) {
     var show_pos_x = mouse_x;
+    var view_width = float_event_edit.width
+    var root_width = panelItem.width
 
     if (mouse_x - view_width / 2 < 0) {
         show_pos_x = 0;
@@ -66,4 +60,18 @@ function getEditViewPosX(mouse_x, view_width, root_width) {
     }
 
     return show_pos_x;
+}
+
+function getEditViewPosY(mouse_y, index_of_cell) {
+    var show_pos_y = mouse_y;
+    var view_height = float_event_edit.height;
+    var cell_cols = panelItem.columns;
+
+    if (index_of_cell < cell_cols) {
+        show_pos_y = mouse_y;
+    } else {
+        show_pos_y = mouse_y - view_height;
+    }
+
+    return show_pos_y;
 }

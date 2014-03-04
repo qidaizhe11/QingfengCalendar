@@ -145,6 +145,7 @@ void MyEventModel::saveEvent(MyEvent* my_event)
   qDebug() << my_event->displayLabel();
 
   qDebug() << my_event->startDateTime();
+  qDebug() << my_event->endDateTime();
 
 //  if (my_event->startDateTime()) {
     organizer_event.setStartDateTime(my_event->startDateTime());

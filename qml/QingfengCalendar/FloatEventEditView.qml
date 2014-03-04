@@ -21,7 +21,7 @@ Item {
 
     property real shadow_radius: 8
 
-    property variant event_item
+    property var event_item
 
     signal show(date event_start_date)
     signal hide()
@@ -34,6 +34,25 @@ Item {
     }
     onHide: {
         float_event_edit.visible = false;
+        panelItem.hoveredCellIndex = -1;
+    }
+
+    Connections {
+        target: navigationbar_mouseArea
+        onClicked: {
+            if (float_event_edit.visible) {
+                float_event_edit.hide();
+            }
+        }
+    }
+
+    Connections {
+        target: background_mouseArea
+        onClicked: {
+            if (float_event_edit.visible) {
+                float_event_edit.hide();
+            }
+        }
     }
 
     RectangularGlow {
@@ -160,17 +179,26 @@ Item {
                 console.log("New Event: " + new_event);
 
                 new_event.startDateTime = event_date;
-//                console.log(new_event.startDateTime);
                 if (new_event.startDateTime) {
                     new_event.displayLabel = title_edit.text;
+                    var dt_end = new Date(event_date.getFullYear(),
+                                          event_date.getMonth(),
+                                          event_date.getDate(),
+                                          23, 59, 59);
+//                    dt_end.setDate(event_date.getDate() + 1);
+//                    dt_end.setTime(event_date.getTime() + 24*60*60*1000);
+                    console.log("javascript dt_start: ", event_date);
+                    console.log("Javascript dt_end: ", dt_end);
+                    new_event.endDateTime = dt_end;
+//                    new_event.endDateTime = new_event.startDateTime.addDays(1);
                     new_event.allDay = true;
                     console.log("Start Datetime: " + new_event.startDateTime);
+                    console.log("End date time: ", new_event.endDateTime);
                     console.log("Display Label: " + new_event.displayLabel);
                     console.log("All day: " + new_event.allDay);
                     control.event_model.saveEvent(new_event);
                     float_event_edit.hide();
                     control.refreshEvents();
-//                    float_event_edit.saveEventClicked(new_event);
                 }
             }
         }

@@ -81,10 +81,10 @@ Rectangle {
     MyMouseArea {
         anchors.fill: parent
         hoverEnabled: true
-        onEntered: event_label.color = Qt.lighter(base_color, 1.1);
-        onExited: event_label.color = base_color;
+        onEntered: parent.color = Qt.lighter(base_color, 1.1);
+        onExited: parent.color = base_color;
         onClicked: {
-            event_label.color = Qt.darker(base_color, 1.5);
+            parent.color = Qt.darker(base_color, 1.5);
         }
     }
 
