@@ -1,18 +1,22 @@
-import QtQuick 2.2
-import QtQuick.Controls 1.0
-//import QtQuick.Controls.Styles 1.0
+import QtQuick 2.1
+import QtQuick.Window 2.1
+import QtQuick.Controls 1.1
 import QtQuick.Layouts 1.1
 import QtGraphicalEffects 1.0
 import MyCalendar.Utils.Events 1.0
 import "Content"
 
-Item {
+Window {
     id: float_event_edit
+    flags: Qt.FramelessWindowHint
     width: 500
     height: 220
+    visible: true
 
-    z: 1
+    property real pos_x
+    property real pos_y
 
+    property bool is_empty_event: true
     property date event_date
     property var event_item
 
@@ -21,24 +25,24 @@ Item {
     property real shadow_radius: 8
     property color base_color: Qt.lighter("lightgray", 1.15)
 
-    signal showAdd(date event_start_date)
-    signal showEdit(var event)
-    signal hide()
+//    signal showAdd(date event_start_date)
+//    signal showEdit(var event)
+    signal close()
     signal saveEventClicked(var my_event)
 
-    onShowAdd: {
-        event_date = event_start_date;
-        loader.sourceComponent = event_add;
-//        edit_loader.item.title_text = "";
-        float_event_edit.visible = true;
-    }
-    onShowEdit: {
-        event_item = event;
-        loader.sourceComponent = event_edit;
-        float_event_edit.visible = true;
-    }
+//    onShowEmpty: {
+//        event_date = event_start_date;
+//        loader.sourceComponent = event_add;
+//        //        edit_loader.item.title_text = "";
+//        float_event_edit.visible = true;
+//    }
+//    onShowEdit: {
+//        event_item = event;
+//        loader.sourceComponent = event_edit;
+//        float_event_edit.visible = true;
+//    }
 
-    onHide: {
+    onClose: {
         float_event_edit.visible = false;
         panelItem.hoveredCellIndex = -1;
     }
@@ -46,18 +50,20 @@ Item {
     Connections {
         target: navigationbar_mouseArea
         onClicked: {
-            if (float_event_edit.visible) {
-                float_event_edit.hide();
-            }
+            float_event_edit.close();
+//            if (float_event_edit.visible) {
+//                float_event_edit.hide();
+//            }
         }
     }
 
     Connections {
         target: background_mouseArea
         onClicked: {
-            if (float_event_edit.visible) {
-                float_event_edit.hide();
-            }
+            float_event_edit.close();
+//            if (float_event_edit.visible) {
+//                float_event_edit.hide();
+//            }
         }
     }
 
@@ -70,11 +76,10 @@ Item {
         spread: 0
     }
 
-    MouseArea {
-        id: mouse_area
-        anchors.fill: parent
-        hoverEnabled: true
-    }
+//    MouseArea {
+//        id: mouse_area
+//        anchors.fill: parent
+//    }
 
     Item {
         id: panel_item
@@ -85,7 +90,7 @@ Item {
         Loader {
             id: loader
             anchors.fill: parent
-            sourceComponent: event_add
+            sourceComponent: is_empty_event ? event_add : event_edit
         }
     }
 
@@ -109,7 +114,7 @@ Item {
                 text: event_item ? event_item.displayLabel : ""
                 font.pointSize: font_size + 2
                 font.bold: true
-                color: Qt.darker("blue", 1.5)
+                color: Qt.darker("blue", 1.3)
             }
 
             Label {
@@ -176,7 +181,7 @@ Item {
     property Component event_add: Rectangle {
         color: base_color
 
-//        property string event_title
+        //        property string event_title
         property alias title_text: title_edit.text
 
         Rectangle {
@@ -191,7 +196,7 @@ Item {
                 anchors.fill: parent
 
                 Label {
-                    id: header_label
+                    id: title_label
                     text: qsTr("Event")
                     font.bold: true
                     font.pointSize: font_size + 2
@@ -277,12 +282,12 @@ Item {
                                       event_date.getMonth(),
                                       event_date.getDate(),
                                       23, 59, 59);
-//                    dt_end.setDate(event_date.getDate() + 1);
-//                    dt_end.setTime(event_date.getTime() + 24*60*60*1000);
+                //                    dt_end.setDate(event_date.getDate() + 1);
+                //                    dt_end.setTime(event_date.getTime() + 24*60*60*1000);
                 console.log("javascript dt_start: ", event_date);
                 console.log("Javascript dt_end: ", dt_end);
                 new_event.endDateTime = dt_end;
-//                    new_event.endDateTime = new_event.startDateTime.addDays(1);
+                //                    new_event.endDateTime = new_event.startDateTime.addDays(1);
                 new_event.allDay = true;
                 console.log("Start Datetime: " + new_event.startDateTime);
                 console.log("End date time: ", new_event.endDateTime);

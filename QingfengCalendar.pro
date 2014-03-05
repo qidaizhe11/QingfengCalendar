@@ -30,7 +30,8 @@ SOURCES += main.cpp \
 #    MyPlugins/myplugins_plugin.cpp
     MyPlugins/eventutils.cpp \
     MyPlugins/MyEventModel.cpp \
-    MyPlugins/MyTestEvent.cpp
+    MyPlugins/MyTestEvent.cpp \
+#    MyPlugins/myplugins_plugin.cpp
 
 # Installation path
 # target.path =
@@ -61,7 +62,8 @@ HEADERS += \
 #    MyPlugins/myplugins_plugin.h
     MyPlugins/eventutils.h \
     MyPlugins/MyEventModel.h \
-    MyPlugins/MyTestEvent.h
+    MyPlugins/MyTestEvent.h \
+#    MyPlugins/myplugins_plugin.h
 
 RESOURCES += \
     resources/Calendar.qrc
@@ -69,4 +71,5 @@ RESOURCES += \
 OTHER_FILES += \
     README.md \
 #    CalendarPlugin/qmldir
-    qml/QingfengCalendar/Content/MyTextLinkButton.qml
+    qml/QingfengCalendar/Content/MyTextLinkButton.qml \
+    qml/QingfengCalendar/FloatEventEditWindow.qml

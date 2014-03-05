@@ -1,18 +1,21 @@
 import QtQuick 2.1
 import QtQuick.Controls 1.0
 import QtQuick.Controls.Styles 1.0
+import QtQuick.Window 2.1
 import QtOrganizer 5.0
-import MyCalendar2.Utils.Events 1.0
+import MyCalendar.Utils.Events 1.0
 
-ApplicationWindow {
+Window {
     visible: true
     width: 960
     height: 600
 
-    minimumHeight: 560
-    minimumWidth: 800
+//    minimumHeight: 560
+//    minimumWidth: 800
 
-    title: "Qingfeng Calendar"
+//    title: "Qingfeng Calendar"
+
+    id: main_window
 
 //    OrganizerModel {
 //        id: organizer

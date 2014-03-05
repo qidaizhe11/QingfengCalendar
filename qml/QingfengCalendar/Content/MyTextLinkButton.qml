@@ -16,6 +16,7 @@ Rectangle {
     property string label
 
     property real text_size: 14
+    property bool font_bold: false
 
     signal clicked
 
@@ -28,10 +29,11 @@ Rectangle {
         anchors.centerIn: parent
         text: label
         font.pointSize: font_size
+        font.bold: font_bold
         color: text_color
     }
 
-    MouseArea {
+    MyMouseArea {
         id: mouse_area
         anchors.fill: parent
         hoverEnabled: true

@@ -1,8 +1,9 @@
 import QtQuick 2.1
 import QtQuick.Controls 1.1
 import QtOrganizer 5.0
-import MyCalendar2.Utils.Events 1.0
+import MyCalendar.Utils.Events 1.0
 import "Private/CalendarUtils.js" as CalendarUtils
+import "EventJsUtils.js" as EventJsUtils
 import "Content"
 
 Rectangle {
@@ -81,10 +82,31 @@ Rectangle {
     MyMouseArea {
         anchors.fill: parent
         hoverEnabled: true
+
+        propagateComposedEvents: false
+        preventStealing: true
+
         onEntered: parent.color = Qt.lighter(base_color, 1.1);
         onExited: parent.color = base_color;
         onClicked: {
             parent.color = Qt.darker(base_color, 1.5);
+
+            var date = control.__model.dateAt(grid_index);
+//            hoveredCellIndex = grid_index;
+            if (__isValidDate(date)) {
+//                            control.clicked(date);
+            }
+
+            var global_pos = event_label.mapToItem(null, mouseX, mouseY);
+            console.log("Global position: " + global_pos.x + ", " + global_pos.y);
+
+            var show_pos_x = EventJsUtils.getEditViewPosX(global_pos.x);
+            var show_pos_y = EventJsUtils.getEditViewPosY(
+                        global_pos.y, grid_index);
+            console.log("Shown Pos: " + show_pos_x + ", " + show_pos_y);
+            float_event_edit.x = show_pos_x;
+            float_event_edit.y = show_pos_y;
+            float_event_edit.showEdit(eventItem);
         }
     }
 

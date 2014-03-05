@@ -289,15 +289,23 @@ Item {
                         }
 
                         var global_pos = viewContainer.mapToItem(null, mouseX, mouseY);
+
 //                        console.log("Global position: " + global_pos.x + ", " + global_pos.y);
 
                         var show_pos_x = EventJsUtils.getEditViewPosX(global_pos.x);
                         var show_pos_y = EventJsUtils.getEditViewPosY(
                                     global_pos.y, indexOfCell);
-//                        console.log("Shown Pos: " + show_pos_x + ", " + show_pos_y);
+                        console.log("Shown Pos: " + show_pos_x + ", " + show_pos_y);
                         float_event_edit.x = show_pos_x;
                         float_event_edit.y = show_pos_y;
-                        float_event_edit.show(date);
+                        float_event_edit.showAdd(date);
+
+//                        var properties = {is_empty_event: true, event_date: date};
+//                        var float_event = CreateObject.create(
+//                                    "FloatEventEditWindow.qml", viewContainer,
+//                                    properties);
+//                        console.log("Float_event_edit: ", float_event);
+
                     }
 //                    console.log("OnClicked, indexOfCell: " + indexOfCell);
 //                    console.log("Date at this point: " + date);
@@ -384,42 +392,8 @@ Item {
     FloatEventEditView {
         id: float_event_edit
         visible: false
-//        z: 1
+        z: 1
     }
-
-//    Connections {
-//        target: navigationbar_mouseArea
-//        onClicked: {
-//            if (float_event_edit.visible) {
-//                float_event_edit.hide();
-//            }
-//        }
-//    }
-
-//    Connections {
-//        target: background_mouseArea
-//        onClicked: {
-//            if (float_event_edit.visible) {
-//                float_event_edit.hide();
-//            }
-//        }
-//    }
-
-//    Connections {
-//        target: float_event_edit
-//        onSaveEventClicked: {
-//            console.log("SaveEventClicked.");
-//            console.log("MyEvent: " + my_event);
-//            control.event_model.saveEvent(my_event);
-//        }
-//    }
-
-//    Connections {
-//        target: float_event_edit
-//        onHide: {
-//            hoveredCellIndex = -1;
-//        }
-//    }
 
     function clearLabelListModel() {
         while (label_list_model.count > 0) {
@@ -498,6 +472,7 @@ Item {
 
                     if (component.status === Component.Ready) {
                         var clipped_label = component.createObject(viewContainer, {"eventItem" : event, "show_flag_of_day": show_flag_of_day, "grid_index": index_of_cell, "last_days": clipped_days});
+
                         if (clipped_label === null) {
                             console.log("Error creating object");
                         }
@@ -509,7 +484,6 @@ Item {
                     } else if (component.status === Component.Error) {
                         console.log("Error loading component: ", component.errorString());
                     }
-
                 }
 
                 if (component.status === Component.Ready) {
