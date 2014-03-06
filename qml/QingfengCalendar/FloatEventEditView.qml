@@ -29,7 +29,7 @@ Item {
     onShowAdd: {
         event_date = event_start_date;
         loader.sourceComponent = event_add;
-//        edit_loader.item.title_text = "";
+        loader.item.title_text = "";
         float_event_edit.visible = true;
     }
     onShowEdit: {
@@ -238,7 +238,7 @@ Item {
 
                         width: text_width * 1.5
 
-                        onClicked: createEmptyAllDayEvent();
+                        onClicked: createAllDayEvent();
                     }
 
                     MyTextLinkButton {
@@ -265,24 +265,20 @@ Item {
             onClicked: float_event_edit.hide()
         }
 
-        function createEmptyAllDayEvent() {
-            var new_event = Qt.createQmlObject(
-                        "import QtQuick 2.1; import MyCalendar.Utils.Events 1.0; MyEvent {}", float_event_edit);
-            console.log("New Event: " + new_event);
+        function createAllDayEvent() {
+            if (__isValidDate(event_date)) {
+                var dt_start = new Date(event_date.getFullYear(),
+                                        event_date.getMonth(),
+                                        event_date.getDate(), 0, 0, 0);
+                var dt_end = new Date();
+                dt_end.setTime(dt_start.getTime() + 24*60*60*1000);
 
-            new_event.startDateTime = event_date;
-            if (new_event.startDateTime) {
+                var new_event = Qt.createQmlObject(
+                            "import QtQuick 2.1; import MyCalendar.Utils.Events 1.0; MyEvent {}", float_event_edit);
+
+                new_event.startDateTime = dt_start;
                 new_event.displayLabel = title_edit.text;
-                var dt_end = new Date(event_date.getFullYear(),
-                                      event_date.getMonth(),
-                                      event_date.getDate(),
-                                      23, 59, 59);
-//                    dt_end.setDate(event_date.getDate() + 1);
-//                    dt_end.setTime(event_date.getTime() + 24*60*60*1000);
-                console.log("javascript dt_start: ", event_date);
-                console.log("Javascript dt_end: ", dt_end);
                 new_event.endDateTime = dt_end;
-//                    new_event.endDateTime = new_event.startDateTime.addDays(1);
                 new_event.allDay = true;
                 console.log("Start Datetime: " + new_event.startDateTime);
                 console.log("End date time: ", new_event.endDateTime);

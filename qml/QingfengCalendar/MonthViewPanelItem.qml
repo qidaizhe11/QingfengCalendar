@@ -286,19 +286,18 @@ Item {
                         hoveredCellIndex = indexOfCell;
                         if (__isValidDate(date)) {
 //                            control.clicked(date);
+                            var global_pos = viewContainer.mapToItem(null, mouseX, mouseY);
+
+    //                        console.log("Global position: " + global_pos.x + ", " + global_pos.y);
+
+                            var show_pos_x = EventJsUtils.getEditViewPosX(global_pos.x);
+                            var show_pos_y = EventJsUtils.getEditViewPosY(
+                                        global_pos.y, indexOfCell);
+                            console.log("Shown Pos: " + show_pos_x + ", " + show_pos_y);
+                            float_event_edit.x = show_pos_x;
+                            float_event_edit.y = show_pos_y;
+                            float_event_edit.showAdd(date);
                         }
-
-                        var global_pos = viewContainer.mapToItem(null, mouseX, mouseY);
-
-//                        console.log("Global position: " + global_pos.x + ", " + global_pos.y);
-
-                        var show_pos_x = EventJsUtils.getEditViewPosX(global_pos.x);
-                        var show_pos_y = EventJsUtils.getEditViewPosY(
-                                    global_pos.y, indexOfCell);
-                        console.log("Shown Pos: " + show_pos_x + ", " + show_pos_y);
-                        float_event_edit.x = show_pos_x;
-                        float_event_edit.y = show_pos_y;
-                        float_event_edit.showAdd(date);
 
 //                        var properties = {is_empty_event: true, event_date: date};
 //                        var float_event = CreateObject.create(
@@ -420,6 +419,8 @@ Item {
 
             clearLabelListModel();
 
+            // TODO: 这里的重复事件未经扩展，
+            // 一旦有天天重复之类的，这个逻辑立马崩掉
             updateEventModel();
 
             var event_counts_of_day = [];
@@ -439,8 +440,10 @@ Item {
 
 //                var index_of_cell = event_utils.gridIndex(event.startDateTime,
 //                visible_date);
-                var index_of_cell = event_utils.lastDays(
-                            control.__model.firstVisibleDate, event.startDateTime) - 1;
+                var index_of_cell = event_utils.daysTo(
+                            control.__model.firstVisibleDate, event.startDateTime);
+//                console.log("Index of cell: ", index_of_cell);
+
                 var day_event_count = event_counts_of_day[index_of_cell];
 
                 if (day_event_count >= panelItem.max_show_events_of_day) {
@@ -450,8 +453,14 @@ Item {
 
                 var show_flag_of_day = EventJsUtils.calculateShowFlag(
                             show_flags_of_day, index_of_cell);
-                var last_days = event_utils.lastDays(event.startDateTime,
-                                                     event.endDateTime);
+
+                var last_days = event_utils.lastDays(
+                            event.startDateTime, event.endDateTime);
+                if (last_days === 0 && event.allDay) {
+                    last_days = 1;
+                }
+
+//                console.log("Last days: ", last_days);
 
                 if (index_of_cell + last_days > total_cells) {
                     last_days -= (index_of_cell + last_days - total_cells);
@@ -464,7 +473,8 @@ Item {
                                               last_days);
 
 
-                console.log("Event start: " + event.startDateTime + " " + event.displayLabel);
+//                console.log("Event start: " + event.startDateTime + " " + event.displayLabel);
+//                console.log("Event end: ", event.endDateTime, " ");
 
                 var col = panelItem.columns;
                 while (index_of_cell % col + last_days > col) {

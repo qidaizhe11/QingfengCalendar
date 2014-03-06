@@ -13,7 +13,8 @@ public:
   ~EventUtils();
 
 //  Q_INVOKABLE int gridIndex(const QDate& date, const QDate& visible_date);
-  Q_INVOKABLE int lastDays(const QDate& start_date, const QDate& end_date);
+  Q_INVOKABLE int daysTo(const QDateTime& start, const QDateTime& end);
+  Q_INVOKABLE int lastDays(const QDateTime& start_date, const QDateTime& end_date);
 };
 
 #endif // EVENTUTILS_H

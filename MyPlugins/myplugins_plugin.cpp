@@ -1,5 +1,5 @@
 #include "myplugins_plugin.h"
-#include "eventutils.h"
+#include "EventUtils.h"
 #include "MyEventModel.h"
 #include "MyEvent.h"
 

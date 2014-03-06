@@ -7,7 +7,7 @@
 #include <QVariant>
 
 #include "MyPlugins/MyEventModel.h"
-#include "MyPlugins/eventutils.h"
+#include "MyPlugins/EventUtils.h"
 #include "MyPlugins/MyEvent.h"
 #include "MyPlugins/MyTestEvent.h"
 
@@ -29,7 +29,7 @@ int main(int argc, char *argv[])
     qmlRegisterType<QQuickRangedDate>(private_uri, 1, 0, "RangedDate");
     qmlRegisterType<QQuickCalendarModel>(private_uri, 1, 0, "CalendarModel");
 
-    const char* uri = "MyCalendar2.Utils.Events";
+    const char* uri = "MyCalendar.Utils.Events";
     // @uri MyCalendar.Utils.Events
     qmlRegisterType<EventUtils>(uri, 1, 0, "EventUtils");
     qmlRegisterType<MyEventModel>(uri, 1, 0, "MyEventModel");

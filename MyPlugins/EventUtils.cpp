@@ -1,5 +1,5 @@
-#include "eventutils.h"
-#include <QDate>
+#include "EventUtils.h"
+#include <QDateTime>
 #include <QLocale>
 
 namespace {
@@ -20,10 +20,6 @@ namespace {
 EventUtils::EventUtils(QQuickItem *parent):
   QQuickItem(parent)
 {
-  // By default, QQuickItem does not draw anything. If you subclass
-  // QQuickItem to create a visual item, you will need to uncomment the
-  // following line and re-implement updatePaintNode()
-
   // setFlag(ItemHasContents, true);
 }
 
@@ -46,8 +42,23 @@ EventUtils::~EventUtils()
 //  return index;
 //}
 
-int EventUtils::lastDays(const QDate &start_date, const QDate &end_date)
+int EventUtils::daysTo(const QDateTime &start, const QDateTime &end)
 {
-//  qDebug() << "Calculate last days: " + start_date.toString() + end_date.toString();
-  return start_date.daysTo(end_date) + 1;
+  return start.daysTo(end);
+}
+
+int EventUtils::lastDays(const QDateTime &start_date, const QDateTime &end_date)
+{
+//  qDebug() << "Calculate last days: " + start_date.toString() + ", " + end_date.toString();
+  int days = start_date.daysTo(end_date);
+
+  if ( !(end_date.time() == QTime(0, 0, 0) &&
+         start_date.time() == QTime(0, 0, 0)) ) {
+    days += 1;
+  }
+
+//  qDebug() << "Days: " + QString::number(days);
+  return days;
+
+//  return start_date.daysTo(end_date) + 1;
 }

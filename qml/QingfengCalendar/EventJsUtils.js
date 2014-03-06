@@ -1,5 +1,13 @@
 //.pragma library
 
+//function lastDays(begin_date, end_date) {
+////    console.log("In javascript, start_date: ", begin_date);
+//    var days = Math.floor(
+//                (end_date.getTime() - begin_date.getTime()) /
+//                (24 * 3600 * 1000));
+//    return days;
+//}
+
 function initEventCountArray(array) {
     for( var i = 0; i < panelItem.total_cells; ++i) {
         array.push(0);

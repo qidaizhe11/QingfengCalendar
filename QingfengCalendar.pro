@@ -28,10 +28,10 @@ SOURCES += main.cpp \
     CalendarPlugin/Private/qquickabstractstyle.cpp \
     MyPlugins/MyEvent.cpp \
 #    MyPlugins/myplugins_plugin.cpp
-    MyPlugins/eventutils.cpp \
     MyPlugins/MyEventModel.cpp \
     MyPlugins/MyTestEvent.cpp \
 #    MyPlugins/myplugins_plugin.cpp
+    MyPlugins/EventUtils.cpp
 
 # Installation path
 # target.path =
@@ -60,10 +60,10 @@ HEADERS += \
     CalendarPlugin/Private/qquickcontrolsprivate_p.h \
     MyPlugins/MyEvent.h \
 #    MyPlugins/myplugins_plugin.h
-    MyPlugins/eventutils.h \
     MyPlugins/MyEventModel.h \
     MyPlugins/MyTestEvent.h \
 #    MyPlugins/myplugins_plugin.h
+    MyPlugins/EventUtils.h
 
 RESOURCES += \
     resources/Calendar.qrc
