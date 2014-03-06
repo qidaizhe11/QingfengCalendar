@@ -18,7 +18,7 @@ class MyEvent : public QObject
 {
   Q_OBJECT
 
-//  Q_PROPERTY(QString itemId READ itemId WRITE setItemId NOTIFY valueChanged)
+  Q_PROPERTY(QString itemId READ itemId NOTIFY valueChanged)
 //  Q_PROPERTY(QString description READ description WRITE setDescription
 //             NOTIFY valueChanged)
   Q_PROPERTY(QString displayLabel READ displayLabel WRITE setDisplayLabel
@@ -34,8 +34,7 @@ public:
   MyEvent(const QOrganizerEvent& event, QObject *parent = 0);
 //  explicit MyEvent(const QString& description, const QString& display_label);
 
-//  QString itemId() const { return m_item_id; }
-//  void setItemId(const QString& id) { m_item_id = id; }
+  QString itemId() const;
 
 //  QString description() const { return m_description; }
 //  void setDescription(const QString& description) {
@@ -50,14 +49,8 @@ public:
   bool allDay() const { return m_all_day; }
   void setAllDay(bool all_day) { m_all_day = all_day; }
 
-//  QDateTime startDateTime() const {
-//    qDebug() << "startDateTime of MyEvent: " + startDateTime().toString();
-////    return m_start_date_time;
-//    return QDateTime::currentDateTime();
-//  }
-  QDateTime startDateTime() const;
+  QDateTime startDateTime() const { return m_start_date_time; }
   void setStartDateTime(const QDateTime& start_date_time) {
-//    qDebug() << "setStartDateTime: ";
     m_start_date_time = start_date_time;
   }
 
@@ -66,13 +59,16 @@ public:
 
 //  void setItem(const QOrganizerItem& item);
 
+  QOrganizerEvent toQOrganizerEvent() const;
+
   Q_SIGNALS:
   void valueChanged();
   void startDateTimeChanged();
   void endDateTimeChanged();
 
 private:
-//  QString m_item_id;
+
+  QOrganizerItemId m_id;
 //  QString m_description;
   QString m_display_label;
   bool m_all_day;

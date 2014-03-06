@@ -8,6 +8,9 @@
 #include <QList>
 #include <QVariant>
 #include <QString>
+#include <QMessageBox>
+#include <QFileDialog>
+#include <QStandardPaths>
 
 MyEventModel::MyEventModel(QQuickItem* parent) :
   QQuickItem(parent),
@@ -16,52 +19,8 @@ MyEventModel::MyEventModel(QQuickItem* parent) :
   m_error(QOrganizerManager::NoError)
 {
   m_manager = new QOrganizerManager("memory");
-  //  QString doc_path = QDesktopServices::
-  //  QString file_name = QFileDialog::getOpenFileName(
-  //        this, tr("Select iCalendar file"), ".", tr("iCalendar files (*.ics)"));
 
-//  QString file_name = "/home/daizhe/organizer_ical_test.ics";
-  QString file_name = "/home/daizhe/qidaizhe11@gmail.com-2.ics";
-
-  if (file_name.isEmpty()) {
-    return;
-  }
-
-  QFile file(file_name);
-  if (!file.open(QIODevice::ReadOnly) || !file.isReadable()) {
-    qDebug() << "Failed to open";
-    return;
-  }
-
-  QVersitReader reader;
-  reader.setDevice(&file);
-  if (!reader.startReading() || !reader.waitForFinished()) {
-    qDebug() << "Read failed";
-    return;
-  }
-
-  QVersitOrganizerImporter importer;
-  QList<QOrganizerItem> all_items;
-  QString error_message;
-  foreach (const QVersitDocument& document, reader.results()) {
-    if (!importer.importDocument(document)) {
-      error_message += tr("Import failed.");
-      continue;
-    }
-    QList<QOrganizerItem> items = importer.items();
-    foreach (const QOrganizerItem& item, items) {
-      all_items.append(item);
-    }
-  }
-
-  if (!error_message.isEmpty()) {
-//    QMessageBox::warning(this, "Message", error_message);
-    qDebug() << error_message;
-  }
-
-  if (!m_manager->saveItems(&all_items)) {
-    qDebug() << "Save failed.";
-  }
+  importEvents();
 }
 
 //-------------------------------------------------------------------------
@@ -131,14 +90,91 @@ QString MyEventModel::error() const
 //-------------------------------------------------------------------------
 // Q_INVOKABLE
 
+void MyEventModel::importEvents()
+{
+  QString message_title(tr("Import of Items failed"));
 
-// TODO: 此save函数当前极易崩溃，或者造成Event事件信息的丢失！
+  QString doc_path = QStandardPaths::standardLocations(
+        QStandardPaths::DataLocation).first();
+  if (doc_path.isEmpty()) {
+    doc_path = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
+  }
+  if (doc_path.isEmpty()) {
+    doc_path = ".";
+  }
+//  QString file_name = QFileDialog::getOpenFileName(
+//        NULL, tr("Select iCalendar file"), doc_path,
+//        tr("iCalendar files (*.ics)"));
+
+//  QString file_name = "/home/daizhe/organizer_ical_test.ics";
+  QString file_name = "/home/daizhe/qidaizhe11@gmail.com-2.ics";
+
+  if (file_name.isEmpty()) {
+    return;
+  }
+
+  QFile file(file_name);
+  if (!file.open(QIODevice::ReadOnly) || !file.isReadable()) {
+    QMessageBox::warning(NULL, message_title,
+                         tr("Unable to read from file: %1").arg(file_name));
+    return;
+  }
+
+  QVersitReader reader;
+  reader.setDevice(&file);
+  if (!reader.startReading() || !reader.waitForFinished()) {
+    QMessageBox::warning(NULL, message_title,
+                         tr("Versit reader failed: %1").arg(reader.error()));
+    return;
+  }
+
+  QVersitOrganizerImporter importer;
+  QList<QOrganizerItem> all_items;
+  QString error_message;
+  foreach (const QVersitDocument& document, reader.results()) {
+    if (!importer.importDocument(document)) {
+      error_message += tr("Import failed.");
+      QMap<int, QVersitOrganizerImporter::Error>::const_iterator iterator =
+          importer.errorMap().constBegin();
+      while (iterator != importer.errorMap().constEnd()) {
+        switch (iterator.value()) {
+        case QVersitOrganizerImporter::InvalidDocumentError:
+          error_message += QString(" index %1:").arg(iterator.key());
+          error_message += tr("One of the documents is not an iCalendar file");
+          break;
+        case QVersitOrganizerImporter::EmptyDocumentError:
+          error_message += QString(" index %1:").arg(iterator.key());
+          error_message += tr("One of the documents is empty");
+          break;
+        default:
+          error_message += QString(" index %1:").arg(iterator.key());
+          error_message += tr("Unknown error");
+        }
+        ++iterator;
+      }
+      error_message += QLatin1String("\n");
+      continue;
+    }
+    QList<QOrganizerItem> items = importer.items();
+    foreach (const QOrganizerItem& item, items) {
+      all_items.append(item);
+    }
+  }
+
+  if (!error_message.isEmpty()) {
+    QMessageBox::warning(NULL, message_title, error_message);
+//    qDebug() << error_message;
+  }
+
+  if (!m_manager->saveItems(&all_items)) {
+    qDebug() << "Save failed.";
+  }
+}
 
 void MyEventModel::saveEvent(MyEvent* my_event)
 {
-  QOrganizerEvent organizer_event;
   qDebug() << "In saveEvent function.";
-  qDebug() << my_event;
+//  qDebug() << "Organizer_event id: " + organizer_event.id().toString();
 
 //  MyEvent* new_event = my_event;
   qDebug() << my_event->allDay();
@@ -147,14 +183,10 @@ void MyEventModel::saveEvent(MyEvent* my_event)
   qDebug() << my_event->startDateTime();
   qDebug() << my_event->endDateTime();
 
-//  if (my_event->startDateTime()) {
-    organizer_event.setStartDateTime(my_event->startDateTime());
-    organizer_event.setDisplayLabel(my_event->displayLabel());
-    organizer_event.setEndDateTime(my_event->endDateTime());
-    organizer_event.setAllDay(my_event->allDay());
-    if (my_event->displayLabel().isEmpty()) {
-      my_event->displayLabel() = tr("(No title)");
-    }
+  if (my_event->startDateTime().isValid()) {
+    QOrganizerEvent organizer_event = my_event->toQOrganizerEvent();
+
+//    qDebug() << "Organizer_event id: " + organizer_event.id().toString();
 
     QOrganizerItemSaveRequest* req = new QOrganizerItemSaveRequest(this);
     req->setManager(m_manager);
@@ -164,17 +196,41 @@ void MyEventModel::saveEvent(MyEvent* my_event)
             this, SLOT(onRequestStateChanged(QOrganizerAbstractRequest::State)));
 
     req->start();
+  }
 
-    my_event->deleteLater();
+//  my_event->deleteLater();
+}
 
-//    updateEvents();
-    //    m_manager->saveItem(&organizer_event);
-    //    if (m_manager->error()) {
-    ////      QMessageBox::warning(this, tr("Failed!"), QString("Failed to save event!\n(error code %1)").arg(m_manager->error()));
-    //    } else {
-    //      updateEvents();
-    //    }
-//  }
+void MyEventModel::deleteEvent(const QString &id)
+{
+  QOrganizerItemRemoveByIdRequest* req =
+      new QOrganizerItemRemoveByIdRequest(this);
+  req->setManager(m_manager);
+
+  if (id.startsWith(QString("qtorganizer:occurrence"))) {
+    QMessageBox::information(NULL, tr("Remove failed"),
+        tr("Can't remove an occurrence item, please modify the parent "
+           "item's recurrence rule instead!"));
+    return;
+  }
+
+  QOrganizerItemId item_id = QOrganizerItemId::fromString(id);
+  if (!item_id.isNull()) {
+    req->setItemId(item_id);
+  }
+  connect(req, SIGNAL(stateChanged(QOrganizerAbstractRequest::State)),
+          this, SLOT(onRequestStateChanged(QOrganizerAbstractRequest::State)));
+  req->start();
+}
+
+void MyEventModel::deleteEvent(MyEvent *my_event)
+{
+  QOrganizerItemRemoveRequest* req = new QOrganizerItemRemoveRequest(this);
+  req->setManager(m_manager);
+  req->setItem(my_event->toQOrganizerEvent());
+  connect(req, SIGNAL(stateChanged(QOrganizerAbstractRequest::State)),
+          this, SLOT(onRequestStateChanged(QOrganizerAbstractRequest::State)));
+  req->start();
 }
 
 //-------------------------------------------------------------------------
@@ -198,9 +254,6 @@ void MyEventModel::updateEvents()
 //          QDateTime(m_start_date, QTime(0, 0, 0)),
 //          QDateTime(m_end_date, QTime(23, 59, 59)),
 //          QOrganizerItemFilter(), -1, sort_order_list);
-//    QList<QOrganizerItem> event_items = m_manager->items(
-//          QDateTime(m_start_date, QTime(0, 0, 0)),
-//          QDateTime(m_end_date, QTime(23, 59, 59)));
 
     QList<QOrganizerItem> event_items = m_manager->items(
           m_start_date, m_end_date);
@@ -219,6 +272,7 @@ void MyEventModel::updateEvents()
     for (int i = 0; i < event_items.length(); ++i) {
       if (event_items[i].type() == QOrganizerItemType::TypeEvent) {
         QOrganizerEvent event = static_cast<QOrganizerEvent>(event_items[i]);
+//        qDebug() << "Event Id: " + event.id().toString();
 
         MyEvent* my_event = new MyEvent(event);
         QString description = QString("Description: ") + QString::number(i);
@@ -227,6 +281,7 @@ void MyEventModel::updateEvents()
 
         qDebug() << "Event: " + my_event->displayLabel() + ", " +
                     my_event->startDateTime().toString();
+//        qDebug() << "Event Id: " + my_event->itemId();
 
   //      QObject* item_object = static_cast<QObject*>(&my_event);
         m_events.append(QVariant::fromValue<QObject*>(my_event));

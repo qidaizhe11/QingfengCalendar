@@ -16,7 +16,7 @@ Rectangle {
     property real font_size: 12
     property bool font_bold: false
 
-    signal clicked
+    signal clicked()
 
     width: button_width
     height: button_height
@@ -38,6 +38,6 @@ Rectangle {
 
         onEntered: text_label.color = Qt.lighter(text_color, 1.2)
         onExited: text_label.color = text_color
-        onClicked: parent.onClicked()
+        onClicked: parent.clicked()
     }
 }

@@ -172,6 +172,8 @@ Item {
                 text_color: Qt.lighter("blue", 1.3)
                 text: qsTr("Delete")
                 font_size: font_size
+
+                onClicked: deleteEvent();
             }
 
             MyTextLinkButton {
@@ -199,6 +201,12 @@ Item {
             icon_source: "images/close.png"
 
             onClicked: float_event_edit.hide()
+        }
+
+        function deleteEvent() {
+            control.event_model.deleteEvent(event_item);
+            float_event_edit.hide();
+            control.refreshEvents();
         }
     }
 
@@ -264,13 +272,15 @@ Item {
             MyTextButton {
                 id: edit_save_button
                 anchors.right: parent.right
-                anchors.rightMargin: parent.width * 0.1
+//                anchors.rightMargin: parent.width * 0.1
                 anchors.bottom: parent.bottom
 
                 width: text_width * 2.0
 
                 text: qsTr("Save")
                 font_size: float_event_edit.font_size
+
+                onClicked: saveEventTitle();
             }
         }
 
@@ -286,6 +296,13 @@ Item {
             icon_source: "images/close.png"
 
             onClicked: float_event_edit.hide()
+        }
+
+        function saveEventTitle() {
+            event_item.displayLabel = edit_enter_title.text;
+            control.event_model.saveEvent(event_item);
+            float_event_edit.hide();
+            control.refreshEvents();
         }
     }
 
@@ -356,10 +373,6 @@ Item {
                         width: text_width * 1.5
 
                         onClicked: createAllDayEvent();
-                        Component.onCompleted: {
-                            console.log("Create_button: ", create_button.width, ", ",
-                                        create_button.height);
-                        }
                     }
 
                     MyTextLinkButton {

@@ -1,5 +1,5 @@
 
-#include <QtGui/QGuiApplication>
+#include <QApplication>
 #include <QQmlEngine>
 #include "qtquick2controlsapplicationviewer.h"
 #include <QQuickWindow>
@@ -21,7 +21,7 @@
 
 int main(int argc, char *argv[])
 {
-    QGuiApplication app(argc, argv);
+    QApplication app(argc, argv);
 
     const char* private_uri = "MyCalendar2.Controls.Private";
     // @uri MyCalendar.Controls.Private

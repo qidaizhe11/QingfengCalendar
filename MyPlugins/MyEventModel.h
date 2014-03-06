@@ -42,7 +42,11 @@ public:
 
   QString error() const;
 
+  Q_INVOKABLE void importEvents();
+
   Q_INVOKABLE void saveEvent(MyEvent* my_event);
+  Q_INVOKABLE void deleteEvent(const QString& id);
+  Q_INVOKABLE void deleteEvent(MyEvent* my_event);
 
 Q_SIGNALS:
   void startDateChanged();
