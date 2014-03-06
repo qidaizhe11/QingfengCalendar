@@ -146,8 +146,8 @@ Window {
                 anchors.bottom: parent.bottom
 
                 text_color: Qt.lighter("blue", 1.3)
-                label: qsTr("Delete")
-                text_size: font_size
+                text: qsTr("Delete")
+                font_size: font_size
             }
 
             MyTextLinkButton {
@@ -157,8 +157,8 @@ Window {
                 anchors.bottom: parent.bottom
 
                 text_color: Qt.lighter("blue", 1.3)
-                label: qsTr("Edit >>")
-                text_size: font_size
+                text: qsTr("Edit >>")
+                font_size: font_size
                 font_bold: true
             }
         }
@@ -235,11 +235,11 @@ Window {
                 RowLayout {
                     spacing: 15
 
-                    MyButton {
+                    MyTextButton {
                         id: create_button
                         color: Qt.lighter("blue", 1.3)
-                        label: qsTr("Create")
-                        text_size: font_size
+                        text: qsTr("Create")
+                        font_size: font_size
 
                         width: text_width * 1.5
 
@@ -249,8 +249,8 @@ Window {
                     MyTextLinkButton {
                         id: edit_button
                         text_color: Qt.lighter("blue", 1.3)
-                        label: qsTr("Edit >>")
-                        text_size: font_size
+                        text: qsTr("Edit >>")
+                        font_size: font_size
                     }
                 }
             }

@@ -2,20 +2,18 @@
 import QtQuick 2.0
 
 Rectangle {
-    id: text_button
+    id: text_link_button
 
-    property color hovered_color: Qt.lighter(text_color, 1.2)
-//    property color clicked_color: Qt.darker("darkgray", 1.3)
+//    property color hovered_color: Qt.lighter(text_color, 1.2)
+    property color clicked_color: Qt.darker("darkgray", 1.3)
     property color text_color: "blue"
 
-    property alias text_width: button_text.width
-    property alias text_height: button_text.height
-    property int button_width: button_text.width
-    property int button_height: button_text.height
+    property int button_width: text_label.width
+    property int button_height: text_label.height
 
-    property string label
+    property string text
 
-    property real text_size: 14
+    property real font_size: 12
     property bool font_bold: false
 
     signal clicked
@@ -25,9 +23,9 @@ Rectangle {
     color: "transparent"
 
     Text {
-        id: button_text
+        id: text_label
         anchors.centerIn: parent
-        text: label
+        text: text_link_button.text
         font.pointSize: font_size
         font.bold: font_bold
         color: text_color
@@ -38,7 +36,8 @@ Rectangle {
         anchors.fill: parent
         hoverEnabled: true
 
-        onEntered: button_text.color = hovered_color
-        onExited: button_text.color = text_color
+        onEntered: text_label.color = Qt.lighter(text_color, 1.2)
+        onExited: text_label.color = text_color
+        onClicked: parent.onClicked()
     }
 }

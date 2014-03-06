@@ -34,7 +34,7 @@ Item {
     }
     onShowEdit: {
         event_item = event;
-        loader.sourceComponent = event_edit;
+        loader.sourceComponent = event_edit_show;
         float_event_edit.visible = true;
     }
 
@@ -89,27 +89,55 @@ Item {
         }
     }
 
-    property Component event_edit: Rectangle {
+    property Component event_edit_show: Rectangle {
         color: base_color
 
         property real margin: 20
 
         Rectangle {
             id: edit_content
-            width: parent.width * 0.8
+            width: parent.width * 0.85
             height: parent.height * 0.8
             color: "transparent"
             anchors.centerIn: parent
 
-            Label {
+            Rectangle {
                 id: edit_title
                 anchors.left: parent.left
-                width: parent.width * 0.9
-                elide: Text.ElideRight
-                text: event_item ? event_item.displayLabel : ""
-                font.pointSize: font_size + 2
-                font.bold: true
-                color: Qt.darker("blue", 1.5)
+                width: parent.width
+                height: edit_title_text.height
+                color: "transparent"
+
+                Label {
+                    id: edit_title_text
+//                    anchors.fill: parent
+                    width: parent.width
+
+                    elide: Text.ElideRight
+                    text: event_item ? event_item.displayLabel : ""
+                    font.pointSize: font_size + 2
+                    font.bold: true
+                    color: "indigo"
+                }
+
+                MouseArea {
+                    id: edit_title_mousearea
+                    anchors.fill: parent
+                    hoverEnabled: true
+
+                    onEntered: {
+                        parent.color = "powderblue";
+//                        cursorShape = Qt.IBeamCursor;
+                        cursorShape = Qt.PointingHandCursor;
+                    }
+                    onExited: {
+                        parent.color = "transparent";
+                    }
+
+                    onClicked: {
+                        loader.sourceComponent = event_edit_enter;
+                    }
+                }
             }
 
             Label {
@@ -119,7 +147,8 @@ Item {
                 anchors.top: edit_title.bottom
                 anchors.topMargin: margin
 
-                text: event_item ? event_item.startDateTime.toLocaleDateString() : ""
+                text: event_item ?
+                          event_item.startDateTime.toLocaleDateString() : ""
                 font.pointSize: font_size
             }
 
@@ -141,19 +170,19 @@ Item {
                 anchors.bottom: parent.bottom
 
                 text_color: Qt.lighter("blue", 1.3)
-                label: qsTr("Delete")
-                text_size: font_size
+                text: qsTr("Delete")
+                font_size: font_size
             }
 
             MyTextLinkButton {
                 id: edit_detail_button
                 anchors.right: parent.right
-                anchors.rightMargin: 10
+                anchors.rightMargin: parent.width * 0.1
                 anchors.bottom: parent.bottom
 
                 text_color: Qt.lighter("blue", 1.3)
-                label: qsTr("Edit >>")
-                text_size: font_size
+                text: qsTr("Edit >>")
+                font_size: font_size
                 font_bold: true
             }
         }
@@ -164,6 +193,93 @@ Item {
             height: 20
 
             anchors.left: edit_content.right
+            anchors.top: parent.top
+            anchors.topMargin: parent.height * 0.1
+
+            icon_source: "images/close.png"
+
+            onClicked: float_event_edit.hide()
+        }
+    }
+
+    property Component event_edit_enter: Rectangle {
+        color: base_color
+
+        property real margin: 20
+
+        Rectangle {
+            id: edit_enter_content
+            width: parent.width * 0.85
+            height: parent.height * 0.8
+            color: "transparent"
+            anchors.centerIn: parent
+
+            TextField {
+                id: edit_enter_title
+                anchors.left: parent.left
+                width: parent.width
+
+                text: event_item ? event_item.displayLabel : ""
+                font.pointSize: font_size + 2
+                font.bold: true
+                textColor: "indigo"
+                focus: true
+            }
+
+            Label {
+                id: edit_enter_date
+
+                anchors.left: parent.left
+                anchors.top: edit_enter_title.bottom
+                anchors.topMargin: margin
+
+                text: event_item ?
+                          event_item.startDateTime.toLocaleDateString() : ""
+                font.pointSize: font_size
+            }
+
+            Rectangle {
+                id: edit_enter_line
+
+                anchors.bottom: edit_discard_button.top
+                anchors.bottomMargin: margin
+                width: parent.width
+                height: 1
+
+                color: "lightgray"
+            }
+
+            MyTextButton {
+                id: edit_discard_button
+                anchors.left: parent.left
+                anchors.bottom: parent.bottom
+
+                button_color: "lightgrey"
+                hovered_color: Qt.lighter(button_color, 1.05)
+                text_color: "black"
+                text: qsTr("Discard changes")
+                font_size: float_event_edit.font_size
+            }
+
+            MyTextButton {
+                id: edit_save_button
+                anchors.right: parent.right
+                anchors.rightMargin: parent.width * 0.1
+                anchors.bottom: parent.bottom
+
+                width: text_width * 2.0
+
+                text: qsTr("Save")
+                font_size: float_event_edit.font_size
+            }
+        }
+
+        MyIconButton {
+            id: edit_exit_button
+            width: 20
+            height: 20
+
+            anchors.left: edit_enter_content.right
             anchors.top: parent.top
             anchors.topMargin: parent.height * 0.1
 
@@ -230,22 +346,27 @@ Item {
                 RowLayout {
                     spacing: 15
 
-                    MyButton {
+                    MyTextButton {
                         id: create_button
-                        color: Qt.lighter("blue", 1.3)
-                        label: qsTr("Create")
-                        text_size: font_size
+
+                        button_color: Qt.lighter("blue", 1.3)
+                        font_size: float_event_edit.font_size
+                        text: qsTr("Create")
 
                         width: text_width * 1.5
 
                         onClicked: createAllDayEvent();
+                        Component.onCompleted: {
+                            console.log("Create_button: ", create_button.width, ", ",
+                                        create_button.height);
+                        }
                     }
 
                     MyTextLinkButton {
                         id: edit_button
                         text_color: Qt.lighter("blue", 1.3)
-                        label: qsTr("Edit >>")
-                        text_size: font_size
+                        text: qsTr("Edit >>")
+                        font_size: float_event_edit.font_size
                     }
                 }
             }
