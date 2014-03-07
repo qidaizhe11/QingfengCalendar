@@ -61,6 +61,15 @@ Item {
         }
     }
 
+    Connections {
+        target: control
+        onRefreshEvents: {
+            if (float_event_edit.visible) {
+                float_event_edit.hide();
+            }
+        }
+    }
+
     RectangularGlow {
         id: border_shadow
         anchors.fill: parent
@@ -89,21 +98,29 @@ Item {
         }
     }
 
+    property real edit_view_margin: 20
+    property real width_scale_level: 0.85
+    property real height_scale_level: 0.8
+    property real edit_title_topmargin_level: 0.15
+    property real close_button_topmargin_level: 0.1
+
     property Component event_edit_show: Rectangle {
         color: base_color
 
-        property real margin: 20
+//        property real margin: edit_view_margin
 
         Rectangle {
             id: edit_content
-            width: parent.width * 0.85
-            height: parent.height * 0.8
+            width: parent.width * width_scale_level
+            height: parent.height * height_scale_level
             color: "transparent"
             anchors.centerIn: parent
 
             Rectangle {
                 id: edit_title
                 anchors.left: parent.left
+                anchors.top: parent.top
+                anchors.topMargin: parent.height * edit_title_topmargin_level
                 width: parent.width
                 height: edit_title_text.height
                 color: "transparent"
@@ -145,7 +162,7 @@ Item {
 
                 anchors.left: parent.left
                 anchors.top: edit_title.bottom
-                anchors.topMargin: margin
+                anchors.topMargin: edit_view_margin
 
                 text: event_item ?
                           event_item.startDateTime.toLocaleDateString() : ""
@@ -156,7 +173,7 @@ Item {
                 id: line
 
                 anchors.bottom: edit_delete_button.top
-                anchors.bottomMargin: margin
+                anchors.bottomMargin: edit_view_margin
                 width: parent.width
                 height: 1
 
@@ -196,7 +213,7 @@ Item {
 
             anchors.left: edit_content.right
             anchors.top: parent.top
-            anchors.topMargin: parent.height * 0.1
+            anchors.topMargin: parent.height * close_button_topmargin_level
 
             icon_source: "images/close.png"
 
@@ -213,18 +230,20 @@ Item {
     property Component event_edit_enter: Rectangle {
         color: base_color
 
-        property real margin: 20
+//        property real margin: edit_view_margin
 
         Rectangle {
             id: edit_enter_content
-            width: parent.width * 0.85
-            height: parent.height * 0.8
+            width: parent.width * width_scale_level
+            height: parent.height * height_scale_level
             color: "transparent"
             anchors.centerIn: parent
 
             TextField {
                 id: edit_enter_title
                 anchors.left: parent.left
+                anchors.top: parent.top
+                anchors.topMargin: parent.height * edit_title_topmargin_level
                 width: parent.width
 
                 text: event_item ? event_item.displayLabel : ""
@@ -239,7 +258,7 @@ Item {
 
                 anchors.left: parent.left
                 anchors.top: edit_enter_title.bottom
-                anchors.topMargin: margin
+                anchors.topMargin: edit_view_margin
 
                 text: event_item ?
                           event_item.startDateTime.toLocaleDateString() : ""
@@ -250,7 +269,7 @@ Item {
                 id: edit_enter_line
 
                 anchors.bottom: edit_discard_button.top
-                anchors.bottomMargin: margin
+                anchors.bottomMargin: edit_view_margin
                 width: parent.width
                 height: 1
 
@@ -291,7 +310,7 @@ Item {
 
             anchors.left: edit_enter_content.right
             anchors.top: parent.top
-            anchors.topMargin: parent.height * 0.1
+            anchors.topMargin: parent.height * close_button_topmargin_level
 
             icon_source: "images/close.png"
 
@@ -392,7 +411,7 @@ Item {
 
             anchors.left: add_content.right
             anchors.top: parent.top
-            anchors.topMargin: 15
+            anchors.topMargin: parent.height * 0.1
 
             icon_source: "images/close.png"
 
