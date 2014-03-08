@@ -13,13 +13,13 @@ uri = MyCalendar.Utils.Events
 # Input
 SOURCES += \
     myplugins_plugin.cpp \
-    eventutils.cpp \
+    EventUtils.cpp \
     MyEventModel.cpp \
     MyEvent.cpp \
 
 HEADERS += \
     myplugins_plugin.h \
-    eventutils.h \
+    EventUtils.h \
     MyEventModel.h \
     MyEvent.h \
 

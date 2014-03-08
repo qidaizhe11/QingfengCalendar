@@ -12,7 +12,7 @@ Style {
     id: calendarMonthViewStyle
     objectName: "calendar_style"
 
-    property Calendar control: __control
+    property MyCalendar control: __control
 
     property color gridColor: "#f0f0f0"
     property color base_color: "lightgray"

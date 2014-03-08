@@ -29,7 +29,7 @@ int main(int argc, char *argv[])
     qmlRegisterType<QQuickRangedDate>(private_uri, 1, 0, "RangedDate");
     qmlRegisterType<QQuickCalendarModel>(private_uri, 1, 0, "CalendarModel");
 
-    const char* uri = "MyCalendar.Utils.Events";
+    const char* uri = "MyCalendar2.Utils.Events";
     // @uri MyCalendar.Utils.Events
     qmlRegisterType<EventUtils>(uri, 1, 0, "EventUtils");
     qmlRegisterType<MyEventModel>(uri, 1, 0, "MyEventModel");
@@ -49,7 +49,8 @@ int main(int argc, char *argv[])
 //    qDebug() << temp;
 
     QtQuick2ControlsApplicationViewer viewer;
-    viewer.setMainQmlFile(QStringLiteral("qml/QingfengCalendar/mainCalendarExample.qml"));
+//    viewer.setMainQmlFile(QStringLiteral("qml/QingfengCalendar/mainCalendarExample.qml"));
+    viewer.setMainQmlFile(QStringLiteral("qml/QingfengCalendar/EventEditWindow.qml"));
 
 //    QQuickView* viewer = new QQuickView;
 //    viewer->setResizeMode(QQuickView::SizeRootObjectToView);

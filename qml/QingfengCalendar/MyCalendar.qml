@@ -8,7 +8,7 @@ import "Private"
 import "Private/CalendarUtils.js" as CalendarUtils
 
 Control {
-    id: calendar
+    id: my_calendar
     width: 960
     height: 600
 
@@ -68,7 +68,7 @@ Control {
 //    property var __locale: Qt.locale()
 
     property CalendarModel __model: CalendarModel {
-//        locale: calendar.__locale
+//        locale: my_calendar.__locale
         visibleDate: new Date(visibleYear, visibleMonth, 1)
     }
 
@@ -80,7 +80,7 @@ Control {
         endDate: new Date()
     }
 
-    style: Qt.createComponent("CalendarStyle.qml", calendar)
+    style: Qt.createComponent("CalendarMonthViewStyle.qml", my_calendar)
 
     signal hovered(date date)
 
@@ -93,7 +93,7 @@ Control {
     signal doubleClicked(date date)
 
     onClicked: {
-//        calendar.selectedDate = date
+//        my_calendar.selectedDate = date
     }
 
     function showPreviousMonth() {
@@ -131,79 +131,79 @@ Control {
     }
 
     function __selectPreviousMonth() {
-        calendar.selectedDate = CalendarUtils.setMonth(calendar.selectedDate,
-                                    calendar.selectedDate.getMonth() - 1);
+        my_calendar.selectedDate = CalendarUtils.setMonth(my_calendar.selectedDate,
+                                    my_calendar.selectedDate.getMonth() - 1);
     }
 
     function __selectNextMonth() {
-        calendar.selectedDate = CalendarUtils.setMonth(calendar.selectedDate,
-                                    calendar.selectedDate.getMonth() + 1);
+        my_calendar.selectedDate = CalendarUtils.setMonth(my_calendar.selectedDate,
+                                    my_calendar.selectedDate.getMonth() + 1);
     }
 
     function __selectPreviousWeek() {
-        var newDate = new Date(calendar.selectedDate);
+        var newDate = new Date(my_calendar.selectedDate);
         newDate.setDate(newDate.getDate() - CalendarUtils.daysInWeek);
-        calendar.selectedDate = newDate;
+        my_calendar.selectedDate = newDate;
     }
 
     function __selectNextWeek() {
-        var newDate = new Date(calendar.selectedDate);
+        var newDate = new Date(my_calendar.selectedDate);
         newDate.setDate(newDate.getDate() + CalendarUtils.daysInWeek);
-        calendar.selectedDate = newDate;
+        my_calendar.selectedDate = newDate;
     }
 
     function __selectedFirstDayOfMonth() {
-        var newDate = new Date(calendar.selectedDate);
+        var newDate = new Date(my_calendar.selectedDate);
         newDate.setDate(1);
-        calendar.selectedDate = newDate;
+        my_calendar.selectedDate = newDate;
     }
 
     function __selectedLastDayOfMonth() {
-        var newDate = new Date(calendar.selectedDate);
+        var newDate = new Date(my_calendar.selectedDate);
         newDate.setDate(CalendarUtils.daysInMonth(newDate));
-        calendar.selectedDate = newDate;
+        my_calendar.selectedDate = newDate;
     }
 
     function __selectedPreviousDay() {
-        var newDate = new Date(calendar.selectedDate);
+        var newDate = new Date(my_calendar.selectedDate);
         newDate.setDate(newDate.getDate() - 1);
-        calendar.selectedDate = newDate;
+        my_calendar.selectedDate = newDate;
     }
 
     function __selectedNextDay() {
-        var newDate = new Date(calendar.selectedDate);
+        var newDate = new Date(my_calendar.selectedDate);
         newDate.setDate(newDate.getDate() + 1);
-        calendar.selectedDate = newDate;
+        my_calendar.selectedDate = newDate;
     }
 
     Keys.onLeftPressed: {
-        calendar.__selectedPreviousDay();
+        my_calendar.__selectedPreviousDay();
     }
 
     Keys.onUpPressed: {
-        calendar.__selectPreviousWeek();
+        my_calendar.__selectPreviousWeek();
     }
 
     Keys.onDownPressed: {
-        calendar.__selectNextWeek();
+        my_calendar.__selectNextWeek();
     }
 
     Keys.onRightPressed: {
-        calendar.__selectedNextDay();
+        my_calendar.__selectedNextDay();
     }
 
     Keys.onPressed: {
         if (event.key === Qt.Key_Home) {
-            calendar.__selectedFirstDayOfMonth();
+            my_calendar.__selectedFirstDayOfMonth();
             event.accepted = true;
         } else if (event.key === Qt.Key_End) {
-            calendar.__selectedLastDayOfMonth();
+            my_calendar.__selectedLastDayOfMonth();
             event.accepted = true;
         } else if (event.key === Qt.Key_PageUp) {
-            calendar.__selectPreviousMonth();
+            my_calendar.__selectPreviousMonth();
             event.accepted = true;
         } else if (event.key === Qt.Key_PageDown) {
-            calendar.__selectNextMonth();
+            my_calendar.__selectNextMonth();
             event.accepted = true;
         }
     }

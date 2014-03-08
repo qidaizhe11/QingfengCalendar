@@ -56,7 +56,7 @@ Window {
 ////            height:
 //        }
 
-        Calendar {
+        MyCalendar {
             id: calendar
             objectName: "calendar"
 //            width: parent.width * 0.6 - row.spacing / 2
