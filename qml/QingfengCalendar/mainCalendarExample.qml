@@ -10,8 +10,8 @@ Window {
     width: 960
     height: 600
 
-//    minimumHeight: 560
-//    minimumWidth: 800
+    minimumHeight: 560
+    minimumWidth: 800
 
 //    title: "Qingfeng Calendar"
 

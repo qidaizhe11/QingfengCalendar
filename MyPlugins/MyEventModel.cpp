@@ -102,11 +102,10 @@ void MyEventModel::importEvents()
   if (doc_path.isEmpty()) {
     doc_path = ".";
   }
+
 //  QString file_name = QFileDialog::getOpenFileName(
 //        NULL, tr("Select iCalendar file"), doc_path,
 //        tr("iCalendar files (*.ics)"));
-
-//  QString file_name = "/home/daizhe/organizer_ical_test.ics";
   QString file_name = "/home/daizhe/qidaizhe11@gmail.com-2.ics";
 
   if (file_name.isEmpty()) {

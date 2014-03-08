@@ -12,6 +12,7 @@ Rectangle {
 //    property int button_height: text_label.height * 1.4
 
     property alias text_width: text_label.width
+    property alias text_height: text_label.height
 
     property string text
 
