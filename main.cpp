@@ -49,8 +49,8 @@ int main(int argc, char *argv[])
 //    qDebug() << temp;
 
     QtQuick2ControlsApplicationViewer viewer;
-//    viewer.setMainQmlFile(QStringLiteral("qml/QingfengCalendar/mainCalendarExample.qml"));
-    viewer.setMainQmlFile(QStringLiteral("qml/QingfengCalendar/EventEditWindow.qml"));
+    viewer.setMainQmlFile(QStringLiteral("qml/QingfengCalendar/mainCalendarExample.qml"));
+//    viewer.setMainQmlFile(QStringLiteral("qml/QingfengCalendar/EventEditWindow.qml"));
 
 //    QQuickView* viewer = new QQuickView;
 //    viewer->setResizeMode(QQuickView::SizeRootObjectToView);

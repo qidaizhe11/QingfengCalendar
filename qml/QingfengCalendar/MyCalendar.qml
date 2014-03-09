@@ -18,6 +18,12 @@ Control {
 
     property alias maximumDate: rangedDate.maximumDate
 
+    property date visible_date: {
+        var temp = new Date();
+        var the_date = new Date(temp.getFullYear(), temp.getMonth(), 1);
+        the_date;
+    }
+
     property int visibleMonth: selectedDate.getMonth()
 
     property int visibleYear: selectedDate.getFullYear()
@@ -69,7 +75,7 @@ Control {
 
     property CalendarModel __model: CalendarModel {
 //        locale: my_calendar.__locale
-        visibleDate: new Date(visibleYear, visibleMonth, 1)
+        visibleDate: visible_date
     }
 
     property MyEventModel event_model: MyEventModel {
@@ -208,5 +214,5 @@ Control {
         }
     }
 
-    Component.onCompleted: refreshEvents()
+//    Component.onCompleted: refreshEvents()
 }

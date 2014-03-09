@@ -1,4 +1,6 @@
 import QtQuick 2.0
+import QtQml.Models 2.1
+import MyCalendar.Controls.Private 1.0
 import "Private"
 import "Private/CalendarUtils.js" as CalendarUtils
 import "EventJsUtils.js" as EventJsUtils
@@ -29,6 +31,27 @@ Item {
     property int hoveredCellIndex: -1
     property int pressedCellIndex: -1
 
+    readonly property int max_month_list_count: 11
+    readonly property int middle_index_of_month_list: (max_month_list_count - 1) / 2
+
+    property int month_list_index: middle_index_of_month_list
+
+//    property date visible_month_date
+
+//    Component.onCompleted: {
+//        var select_date = new Date();
+//        visible_month_date = new Date(select_date.getFullYear(),
+//                                      select_date.getMonth(),
+//                                      1);
+//    }
+
+//    {
+//        var select_date = new Date();
+//        visible_month_date = new Date(select_date.getFullYear(),
+//                                      select_date.getMonth(),
+//                                      1);
+//    }
+
     Loader {
         id: backgroundLoader
         anchors.fill: parent
@@ -48,14 +71,16 @@ Item {
         sourceComponent: navigationBar
 
         property QtObject styleData: QtObject {
-            readonly property string title:
+            property string title:
 //                control.__locale.standaloneMonthName(control.visibleMonth) +
 //                new Date(control.visibleYear, control.visibleMonth, 1). toLocaleDateString(control.__locale, " yyyy")
 //            Qt.locale().standaloneMonthName(control.visibleMonth) +
 //            new Date(control.visibleYear, control.visibleMonth, 1).
 //            toLocaleDateString(Qt.locale(), " yyyy")
-                (new Date(control.visibleYear, control.visibleMonth, 1).toLocaleDateString(Qt.locale(), "yyyy  ")) +
-                Qt.locale().standaloneMonthName(control.visibleMonth)
+                (new Date(control.visible_date.getFullYear(),
+                          control.visible_date.getMonth(),
+                          1).toLocaleDateString(Qt.locale(), "yyyy  ")) +
+                Qt.locale().standaloneMonthName(control.visible_date.getMonth());
         }
 
         MouseArea {
@@ -100,293 +125,354 @@ Item {
                 }
             }
         }
+    } // day_of_week_header_row
+
+    ListModel {
+        id: month_list_model
+
+        signal refreshMonthList()
+        signal insertAtBeginning()
+        signal insertAtEnd()
+
+        Component.onCompleted: {
+            console.log("List Model onCompleted.")
+            var date = control.visible_date;
+            date.setMonth(date.getMonth() - middle_index_of_month_list);
+
+            for (var i = 0; i < max_month_list_count; ++i) {
+                month_list_model.append({ "month_date": date} );
+                console.log("In month_list_model: ", date.toLocaleDateString());
+                date.setMonth(date.getMonth() + 1);
+            }
+            month_list_view.currentIndex = middle_index_of_month_list;
+            control.refreshEvents();
+        }
+
+        onInsertAtBeginning: {
+            var date = control.visible_date;
+            for (var i = 0; i < middle_index_of_month_list; ++i) {
+                date.setMonth(date.getMonth() - 1);
+                month_list_model.insert(0, { "month_date": date});
+                console.log("Insert date: ", date);
+
+                console.log("Try to delete item form month_list_model.",
+                            month_list_model.count);
+                month_list_model.remove(max_month_list_count);
+            }
+
+            month_list_view.positionViewAtIndex(middle_index_of_month_list,
+                                                ListView.SnapPosition);
+        }
+
+        onInsertAtEnd: {
+            var date = control.visible_date;
+            for (var i = 0; i < middle_index_of_month_list; ++i) {
+                date.setMonth(date.getMonth() + 1);
+                month_list_model.append({"month_date": date});
+                console.log("Insert date: ", date);
+                month_list_model.remove(0);
+                console.log("Try to delete date, ", month_list_model.count);
+            }
+
+            month_list_view.positionViewAtIndex(middle_index_of_month_list,
+                                                ListView.SnapPosition);
+        }
     }
 
-    Row {
-        id: gridRow
-        width: weekNumbersItem.width + viewContainer.width
-        height: viewContainer.height
+    Item {
+        id: viewContainer
+        width: panelItem.width
+        height: panelItem.height - navigationBarLoader.height -
+                dayOfWeekHeaderRow.height
         anchors.top: dayOfWeekHeaderRow.bottom
 
-        Item {
-            id: weekNumbersItem
-            visible: control.weekNumbersVisible
-            width: 30
-            height: viewContainer.height
+        ListView {
+            id: month_list_view
+            anchors.fill: parent
 
-            Repeater {
-                id: weekNumberRepeater
-                model: panelItem.weeksToshow
+            model: month_list_model
+            delegate: month_delegate
+            clip: true
+            interactive: true
+            focus: true
+            cacheBuffer: 3000
+            snapMode: ListView.SnapOneItem
+            orientation: ListView.Vertical
+            currentIndex: middle_index_of_month_list
+//            flickDeceleration: 0
+            highlightFollowsCurrentItem: true
+            highlightMoveVelocity: 1600
+            highlightRangeMode: ListView.StrictlyEnforceRange
+            boundsBehavior: Flickable.DragOverBounds
+//            preferredHighlightBegin: 0
+//            preferredHighlightEnd: 0
+//            keyNavigationWraps: true
 
-                Loader {
-                    id: weekNumberDelegateLoader
-                    y: __cellRectAt(index * panelItem.columns).y +
-                       (control.gridVisible ? __gridLineWidth : 0)
-                    width: weekNumbersItem.width
-                    height: __cellRectAt(index * panelItem.columns).height -
-                            (control.gridVisible ? __gridLineWidth : 0)
-                    sourceComponent: weekNumberDelegate
-
-                    readonly property int __index: index
-                    property int __weekNumber:
-                        control.__model.weekNumberAt(index)
-
-                    Connections {
-                        target: control
-                        onVisibleMonthChanged: __weekNumber =
-                                               control.__model.weekNumberAt(index)
-                        onVisibleYearChanged: __weekNumber =
-                                              control.__model.weekNumberAt(index)
-                    }
-
-                    Connections {
-                        target: control.__model
-                        onCountChanged: __weekNumber =
-                                        control.__model.weekNumberAt(index)
-                    }
-
-                    property QtObject styleData: QtObject {
-                        readonly property alias index:
-                            weekNumberDelegateLoader.__index
-                        readonly property int weekNumber:
-                            weekNumberDelegateLoader.__weekNumber
-                    }
-                }
-            }
-        }
-
-        Item {
-            id: viewContainer
-            width: panelItem.width - (control.weekNumbersVisible ?
-                                          weekNumbersItem.width : 0)
-            height: panelItem.height - navigationBarLoader.height -
-                    dayOfWeekHeaderRow.height
-
-            Repeater {
-                id: verticalGridLineRepeater
-                model: panelItem.columns -1
-                delegate: Rectangle {
-                    x: index < panelItem.columns ?
-                           __cellRectAt(index).x + __cellRectAt(index).width :
-                           __cellRectAt(panelItem.columns - 1).x +
-                           __cellRectAt(panelItem.columns - 1).width
-                    y: -dayOfWeekHeaderRow.height + 5
-                    width: __gridLineWidth
-                    height: viewContainer.height + dayOfWeekHeaderRow.height
-                    color: gridColor
-                    visible: control.gridVisible
-                }
-            }
-
-            Repeater {
-                id: horizontalGridLineRepeater
-                model: panelItem.rows
-                delegate: Rectangle {
-                    x: 0
-                    y: index < panelItem.columns - 1 ?
-                           __cellRectAt(index * panelItem.columns).y :
-                           __cellRectAt((panelItem.rows - 1) *
-                                        panelItem.columns).y +
-                           __cellRectAt((panelItem.rows - 1) *
-                                        panelItem.columns).height
-                    width: viewContainer.width
-                    height: __gridLineWidth
-                    color: gridColor
-                    visible: control.gridVisible
-                }
-            }
-
-            MouseArea {
-                id: mouseArea
-                anchors.fill: parent
-
-                hoverEnabled: true
-
-                function cellIndexAt(mouseX, mouseY) {
-                    var viewContainerPos = viewContainer.mapFromItem(
-                                mouseArea, mouseX, mouseY);
-                    var child = viewContainer.childAt(viewContainerPos.x,
-                                                      viewContainerPos.y);
-//                    console.log("X: " + mouseX + ", Y: " +
-//                                mouseY);
-//                    console.log("viewcontainerPos, X: " + viewContainerPos.x
-//                                + ", Y: " + viewContainerPos.y);
-//                    var parentPos = viewContainer.mapToItem(null, mouseX, mouseY);
-//                    console.log("Parent pos, X: " + parentPos.x + ", Y: " + parentPos.y);
-//                    console.log("Child: " + child);
-                    return child && child !== mouseArea ? child.__index : -1;
-                }
-
-//                onEntered: {
-//                    hoveredCellIndex = cellIndexAt(mouseX, mouseY);
-//                    if (hoveredCellIndex === undefined) {
-//                        hoveredCellIndex = cellIndexAt(mouseX, mouseY);
-//                    }
-
-//                    var date = view.model.dateAt(hoveredCellIndex);
-//                    if (__isValidDate(date)) {
-//                        control.hovered(date);
-//                    }
-//                }
-
-//                onExited: {
-//                    hoveredCellIndex = -1;
-//                }
-
-//                onPositionChanged: {
-//                    var indexOfCell = cellIndexAt(mouseX, mouseY);
-//                    var previousHoveredCellIndex = hoveredCellIndex;
-//                    hoveredCellIndex = indexOfCell;
-//                    if (indexOfCell !== -1) {
-//                        var date = view.model.dateAt(indexOfCell);
-//                        if (__isValidDate(date)) {
-//                            if (hoveredCellIndex !==
-//                                    previousHoveredCellIndex) {
-//                                //                                    control.hovered(date);
-//                            }
-
-//                            if (pressed && date.getTime() !==
-//                                    control.selectedDate.getTime()) {
-//                                //                                    control.selectedDate = date;
-//                                pressedCellIndex = indexOfCell;
-//                                //                                    control.pressed(date);
-//                            }
-//                        }
-//                    }
-//                }
-
-                onPressed: {
-                    var indexOfCell = cellIndexAt(mouseX, mouseY);
-                    if (indexOfCell !== -1) {
-                        var date = view.model.dateAt(indexOfCell);
-                        pressedCellIndex = indexOfCell;
-                        if (__isValidDate(date)) {
-//                            control.selectedDate = date;
-//                            control.pressed(date);
-                        }
-                    }
-                }
-
-                onReleased: {
-                    var indexOfCell = cellIndexAt(mouseX, mouseY);
-                    if (indexOfCell !== -1) {
-                        var date = view.model.dateAt(indexOfCell);
-                        if (__isValidDate(date)) {
-//                            control.released(date);
-                        }
-                    }
-                    pressedCellIndex = -1;
-                }
-
-                onClicked: {
-//                    console.log("Mouse position: " + mouse.x + ", " + mouse.y);
-                    var indexOfCell = cellIndexAt(mouseX, mouseY);
-                    if (indexOfCell !== -1) {
-                        var date = view.model.dateAt(indexOfCell);
-                        hoveredCellIndex = indexOfCell;
-                        if (__isValidDate(date)) {
-//                            control.clicked(date);
-                            var global_pos = viewContainer.mapToItem(null, mouseX, mouseY);
-
-    //                        console.log("Global position: " + global_pos.x + ", " + global_pos.y);
-
-                            var show_pos_x = EventJsUtils.getEditViewPosX(global_pos.x);
-                            var show_pos_y = EventJsUtils.getEditViewPosY(
-                                        global_pos.y, indexOfCell);
-                            console.log("Shown Pos: " + show_pos_x + ", " + show_pos_y);
-                            float_event_edit.x = show_pos_x;
-                            float_event_edit.y = show_pos_y;
-                            float_event_edit.showAdd(date);
-                        }
-
-//                        var properties = {is_empty_event: true, event_date: date};
-//                        var float_event = CreateObject.create(
-//                                    "FloatEventEditWindow.qml", viewContainer,
-//                                    properties);
-//                        console.log("Float_event_edit: ", float_event);
-
-                    }
-//                    console.log("OnClicked, indexOfCell: " + indexOfCell);
-//                    console.log("Date at this point: " + date);
-                }
-
-                onDoubleClicked: {
-                    var indexOfCell = cellIndexAt(mouseX, mouseY);
-                    if (indexOfCell !== -1) {
-                        var date = view.model.dateAt(indexOfCell);
-                        if (__isValidDate(date)) {
-//                            control.doubleClicked(date);
-                        }
-                    }
-//                    console.log("OnDoubleClicked, indexOfCell: " + indexOfCell);
-//                    console.log("Date at this point: " + date);
-                }
-            }
-
-            Connections {
-                target: control
-                onSelectedDateChanged: view.selectedDateChanged()
-            }
-
-            Repeater {
-                id: view
-
-                property int currentIndex: -1
-
-                model: control.__model
-
-                Component.onCompleted: selectedDateChanged()
-
-                function selectedDateChanged() {
-                    if (model !== undefined && model.locale !== undefined) {
-                        currentIndex = model.indexAt(control.selectedDate);
-                    }
-                }
-
-                delegate: Loader {
-                    id: delegateLoader
-
-                    x: __cellRectAt(index).x +
-                       (control.gridVisible ? __gridLineWidth : 0)
-                    y: __cellRectAt(index).y +
-                       (control.gridVisible ? __gridLineWidth : 0)
-                    width: __cellRectAt(index).width -
-                           (control.gridVisible ? __gridLineWidth : 0)
-                    height: __cellRectAt(index).height -
-                            (control.gridVisible ? __gridLineWidth : 0)
-
-                    sourceComponent: dayDelegate
-
-                    readonly property int __index: index
-                    readonly property date __date: date
-
-                    readonly property bool valid: __isValidDate(date)
-
-                    property QtObject styleData: QtObject {
-                        readonly property alias index:
-                            delegateLoader.__index
-                        readonly property bool selected:
-                            control.selectedDate.getTime() ===
-                            date.getTime()
-                        readonly property alias date: delegateLoader.__date
-                        readonly property bool valid: delegateLoader.valid
-                        // TODO: this will not be correct if the app is
-                        // running when a new day begins.
-                        readonly property bool today: date.getTime() ===
-                                                      new Date().setHours(0, 0, 0, 0)
-                        readonly property bool visibleMonth:
-                            date.getMonth() === control.visibleMonth
-                        readonly property bool hovered:
-                            panelItem.hoveredCellIndex == index
-                        readonly property bool pressed:
-                            panelItem.pressedCellIndex == index
-                        // TODO: pressed property here, clicked and
-                        // doubleClicked in the control itself
-                    }
-                }
+            Component.onCompleted: {
+                console.log("List View onCompleted.")
+//                currentIndex = middle_index_of_month_list
             }
         }
     }
+
+    Timer {
+        id: insert_at_begin_timer
+        interval: 500
+        running: false
+        repeat: false
+        onTriggered: {
+            console.log("Timer triggered.")
+            month_list_model.insertAtBeginning();
+        }
+    }
+
+    Timer {
+        id: insert_at_end_timer
+        interval: 500
+        running: false
+        repeat: false
+        onTriggered: {
+            console.log("Timer triggered.")
+            month_list_model.insertAtEnd();
+        }
+    }
+
+    Timer {
+        id: refresh_events_timer
+        interval: 800
+        onTriggered: {
+            control.refreshEvents()
+        }
+    }
+
+    Connections {
+        target: month_list_view
+        onCurrentItemChanged: {
+            console.log("Month list view, Current Item Changed.");
+            console.log("Index: ", month_list_view.currentIndex);
+
+            var index = month_list_view.currentIndex;
+            control.visible_date = month_list_model.get(index).month_date;
+
+            console.log(control.visible_date.toLocaleDateString());
+
+            refresh_events_timer.start();
+
+            if (index === 0) {
+                insert_at_begin_timer.start();
+            }
+            if (index === max_month_list_count - 1) {
+                insert_at_end_timer.start();
+            }
+        }
+    }
+
+    property Component month_delegate: Item {
+//        id: viewContainer
+        width: panelItem.width
+        height: panelItem.height - navigationBarLoader.height -
+                dayOfWeekHeaderRow.height
+
+        Repeater {
+            id: verticalGridLineRepeater
+            model: panelItem.columns -1
+            delegate: Rectangle {
+                x: index < panelItem.columns ?
+                       __cellRectAt(index).x + __cellRectAt(index).width :
+                       __cellRectAt(panelItem.columns - 1).x +
+                       __cellRectAt(panelItem.columns - 1).width
+                y: -dayOfWeekHeaderRow.height + 5
+                width: __gridLineWidth
+                height: viewContainer.height + dayOfWeekHeaderRow.height
+                color: gridColor
+                visible: control.gridVisible
+            }
+        }
+
+        Repeater {
+            id: horizontalGridLineRepeater
+            model: panelItem.rows
+            delegate: Rectangle {
+                x: 0
+                y: index < panelItem.columns - 1 ?
+                       __cellRectAt(index * panelItem.columns).y :
+                       __cellRectAt((panelItem.rows - 1) *
+                                    panelItem.columns).y +
+                       __cellRectAt((panelItem.rows - 1) *
+                                    panelItem.columns).height
+                width: viewContainer.width
+                height: __gridLineWidth
+                color: gridColor
+                visible: control.gridVisible
+            }
+        }
+
+        MouseArea {
+            id: mouseArea
+            anchors.fill: parent
+
+            hoverEnabled: true
+
+            function cellIndexAt(mouseX, mouseY) {
+                var viewContainerPos = parent.mapFromItem(
+                            mouseArea, mouseX, mouseY);
+                var child = parent.childAt(viewContainerPos.x,
+                                                  viewContainerPos.y);
+//                console.log("X: " + mouseX + ", Y: " +
+//                            mouseY);
+//                console.log("viewcontainerPos, X: " + viewContainerPos.x
+//                            + ", Y: " + viewContainerPos.y);
+//                var parentPos = viewContainer.mapToItem(null, mouseX, mouseY);
+//                console.log("Parent pos, X: " + parentPos.x + ", Y: " + parentPos.y);
+//                console.log("Child: " + child);
+                return child && child !== mouseArea ? child.__index : -1;
+            }
+
+            onPressed: {
+                var indexOfCell = cellIndexAt(mouseX, mouseY);
+                if (indexOfCell !== -1) {
+                    var date = view.model.dateAt(indexOfCell);
+//                    pressedCellIndex = indexOfCell;
+                    if (__isValidDate(date)) {
+                        //                            control.selectedDate = date;
+                        //                            control.pressed(date);
+                    }
+                }
+            }
+
+            onReleased: {
+                var indexOfCell = cellIndexAt(mouseX, mouseY);
+                if (indexOfCell !== -1) {
+                    var date = view.model.dateAt(indexOfCell);
+                    if (__isValidDate(date)) {
+                        //                            control.released(date);
+                    }
+                }
+                pressedCellIndex = -1;
+            }
+
+            onWheel: {
+                if (wheel.angleDelta.y > 0) {
+                    month_list_view.decrementCurrentIndex();
+                }
+
+                if (wheel.angleDelta.y < 0) {
+                    month_list_view.incrementCurrentIndex();
+                }
+            }
+
+            onClicked: {
+                console.log("Mouse position: " + mouse.x + ", " + mouse.y);
+                var indexOfCell = cellIndexAt(mouseX, mouseY);
+                console.log("IndexOfCell: ", indexOfCell);
+                if (indexOfCell !== -1) {
+                    var date = view.model.dateAt(indexOfCell);
+                    console.log("Date at this point: ", date.toLocaleDateString());
+//                    panelItem.hoveredCellIndex = indexOfCell;
+                    if (__isValidDate(date)) {
+                        //                            control.clicked(date);
+                        var global_pos = viewContainer.mapToItem(null, mouseX, mouseY);
+
+                        //                        console.log("Global position: " + global_pos.x + ", " + global_pos.y);
+
+                        var show_pos_x = EventJsUtils.getEditViewPosX(global_pos.x);
+                        var show_pos_y = EventJsUtils.getEditViewPosY(
+                                    global_pos.y, indexOfCell);
+                        console.log("Shown Pos: " + show_pos_x + ", " + show_pos_y);
+                        float_event_edit.x = show_pos_x;
+                        float_event_edit.y = show_pos_y;
+                        float_event_edit.showAdd(date);
+                    }
+
+//                    var properties = {is_empty_event: true, event_date: date};
+//                    var float_event = CreateObject.create(
+//                                "FloatEventEditWindow.qml", viewContainer,
+//                                properties);
+//                    console.log("Float_event_edit: ", float_event);
+
+                }
+                //                    console.log("OnClicked, indexOfCell: " + indexOfCell);
+                //                    console.log("Date at this point: " + date);
+            }
+
+            onDoubleClicked: {
+                var indexOfCell = cellIndexAt(mouseX, mouseY);
+                if (indexOfCell !== -1) {
+                    var date = view.model.dateAt(indexOfCell);
+                    if (__isValidDate(date)) {
+                        //                            control.doubleClicked(date);
+                    }
+                }
+                //                    console.log("OnDoubleClicked, indexOfCell: " + indexOfCell);
+                //                    console.log("Date at this point: " + date);
+            }
+        }
+
+        Connections {
+            target: control
+            onSelectedDateChanged: view.selectedDateChanged()
+        }
+
+        Repeater {
+            id: view
+
+            property int currentIndex: -1
+
+            model: CalendarModel {
+                visibleDate: month_date
+            }
+
+            Component.onCompleted: selectedDateChanged()
+
+            function selectedDateChanged() {
+                if (model !== undefined && model.locale !== undefined) {
+                    currentIndex = model.indexAt(control.selectedDate);
+                }
+            }
+
+            delegate: Loader {
+                id: delegateLoader
+
+                x: __cellRectAt(index).x +
+                   (control.gridVisible ? __gridLineWidth : 0)
+                y: __cellRectAt(index).y +
+                   (control.gridVisible ? __gridLineWidth : 0)
+                width: __cellRectAt(index).width -
+                       (control.gridVisible ? __gridLineWidth : 0)
+                height: __cellRectAt(index).height -
+                        (control.gridVisible ? __gridLineWidth : 0)
+
+                sourceComponent: dayDelegate
+
+                readonly property int __index: index
+                readonly property date __date: date
+
+                readonly property bool valid: __isValidDate(date)
+
+                property QtObject styleData: QtObject {
+                    readonly property alias index:
+                        delegateLoader.__index
+                    readonly property bool selected:
+                        control.selectedDate.getTime() ===
+                        date.getTime()
+                    readonly property alias date: delegateLoader.__date
+                    readonly property bool valid: delegateLoader.valid
+                    // TODO: this will not be correct if the app is
+                    // running when a new day begins.
+                    readonly property bool today: date.getTime() ===
+                                                  new Date().setHours(0, 0, 0, 0)
+                    readonly property bool visibleMonth:
+                        date.getMonth() === month_date.getMonth()
+                    readonly property bool hovered:
+                        panelItem.hoveredCellIndex == index
+                    readonly property bool pressed:
+                        panelItem.pressedCellIndex == index
+                    // TODO: pressed property here, clicked and
+                    // doubleClicked in the control itself
+                }
+            }
+        } // view
+    } // view_container
 
     FloatEventEditView {
         id: float_event_edit
@@ -481,7 +567,13 @@ Item {
                     var clipped_days = col - index_of_cell % col;
 
                     if (component.status === Component.Ready) {
-                        var clipped_label = component.createObject(viewContainer, {"eventItem" : event, "show_flag_of_day": show_flag_of_day, "grid_index": index_of_cell, "last_days": clipped_days});
+                        var clipped_label =
+                                component.createObject(
+                                    viewContainer,
+                                    {"eventItem" : event,
+                                        "show_flag_of_day": show_flag_of_day,
+                                        "grid_index": index_of_cell,
+                                        "last_days": clipped_days});
 
                         if (clipped_label === null) {
                             console.log("Error creating object");
