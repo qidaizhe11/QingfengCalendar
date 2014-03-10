@@ -148,13 +148,13 @@ Control {
 
     function __selectPreviousWeek() {
         var newDate = new Date(my_calendar.selectedDate);
-        newDate.setDate(newDate.getDate() - CalendarUtils.daysInWeek);
+        newDate.setDate(newDate.getDate() - CalendarUtils.daysInAWeek);
         my_calendar.selectedDate = newDate;
     }
 
     function __selectNextWeek() {
         var newDate = new Date(my_calendar.selectedDate);
-        newDate.setDate(newDate.getDate() + CalendarUtils.daysInWeek);
+        newDate.setDate(newDate.getDate() + CalendarUtils.daysInAWeek);
         my_calendar.selectedDate = newDate;
     }
 

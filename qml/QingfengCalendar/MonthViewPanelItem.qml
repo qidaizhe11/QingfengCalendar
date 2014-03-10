@@ -17,7 +17,7 @@ Item {
 
     readonly property int weeksToshow: CalendarUtils.weeksOnCalendarMonth
     readonly property int rows: weeksToshow
-    readonly property int columns: CalendarUtils.daysInWeek
+    readonly property int columns: CalendarUtils.daysInAWeek
 
     readonly property int total_cells: rows * columns
 

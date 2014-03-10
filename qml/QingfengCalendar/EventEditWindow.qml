@@ -46,6 +46,7 @@ Window {
 
 //        property real left_margin: left_part.width * 0.1
         property real title_font_size: 16
+        property real item_height: left_part.height * 0.05
 
         Rectangle {
             id: calendar_title_rect
@@ -161,12 +162,12 @@ Window {
                         Label {
                             text: qsTr("When")
                         }
-                        Button {
+                        MyDateEdit {
                             id: start_date_edit
                             width: parent.width
-                            text: event_item ?
-                                      event_item.startDateTime.toLocaleDateString() :
-                                      event_date.toLocaleDateString()
+                            height: left_part.item_height
+                            selected_date: event_item ? event_item.startDateTime :
+                                               event_date
                         }
                     }
 
@@ -181,16 +182,19 @@ Window {
 
                         Row {
                             width: parent.width
-                            spacing: 3
+                            height: left_part.item_height
+                            spacing: height * 0.2
 
                             ComboBox {
                                 id: start_hour_combo
                                 width: parent.width / 3
+                                height: left_part.item_height
                                 model: hour_model
                             }
                             ComboBox {
                                 id: start_minute_combo
                                 width: parent.width / 3
+                                height: left_part.item_height
                                 model: minute_model
                             }
 
@@ -212,25 +216,28 @@ Window {
                         Label {
                             text: qsTr("End")
                         }
-                        Button {
+                        MyDateEdit {
                             id: end_date_edit
                             width: parent.width
-                            text: event_item ?
-                                      event_item.startDateTime.toLocaleDateString() :
-                                      event_date.toLocaleDateString()
+                            height: left_part.item_height
+                            selected_date: event_item ? event_item.endDateTime :
+                                               event_date
                         }
                         Row {
                             width: parent.width
-                            spacing: 3
+                            height: left_part.item_height
+                            spacing: height * 0.2
 
                             ComboBox {
                                 id: end_hour_combo
                                 width: parent.width / 3
+                                height: left_part.item_height
                                 model: hour_model
                             }
                             ComboBox {
                                 id: end_minute_combo
                                 width: parent.width / 3
+                                height: left_part.item_height
                                 model: minute_model
                             }
                         }
@@ -243,9 +250,12 @@ Window {
                         Label {
                             text: qsTr("Where")
                         }
-                        TextField {
+                        // 注：系统原生TextField，在我的MyDateEdit中日历展开时，
+                        // MouseEvent将被莫名其妙地获取。
+                        MyTextField {
                             id: location_label
                             width: parent.width
+                            height: left_part.item_height
                         }
                     }
 
@@ -306,18 +316,15 @@ Window {
                 color: "lightgrey"
             }
 
-            TextArea {
+            MyTextArea {
                 id: description_edit
                 anchors.top: line.bottom
                 anchors.topMargin: parent.height * 0.02
                 height: parent.height * 0.75
                 width: parent.width
 
-                text: qsTr("Add a description")
-                font.pointSize: 12
-
-                backgroundVisible: false
-                frameVisible: false
+                font_size: 12
+                placeholder_text: qsTr("Add a description")
             }
 
             property real button_width_level: 0.18

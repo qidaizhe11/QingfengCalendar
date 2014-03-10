@@ -8,13 +8,15 @@ Button {
     property real font_size: 12
     property bool font_bold: false
 
+    property bool is_color_defined: button_color != undefined
+
     style: ButtonStyle {
 
         background:  Rectangle {
             anchors.fill: parent
 
             border.color: control.activeFocus ? "#47b" :
-                                                (button_color ? button_color : "#999")
+                                                (is_color_defined ? button_color : "#999")
             implicitWidth: 100
             implicitHeight: 20
             gradient: Gradient {
@@ -23,17 +25,14 @@ Button {
                 GradientStop {color: control.pressed ? "#ccc" : "#e3e3e3";
                     position: control.pressed ? 0.1: 1}
             }
-//            gradient: Gradient {
-//                GradientStop { color: "#fefefe"; position: 0}
-//                GradientStop { color: "#e3e3e3"; position: 1}
-//            }
 
             radius: height * 0.08
 
             Rectangle {
                 anchors.fill: parent
                 radius: parent.radius
-                color: control.hovered || control.activeFocus ? "#47b" : "white"
+                color: control.hovered || control.activeFocus ?
+                           (is_color_defined ? button_color : "#47b") : "white"
                 opacity: control.hovered || control.activeFocus ? 0.1 : 0
                 Behavior on opacity {NumberAnimation{ duration: 100 }}
             }
@@ -49,7 +48,7 @@ Button {
                 text: control.text
                 font.pointSize: font_size
                 font.bold: font_bold
-                color: button_color ? button_color : __syspal.text
+                color: is_color_defined ? button_color : __syspal.text
             }
         }
     }

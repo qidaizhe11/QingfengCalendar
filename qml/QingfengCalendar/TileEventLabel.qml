@@ -27,7 +27,7 @@ Rectangle {
     property color font_color: "white"
 
     readonly property int display_weeks: CalendarUtils.weeksOnCalendarMonth
-    readonly property int days_in_week: CalendarUtils.daysInWeek
+    readonly property int days_in_week: CalendarUtils.daysInAWeek
 //    property int grid_index: event_utils.gridIndex(eventItem.startDateTime)
     property int horizontal_index: grid_index % days_in_week
     property int vertical_index: grid_index / days_in_week

@@ -1,7 +1,7 @@
 
 .pragma library
 
-var daysInWeek = 7;
+var daysInAWeek = 7;
 var monthsInYear = 12;
 
 var weeksOnCalendarMonth = 6;
