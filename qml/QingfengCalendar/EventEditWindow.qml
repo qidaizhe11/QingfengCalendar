@@ -1,30 +1,34 @@
 import QtQuick 2.1
 import QtQuick.Controls 1.0
 import QtQuick.Controls.Styles 1.0
-import QtQuick.Window 2.1
+//import QtQuick.Window 2.1
 import QtQuick.Layouts 1.0
 import MyCalendar.Utils.Events 1.0
 import "Content"
 
-Window {
+Rectangle {
     id: event_edit_window
 
-    property real window_width: 960
-    property real window_height: 600
+//    property real window_width: 960
+//    property real window_height: 600
 
-    property real pos_x
-    property real pos_y
+//    property real pos_x
+//    property real pos_y
+
+//    anchors.fill: parent
+    width: parent.width
+    height: parent.height
 
     property real font_size: 12
 
     visible: true
     color: "white"
 
-    width: window_width
-    height: window_height
+//    width: window_width
+//    height: window_height
 
-    minimumHeight: 560
-    minimumWidth: 800
+//    minimumHeight: 560
+//    minimumWidth: 800
 
 //    MyEvent {
 //        id: my_event_item
@@ -34,6 +38,8 @@ Window {
     property date event_date: new Date()
 
     property real left_part_width: event_edit_window.width * 0.4
+
+    Component.onCompleted: title_edit.forceActiveFocus()
 
     Rectangle {
         id: left_part
@@ -56,9 +62,21 @@ Window {
             height: parent.height * 0.15
 //            width: parent.width
 
+            MyTextButton {
+                id: back_button
+
+                anchors.left: parent.left
+                anchors.verticalCenter: parent.verticalCenter
+
+                text: "Back"
+                font_size: 12
+
+                onClicked: if (stack_view) stack_view.pop()
+            }
+
             Rectangle {
                 id: calendar_color_block
-                anchors.left: parent.left
+                anchors.left: back_button.right
                 anchors.verticalCenter: parent.verticalCenter
                 height: parent.height * 0.5
                 width: parent.height * 0.5
@@ -365,6 +383,8 @@ Window {
                 font_size: parent.button_font_size
                 button_color: Qt.darker("lightgray", 1.6)
 //                font_bold: true
+
+                onClicked: if (stack_view) stack_view.pop()
             }
 
 //            MyTextButton {

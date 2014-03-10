@@ -102,13 +102,17 @@ Style {
     property Component dayDelegate: Rectangle {
 //        color: styleData.date !== undefined &&
 //               styleData.selected ? selectedDateColor : "orangle"
-        readonly property color sameMonthDateTextColor: "darkgray"
-        readonly property color selectedDateColor: __syspal.highlight
+        readonly property color base_color: "lightgray"
+
+        readonly property color selectedDateColor: Qt.darker("darkgray", 1.4)
+        readonly property color sameMonthDateTextColor: Qt.darker("darkgray", 3.0)
         readonly property color different_month_date_color:
-            Qt.darker("darkgray", 1.1)
+            Qt.darker("lightgray", 1.05)
+
         readonly property color selectedDateTextColor: "white"
         readonly property color differentMonthDateTextColor:
-            Qt.lighter("lightgray", 1.15)
+            Qt.darker("darkgray", 1.4)
+
         readonly property color invalidDateColor: "#dddddd"
 
         color: {
@@ -119,26 +123,30 @@ Style {
                 if (styleData.selected) {
                     the_color = selectedDateColor;
                 }
+                if (styleData.hovered) {
+                    the_color = Qt.darker(the_color, 1.1);
+                }
             }
+
             the_color;
         }
 
         Label {
             id: dayDelegateText
             text: styleData.date.getDate()
-            font.pointSize: 14
+            font.pointSize: 12
             anchors.top: parent.top
-            anchors.topMargin: parent.height * 0.1
+            anchors.topMargin: dayDelegateText.width * 0.4
             anchors.left: parent.left
-            anchors.leftMargin: parent.width * 0.1
-                        horizontalAlignment: Text.AlignRight
+            anchors.leftMargin: dayDelegateText.height * 0.5
+            horizontalAlignment: Text.AlignRight
             color: {
                 var theColor = invalidDateColor;
                 if (styleData.valid) {
                     theColor = styleData.visibleMonth ? sameMonthDateTextColor :
                                                         differentMonthDateTextColor;
                     if (styleData.selected) {
-                        theColor = selectedDateColor;
+                        theColor = selectedDateTextColor;
                     }
                 }
                 theColor;

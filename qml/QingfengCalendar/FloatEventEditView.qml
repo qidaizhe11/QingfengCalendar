@@ -25,6 +25,8 @@ Item {
     signal showEdit(var event)
     signal hide()
     signal saveEventClicked(var my_event)
+    signal editDetails()
+    signal addDetails()
 
     onShowAdd: {
         event_date = event_start_date;
@@ -41,6 +43,12 @@ Item {
     onHide: {
         float_event_edit.visible = false;
         panelItem.hoveredCellIndex = -1;
+    }
+
+    onAddDetails: {
+        stack_view.push({ item: Qt.resolvedUrl("EventEditWindow.qml"),
+                        properties: {event_date: event_date} });
+        float_event_edit.hide();
     }
 
     Connections {
@@ -203,6 +211,8 @@ Item {
                 text: qsTr("Edit >>")
                 font_size: font_size
                 font_bold: true
+
+                onClicked: float_event_edit.editDetails()
             }
         }
 
@@ -399,6 +409,8 @@ Item {
                         text_color: Qt.lighter("blue", 1.3)
                         text: qsTr("Edit >>")
                         font_size: float_event_edit.font_size
+
+                        onClicked: float_event_edit.addDetails()
                     }
                 }
             }
