@@ -321,32 +321,58 @@ Window {
             }
 
             property real button_width_level: 0.18
-            property real button_font_size: 14
+            property real button_font_size: 12
 
-            MyTextButton {
+//            MyTextButton {
+//                id: save_button
+//                anchors.left: parent.left
+//                anchors.bottom: parent.bottom
+//                text: qsTr("Save")
+//                font_size: parent.button_font_size
+//                button_color: "indigo"
+//                width: parent.width * parent.button_width_level
+//                height: text_height * 1.6
+//            }
+
+            MyButton {
                 id: save_button
                 anchors.left: parent.left
                 anchors.bottom: parent.bottom
                 text: qsTr("Save")
-                font_size: parent.button_font_size
-                button_color: "indigo"
                 width: parent.width * parent.button_width_level
-                height: text_height * 1.6
+                height: parent.height * 0.08
+                button_color: "indigo"
+                font_size: parent.button_font_size
+                font_bold: true
             }
 
-            MyTextButton {
+            MyButton {
                 id: cancel_button
                 anchors.left: save_button.right
                 anchors.leftMargin: parent.width * 0.05
                 anchors.bottom: parent.bottom
                 width: parent.width * parent.button_width_level
-                height: text_height * 1.6
+                height: parent.height * 0.08
+
                 text: qsTr("Cancel")
                 font_size: parent.button_font_size
-                button_color: "lightgray"
-                text_color: Qt.darker("darkgrey", 2.0)
-                hovered_color: Qt.lighter(button_color, 1.1)
+                button_color: Qt.darker("lightgray", 1.6)
+//                font_bold: true
             }
+
+//            MyTextButton {
+//                id: cancel_button
+//                anchors.left: save_button.right
+//                anchors.leftMargin: parent.width * 0.05
+//                anchors.bottom: parent.bottom
+//                width: parent.width * parent.button_width_level
+//                height: text_height * 1.6
+//                text: qsTr("Cancel")
+//                font_size: parent.button_font_size
+//                button_color: "lightgray"
+//                text_color: Qt.darker("darkgrey", 2.0)
+//                hovered_color: Qt.lighter(button_color, 1.1)
+//            }
 
             MyTextButton {
                 id: delete_button

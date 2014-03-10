@@ -72,6 +72,7 @@ OTHER_FILES += \
     README.md \
 #    CalendarPlugin/qmldir
     qml/QingfengCalendar/Content/MyTextLinkButton.qml \
-    qml/QingfengCalendar/FloatEventEditWindow.qml \
+#    qml/QingfengCalendar/FloatEventEditWindow.qml \
     qml/QingfengCalendar/Content/MyTextButton.qml \
-    qml/QingfengCalendar/MyCalendar.qml
+    qml/QingfengCalendar/MyCalendar.qml \
+    qml/QingfengCalendar/Content/MyButton.qml
