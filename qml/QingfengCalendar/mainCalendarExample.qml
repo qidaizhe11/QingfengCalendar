@@ -35,7 +35,7 @@ Window {
         }
     }
 
-    EventEditWindow {
+    EventEditView {
         id: event_edit_view
         visible: false
     }

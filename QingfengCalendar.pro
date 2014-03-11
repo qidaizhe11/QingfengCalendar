@@ -75,4 +75,5 @@ OTHER_FILES += \
 #    qml/QingfengCalendar/FloatEventEditWindow.qml \
     qml/QingfengCalendar/Content/MyTextButton.qml \
     qml/QingfengCalendar/MyCalendar.qml \
-    qml/QingfengCalendar/Content/MyButton.qml
+    qml/QingfengCalendar/Content/MyButton.qml \
+    qml/QingfengCalendar/EventEditView.qml

@@ -7,7 +7,7 @@ import MyCalendar.Utils.Events 1.0
 import "Content"
 
 Rectangle {
-    id: event_edit_window
+    id: event_edit_view
 
 //    property real window_width: 960
 //    property real window_height: 600
@@ -37,7 +37,7 @@ Rectangle {
     property var event_item
     property date event_date: new Date()
 
-    property real left_part_width: event_edit_window.width * 0.4
+    property real left_part_width: event_edit_view.width * 0.4
 
     Component.onCompleted: title_edit.forceActiveFocus()
 
@@ -281,7 +281,7 @@ Rectangle {
                     MyTextLinkButton {
                         id: show_more_button
                         text: qsTr("More details")
-                        font_size: event_edit_window.font_size
+                        font_size: event_edit_view.font_size
                     }
 
                 } // column layout

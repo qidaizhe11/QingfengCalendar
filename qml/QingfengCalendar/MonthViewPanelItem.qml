@@ -150,6 +150,7 @@ Item {
 
             month_list_view.positionViewAtIndex(middle_index_of_month_list,
                                                 ListView.SnapPosition);
+//            control.refreshEvents();
         }
 
         onInsertAtEnd: {
@@ -164,6 +165,7 @@ Item {
 
             month_list_view.positionViewAtIndex(middle_index_of_month_list,
                                                 ListView.SnapPosition);
+//            control.refreshEvents();
         }
     }
 
@@ -190,6 +192,7 @@ Item {
 //            flickDeceleration: 0
             highlightFollowsCurrentItem: true
             highlightMoveVelocity: 1000
+//            maximumFlickVelocity: 1000
             highlightRangeMode: ListView.StrictlyEnforceRange
             boundsBehavior: Flickable.DragOverBounds
 //            preferredHighlightBegin: 0
@@ -202,6 +205,8 @@ Item {
             }
 
 //            onDragStarted: hideEventLabels();
+            onDragStarted: hideEventLabels();
+//            onFlickEnded: console.log("MovementEnded.");
 //            onDragEnded: showEventLabels();
         }
     }
@@ -232,41 +237,65 @@ Item {
         id: refresh_events_timer
         interval: 550
         onTriggered: {
-            control.refreshEvents()
+            control.refreshEvents();
         }
     }
 
     Connections {
         target: month_list_view
-        onCurrentItemChanged: {
-            console.log("Month list view, Current Item Changed.");
-            console.log("Index: ", month_list_view.currentIndex);
 
-            panelItem.hideEventLabels();
-
+        onMovementEnded: {
             var index = month_list_view.currentIndex;
             control.visible_date = month_list_model.get(index).month_date;
 
-            console.log(control.visible_date.toLocaleDateString());
+            console.log("Month_list_view, onFlickEnded.");
+            console.log("Index: ", index);
 
             if (index === 0) {
-                insert_at_begin_timer.start();
-            }
-            if (index === max_month_list_count - 1) {
-                insert_at_end_timer.start();
+                month_list_model.insertAtBeginning();
+            } else if (index === max_month_list_count - 1) {
+                month_list_model.insertAtEnd();
             }
 
+            control.refreshEvents();
+        }
+    }
+
+    function showPreviousMonth() {
+        hideEventLabels();
+        month_list_view.decrementCurrentIndex();
+        var index = month_list_view.currentIndex;
+        control.visible_date = month_list_model.get(index).month_date;
+
+        if (index === 0) {
+            insert_at_begin_timer.start();
             refresh_events_timer.start();
+        } else {
+            control.refreshEvents();
+        }
+    }
+
+    function showNextMonth() {
+        hideEventLabels();
+        month_list_view.incrementCurrentIndex();
+        var index = month_list_view.currentIndex;
+        control.visible_date = month_list_model.get(index).month_date;
+
+        if (index === max_month_list_count - 1) {
+            insert_at_end_timer.start();
+            refresh_events_timer.start();
+        } else {
+            control.refreshEvents();
         }
     }
 
     Connections {
         target: navigationBarLoader.item
-        onShowPreviousMonth: month_list_view.decrementCurrentIndex();
+        onShowPreviousMonth: showPreviousMonth();
     }
     Connections {
         target: navigationBarLoader.item
-        onShowNextMonth: month_list_view.incrementCurrentIndex();
+        onShowNextMonth: showNextMonth();
     }
 
     property Component month_delegate: Item {
@@ -354,12 +383,10 @@ Item {
             }
 
             onWheel: {
-                if (wheel.angleDelta.y > 0 && wheel.angleDelta.y <= 120) {
-                    month_list_view.decrementCurrentIndex();
-                }
-
-                if (wheel.angleDelta.y < 0 && wheel.angleDelta.y >= -120) {
-                    month_list_view.incrementCurrentIndex();
+                if (wheel.angleDelta.y > 0) {
+                    showPreviousMonth();
+                } else if (wheel.angleDelta.y < 0) {
+                    showNextMonth();
                 }
             }
 
