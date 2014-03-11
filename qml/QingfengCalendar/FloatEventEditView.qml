@@ -7,7 +7,7 @@ import MyCalendar.Utils.Events 1.0
 import "Content"
 
 Item {
-    id: float_event_edit
+    id: float_edit
     width: 500
     height: 220
 
@@ -21,41 +21,45 @@ Item {
     property real shadow_radius: 8
     property color base_color: Qt.lighter("lightgray", 1.15)
 
-    signal showAdd(date event_start_date)
+    signal showAdd(date dt_start)
     signal showEdit(var event)
     signal hide()
-    signal saveEventClicked(var my_event)
+//    signal saveClicked(var my_event)
     signal editDetails()
     signal addDetails()
 
     onShowAdd: {
-        event_date = event_start_date;
-        loader.sourceComponent = event_add;
+        event_date = dt_start;
+        loader.sourceComponent = event_add_panel;
         loader.item.title_text = "";
-        float_event_edit.visible = true;
+        float_edit.visible = true;
     }
     onShowEdit: {
         event_item = event;
-        loader.sourceComponent = event_edit_show;
-        float_event_edit.visible = true;
+        loader.sourceComponent = event_edit_panel;
+        float_edit.visible = true;
     }
 
     onHide: {
-        float_event_edit.visible = false;
+        if (loader.item.state && loader.item.state !== "show") {
+            loader.item.state = "show";
+        }
+
+        float_edit.visible = false;
         panelItem.hoveredCellIndex = -1;
     }
 
     onAddDetails: {
         stack_view.push({ item: Qt.resolvedUrl("EventEditWindow.qml"),
                         properties: {event_date: event_date} });
-        float_event_edit.hide();
+        float_edit.hide();
     }
 
     Connections {
         target: navigationbar_mouseArea
         onClicked: {
-            if (float_event_edit.visible) {
-                float_event_edit.hide();
+            if (float_edit.visible) {
+                float_edit.hide();
             }
         }
     }
@@ -63,8 +67,8 @@ Item {
     Connections {
         target: background_mouseArea
         onClicked: {
-            if (float_event_edit.visible) {
-                float_event_edit.hide();
+            if (float_edit.visible) {
+                float_edit.hide();
             }
         }
     }
@@ -72,8 +76,8 @@ Item {
     Connections {
         target: control
         onRefreshEvents: {
-            if (float_event_edit.visible) {
-                float_event_edit.hide();
+            if (float_edit.visible) {
+                float_edit.hide();
             }
         }
     }
@@ -102,66 +106,87 @@ Item {
         Loader {
             id: loader
             anchors.fill: parent
-            sourceComponent: event_add
+            sourceComponent: event_add_panel
         }
     }
 
-    property real edit_view_margin: 20
-    property real width_scale_level: 0.85
-    property real height_scale_level: 0.8
-    property real edit_title_topmargin_level: 0.15
-    property real close_button_topmargin_level: 0.1
-
-    property Component event_edit_show: Rectangle {
+    property Component event_edit_panel: Rectangle {
+//    Rectangle {
+        id: event_edit_panel
         color: base_color
 
-//        property real margin: edit_view_margin
+        state: "show"
+
+        property real vertical_margin: 20
 
         Rectangle {
             id: edit_content
-            width: parent.width * width_scale_level
-            height: parent.height * height_scale_level
+            width: parent.width * 0.85
+            height: parent.height * 0.8
             color: "transparent"
             anchors.centerIn: parent
 
-            Rectangle {
+            Item {
                 id: edit_title
                 anchors.left: parent.left
                 anchors.top: parent.top
-                anchors.topMargin: parent.height * edit_title_topmargin_level
+                anchors.topMargin: parent.height * 0.15
                 width: parent.width
-                height: edit_title_text.height
-                color: "transparent"
+                height: event_edit_panel.state === "show" ?
+                            edit_title_text.height :
+                            edit_title_enter.height
+//                visible: true
 
-                Label {
-                    id: edit_title_text
-//                    anchors.fill: parent
+                Rectangle {
+                    id: edit_title_show
+                    anchors.fill: parent
+                    color: "transparent"
+
+                    visible: event_edit_panel.state === "show" ? true : false
+
+                    Label {
+                        id: edit_title_text
+    //                    anchors.fill: parent
+                        width: parent.width
+
+                        elide: Text.ElideRight
+                        text: event_item ? event_item.displayLabel : ""
+                        font.pointSize: float_edit.font_size + 2
+                        font.bold: true
+                        color: "indigo"
+                    }
+
+                    MouseArea {
+                        id: edit_title_mousearea
+                        anchors.fill: parent
+                        hoverEnabled: true
+
+                        onEntered: {
+                            parent.color = "powderblue";
+                            cursorShape = Qt.PointingHandCursor;
+                        }
+                        onExited: {
+                            parent.color = "transparent";
+                        }
+
+                        onClicked: {
+//                            loader.sourceComponent = event_edit_enter;
+                            event_edit_panel.state = "edit";
+                        }
+                    }
+                } // edit_title_show
+
+                TextField {
+                    id: edit_title_enter
                     width: parent.width
 
-                    elide: Text.ElideRight
+                    visible: event_edit_panel.state === "edit" ? true : false
+
                     text: event_item ? event_item.displayLabel : ""
-                    font.pointSize: font_size + 2
+                    font.pointSize: float_edit.font_size + 2
                     font.bold: true
-                    color: "indigo"
-                }
-
-                MouseArea {
-                    id: edit_title_mousearea
-                    anchors.fill: parent
-                    hoverEnabled: true
-
-                    onEntered: {
-                        parent.color = "powderblue";
-//                        cursorShape = Qt.IBeamCursor;
-                        cursorShape = Qt.PointingHandCursor;
-                    }
-                    onExited: {
-                        parent.color = "transparent";
-                    }
-
-                    onClicked: {
-                        loader.sourceComponent = event_edit_enter;
-                    }
+                    textColor: "indigo"
+                    focus: true
                 }
             }
 
@@ -170,49 +195,101 @@ Item {
 
                 anchors.left: parent.left
                 anchors.top: edit_title.bottom
-                anchors.topMargin: edit_view_margin
+                anchors.topMargin: vertical_margin
 
                 text: event_item ?
                           event_item.startDateTime.toLocaleDateString() : ""
-                font.pointSize: font_size
+                font.pointSize: float_edit.font_size
             }
 
             Rectangle {
                 id: line
 
-                anchors.bottom: edit_delete_button.top
-                anchors.bottomMargin: edit_view_margin
+                anchors.bottom: left_bottom_button.top
+                anchors.bottomMargin: vertical_margin / 2
                 width: parent.width
                 height: 1
 
                 color: "lightgray"
             }
 
-            MyTextLinkButton {
-                id: edit_delete_button
-
+            Item {
+                id: left_bottom_button
                 anchors.left: parent.left
                 anchors.bottom: parent.bottom
+                height: event_edit_panel.state === "show" ?
+                            edit_delete_button.height :
+                            edit_discard_button.height
+                width: event_edit_panel.state === "show" ?
+                           edit_delete_button.width :
+                           edit_discard_button.width
 
-                text_color: Qt.lighter("blue", 1.3)
-                text: qsTr("Delete")
-                font_size: font_size
+                MyTextLinkButton {
+                    id: edit_delete_button
+                    anchors.centerIn: parent
 
-                onClicked: deleteEvent();
+                    visible: event_edit_panel.state === "show" ? true : false
+
+                    text_color: Qt.lighter("blue", 1.3)
+                    text: qsTr("Delete")
+                    font_size: float_edit.font_size + 2
+
+                    onClicked: deleteEvent();
+                }
+
+                MyTextButton {
+                    id: edit_discard_button
+                    anchors.centerIn: parent
+
+                    visible: event_edit_panel.state === "edit" ? true : false
+
+                    button_color: "lightgrey"
+                    hovered_color: Qt.lighter(button_color, 1.05)
+                    text_color: "black"
+                    text: qsTr("Discard changes")
+                    font_size: float_edit.font_size + 2
+                }
             }
 
-            MyTextLinkButton {
-                id: edit_detail_button
+            Item {
+                id: right_bottom_button
                 anchors.right: parent.right
                 anchors.rightMargin: parent.width * 0.1
                 anchors.bottom: parent.bottom
+                height: event_edit_panel.state === "show" ?
+                            edit_detail_button.height :
+                            edit_save_button.height
+                width: event_edit_panel.state === "show" ?
+                           edit_detail_button.width :
+                           edit_save_button.width
 
-                text_color: Qt.lighter("blue", 1.3)
-                text: qsTr("Edit >>")
-                font_size: font_size
-                font_bold: true
+                MyTextLinkButton {
+                    id: edit_detail_button
+                    anchors.centerIn: parent
 
-                onClicked: float_event_edit.editDetails()
+                    visible: event_edit_panel.state === "show" ? true : false
+
+                    text_color: Qt.lighter("blue", 1.3)
+                    text: qsTr("Edit >>")
+                    font_size: float_edit.font_size + 2
+                    font_bold: true
+
+                    onClicked: float_edit.editDetails()
+                }
+
+                MyTextButton {
+                    id: edit_save_button
+                    anchors.centerIn: parent
+
+                    visible: event_edit_panel.state === "edit" ? true : false
+
+                    width: text_width * 2.0
+
+                    text: qsTr("Save")
+                    font_size: float_edit.font_size + 2
+
+                    onClicked: saveEventTitle();
+                }
             }
         }
 
@@ -223,119 +300,21 @@ Item {
 
             anchors.left: edit_content.right
             anchors.top: parent.top
-            anchors.topMargin: parent.height * close_button_topmargin_level
+            anchors.topMargin: parent.height * 0.1
 
             icon_source: "images/close.png"
 
-            onClicked: float_event_edit.hide()
+            onClicked: float_edit.hide()
         }
 
         function deleteEvent() {
             control.event_model.deleteEvent(event_item);
-            float_event_edit.hide();
+            float_edit.hide();
             control.refreshEvents();
         }
     }
 
-    property Component event_edit_enter: Rectangle {
-        color: base_color
-
-//        property real margin: edit_view_margin
-
-        Rectangle {
-            id: edit_enter_content
-            width: parent.width * width_scale_level
-            height: parent.height * height_scale_level
-            color: "transparent"
-            anchors.centerIn: parent
-
-            TextField {
-                id: edit_enter_title
-                anchors.left: parent.left
-                anchors.top: parent.top
-                anchors.topMargin: parent.height * edit_title_topmargin_level
-                width: parent.width
-
-                text: event_item ? event_item.displayLabel : ""
-                font.pointSize: font_size + 2
-                font.bold: true
-                textColor: "indigo"
-                focus: true
-            }
-
-            Label {
-                id: edit_enter_date
-
-                anchors.left: parent.left
-                anchors.top: edit_enter_title.bottom
-                anchors.topMargin: edit_view_margin
-
-                text: event_item ?
-                          event_item.startDateTime.toLocaleDateString() : ""
-                font.pointSize: font_size
-            }
-
-            Rectangle {
-                id: edit_enter_line
-
-                anchors.bottom: edit_discard_button.top
-                anchors.bottomMargin: edit_view_margin
-                width: parent.width
-                height: 1
-
-                color: "lightgray"
-            }
-
-            MyTextButton {
-                id: edit_discard_button
-                anchors.left: parent.left
-                anchors.bottom: parent.bottom
-
-                button_color: "lightgrey"
-                hovered_color: Qt.lighter(button_color, 1.05)
-                text_color: "black"
-                text: qsTr("Discard changes")
-                font_size: float_event_edit.font_size
-            }
-
-            MyTextButton {
-                id: edit_save_button
-                anchors.right: parent.right
-//                anchors.rightMargin: parent.width * 0.1
-                anchors.bottom: parent.bottom
-
-                width: text_width * 2.0
-
-                text: qsTr("Save")
-                font_size: float_event_edit.font_size
-
-                onClicked: saveEventTitle();
-            }
-        }
-
-        MyIconButton {
-            id: edit_exit_button
-            width: 20
-            height: 20
-
-            anchors.left: edit_enter_content.right
-            anchors.top: parent.top
-            anchors.topMargin: parent.height * close_button_topmargin_level
-
-            icon_source: "images/close.png"
-
-            onClicked: float_event_edit.hide()
-        }
-
-        function saveEventTitle() {
-            event_item.displayLabel = edit_enter_title.text;
-            control.event_model.saveEvent(event_item);
-            float_event_edit.hide();
-            control.refreshEvents();
-        }
-    }
-
-    property Component event_add: Rectangle {
+    property Component event_add_panel: Rectangle {
         color: base_color
 
 //        property string event_title
@@ -356,7 +335,7 @@ Item {
                     id: header_label
                     text: qsTr("Event")
                     font.bold: true
-                    font.pointSize: font_size + 2
+                    font.pointSize: float_edit.font_size + 2
                 }
 
                 GridLayout {
@@ -367,36 +346,36 @@ Item {
                     Label {
                         id: date_tip_label
                         text: qsTr("When: ")
-                        font.pointSize: font_size
+                        font.pointSize: float_edit.font_size
                     }
                     Label {
                         id: date_show_label
                         text: event_date.toLocaleDateString(Qt.locale(), "MMMM dd  (ddd)")
-                        font.pointSize: font_size
+                        font.pointSize: float_edit.font_size
                     }
 
                     Label {
                         id: title_tip
                         text: qsTr("What: ")
-                        font.pointSize: font_size
+                        font.pointSize: float_edit.font_size
                     }
                     TextField {
                         id: title_edit
                         text: ""
                         Layout.fillWidth: true
-                        font.pointSize: font_size
+                        font.pointSize: float_edit.font_size
                         focus: true
                     }
                 }
 
                 RowLayout {
-                    spacing: 15
+                    spacing: 20
 
                     MyTextButton {
                         id: create_button
 
                         button_color: Qt.lighter("blue", 1.3)
-                        font_size: float_event_edit.font_size
+                        font_size: float_edit.font_size + 2
                         text: qsTr("Create")
 
                         width: text_width * 1.5
@@ -408,9 +387,9 @@ Item {
                         id: edit_button
                         text_color: Qt.lighter("blue", 1.3)
                         text: qsTr("Edit >>")
-                        font_size: float_event_edit.font_size
+                        font_size: float_edit.font_size + 2
 
-                        onClicked: float_event_edit.addDetails()
+                        onClicked: float_edit.addDetails()
                     }
                 }
             }
@@ -427,7 +406,7 @@ Item {
 
             icon_source: "images/close.png"
 
-            onClicked: float_event_edit.hide()
+            onClicked: float_edit.hide()
         }
 
         function createAllDayEvent() {
@@ -439,18 +418,21 @@ Item {
                 dt_end.setTime(dt_start.getTime() + 24*60*60*1000);
 
                 var new_event = Qt.createQmlObject(
-                            "import QtQuick 2.1; import MyCalendar.Utils.Events 1.0; MyEvent {}", float_event_edit);
+                            "import QtQuick 2.1; import MyCalendar.Utils.Events 1.0; MyEvent {}",
+                            float_edit);
 
                 new_event.startDateTime = dt_start;
                 new_event.displayLabel = title_edit.text;
                 new_event.endDateTime = dt_end;
                 new_event.allDay = true;
+
                 console.log("Start Datetime: " + new_event.startDateTime);
                 console.log("End date time: ", new_event.endDateTime);
                 console.log("Display Label: " + new_event.displayLabel);
                 console.log("All day: " + new_event.allDay);
                 control.event_model.saveEvent(new_event);
-                float_event_edit.hide();
+
+                float_edit.hide();
                 control.refreshEvents();
             }
 

@@ -91,7 +91,7 @@ Item {
 
 //    Loader {
 //        id: event_editor_loader
-//        sourceComponent: float_event_edit
+//        sourceComponent: float_edit
 //    }
 
     Row {
@@ -379,9 +379,9 @@ Item {
                         var show_pos_y = EventJsUtils.getEditViewPosY(
                                     global_pos.y, indexOfCell);
                         console.log("Shown Pos: " + show_pos_x + ", " + show_pos_y);
-                        float_event_edit.x = show_pos_x;
-                        float_event_edit.y = show_pos_y;
-                        float_event_edit.showAdd(date);
+                        float_edit.x = show_pos_x;
+                        float_edit.y = show_pos_y;
+                        float_edit.showAdd(date);
                     }
 
 //                    var properties = {is_empty_event: true, event_date: date};
@@ -475,7 +475,7 @@ Item {
     } // view_container
 
     FloatEventEditView {
-        id: float_event_edit
+        id: float_edit
         visible: false
         z: 1
     }

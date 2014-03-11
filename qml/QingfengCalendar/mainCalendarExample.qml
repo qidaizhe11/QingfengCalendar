@@ -58,7 +58,7 @@ Window {
                     property: "x"
                     from: target.width
                     to: 0
-                    duration: 100
+                    duration: 200
                 }
                 PropertyAnimation {
                     target: exitItem
@@ -69,7 +69,7 @@ Window {
                     property: "opacity"
                     from: 1
                     to: 0
-                    duration: 100
+                    duration: 200
                 }
             }
 

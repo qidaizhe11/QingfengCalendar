@@ -104,9 +104,9 @@ Rectangle {
             var show_pos_y = EventJsUtils.getEditViewPosY(
                         global_pos.y, grid_index);
             console.log("Shown Pos: " + show_pos_x + ", " + show_pos_y);
-            float_event_edit.x = show_pos_x;
-            float_event_edit.y = show_pos_y;
-            float_event_edit.showEdit(eventItem);
+            float_edit.x = show_pos_x;
+            float_edit.y = show_pos_y;
+            float_edit.showEdit(eventItem);
         }
     }
 

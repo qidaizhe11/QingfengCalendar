@@ -56,7 +56,7 @@ function increaseShowFlag(show_flag_array, flag, start_day, last_days) {
 
 function getEditViewPosX(mouse_x) {
     var show_pos_x = mouse_x;
-    var view_width = float_event_edit.width
+    var view_width = float_edit.width
     var root_width = panelItem.width
 
     if (mouse_x - view_width / 2 < 0) {
@@ -72,7 +72,7 @@ function getEditViewPosX(mouse_x) {
 
 function getEditViewPosY(mouse_y, index_of_cell) {
     var show_pos_y = mouse_y;
-    var view_height = float_event_edit.height;
+    var view_height = float_edit.height;
     var cell_cols = panelItem.columns;
 
     if (index_of_cell < cell_cols) {
