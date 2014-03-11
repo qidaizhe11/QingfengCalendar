@@ -60,42 +60,50 @@ Window {
             property Component pushTransition: StackViewTransition {
                 PropertyAnimation {
                     target: enterItem
-                    property: "x"
-                    from: target.width
-                    to: 0
-                    duration: 200
+//                    property: "x"
+//                    from: target.width
+//                    to: 0
+//                    duration: 200
+                    property: "opacity"
+                    from: 0
+                    to: 1
+                    duration: 300
                 }
                 PropertyAnimation {
                     target: exitItem
-//                    property: "x"
-//                    from: 0
-//                    to: -target.width
-//                    duration: 100
-                    property: "opacity"
-                    from: 1
-                    to: 0
-                    duration: 200
+                    property: "x"
+                    from: 0
+                    to: -target.width
+                    duration: 300
+//                    property: "opacity"
+//                    from: 1
+//                    to: 0
+//                    duration: 200
                 }
             }
 
             property Component popTransition: StackViewTransition {
                 PropertyAnimation {
                     target: enterItem
-//                    property: "x"
-//                    from: -target.width
-//                    to: 0
+                    property: "x"
+                    from: -target.width
+                    to: 0
+                    duration: 300
+//                    property: "opacity"
+//                    from: 0
+//                    to: 1
 //                    duration: 200
-                    property: "opacity"
-                    from: 0
-                    to: 1
-                    duration: 200
                 }
                 PropertyAnimation {
                     target: exitItem
-                    property: "x"
-                    from: 0
-                    to: target.width
-                    duration: 200
+//                    property: "x"
+//                    from: 0
+//                    to: target.width
+//                    duration: 200
+                    property: "opacity"
+                    from: 1
+                    to: 0
+                    duration: 300
                 }
             }
             property Component replaceTransition: pushTransition

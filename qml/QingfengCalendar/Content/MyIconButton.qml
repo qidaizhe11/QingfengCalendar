@@ -9,7 +9,9 @@ Rectangle {
 
     property url icon_source: ""
 
-    signal clicked
+    signal clicked()
+
+    activeFocusOnTab: true
 
     Image {
         anchors.centerIn: parent
@@ -17,39 +19,16 @@ Rectangle {
         opacity: 0.6
     }
 
+    Rectangle {
+        anchors.fill: parent
+        radius: parent.radius
+        color: parent.activeFocus ? "#47b" : "white"
+        opacity: parent.activeFocus ? 0.3 : 0
+        Behavior on opacity {NumberAnimation{ duration: 100 }}
+    }
+
     MyMouseArea {
         anchors.fill: parent
         onClicked: parent.clicked()
     }
 }
-
-//Button {
-//    id: icon_button
-
-//    width: 20
-//    height: 20
-
-////            opacity: 0.6
-
-//    style: ButtonStyle {
-//        background: Item {
-//            Rectangle {
-//                anchors.fill: parent
-//                color: "transparent"
-//            }
-//        }
-//        label: Item {
-//            Image {
-//                anchors.centerIn: parent
-//                source: control.iconSource
-//                anchors.verticalCenter: parent.verticalCenter
-//                opacity: 0.6
-//            }
-//        }
-//    }
-
-//    MyMouseArea {
-//        anchors.fill: parent
-////        clicked: clicked();
-//    }
-//}

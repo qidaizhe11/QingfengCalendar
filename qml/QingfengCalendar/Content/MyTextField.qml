@@ -12,6 +12,8 @@ Item {
 
     signal accepted()
 
+    property alias text: text_input.text
+
     property alias contentHeight: text_input.contentHeight
     property alias contentWidth: text_input.contentWidth
 

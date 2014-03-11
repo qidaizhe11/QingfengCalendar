@@ -1,5 +1,4 @@
-
-import QtQuick 2.0
+import QtQuick 2.1
 
 Rectangle {
     id: text_link_button
@@ -22,6 +21,8 @@ Rectangle {
     height: button_height
     color: "transparent"
 
+    activeFocusOnTab: true
+
     Text {
         id: text_label
         anchors.centerIn: parent
@@ -31,6 +32,14 @@ Rectangle {
         color: text_color
     }
 
+    Rectangle {
+        anchors.fill: parent
+        radius: parent.radius
+        color: parent.activeFocus ? "#47b" : "white"
+        opacity: parent.activeFocus ? 0.3 : 0
+        Behavior on opacity {NumberAnimation{ duration: 100 }}
+    }
+
     MyMouseArea {
         id: mouse_area
         anchors.fill: parent
@@ -38,6 +47,10 @@ Rectangle {
 
         onEntered: text_label.color = Qt.lighter(text_color, 1.2)
         onExited: text_label.color = text_color
+
+        onPressed: text_label.color = clicked_color
+        onReleased: text_label.color = text_color
+
         onClicked: parent.clicked()
     }
 }

@@ -9,13 +9,6 @@ import "Content"
 Rectangle {
     id: event_edit_view
 
-//    property real window_width: 960
-//    property real window_height: 600
-
-//    property real pos_x
-//    property real pos_y
-
-//    anchors.fill: parent
     width: parent.width
     height: parent.height
 
@@ -24,22 +17,22 @@ Rectangle {
     visible: true
     color: "white"
 
-//    width: window_width
-//    height: window_height
-
-//    minimumHeight: 560
-//    minimumWidth: 800
-
-//    MyEvent {
-//        id: my_event_item
-//    }
-
     property var event_item
     property date event_date: new Date()
 
     property real left_part_width: event_edit_view.width * 0.4
 
     Component.onCompleted: title_edit.forceActiveFocus()
+
+    state: "add"
+
+    signal cancel()
+
+    onCancel: {
+//        event_item = undefined;
+        if (stack_view) stack_view.pop();
+        event_edit_view.state = "add";
+    }
 
     Rectangle {
         id: left_part
@@ -49,8 +42,6 @@ Rectangle {
         width: parent.width * 0.4
         height: parent.height
         anchors.left: parent.left
-
-//        property real left_margin: left_part.width * 0.1
         property real title_font_size: 16
         property real item_height: left_part.height * 0.05
 
@@ -60,56 +51,42 @@ Rectangle {
             anchors.leftMargin: parent.width * 0.07
             anchors.top: parent.top
             height: parent.height * 0.15
-//            width: parent.width
 
-            MyTextButton {
-                id: back_button
+            Row {
+                anchors.fill: parent
+                spacing: 6
 
-                anchors.left: parent.left
-                anchors.verticalCenter: parent.verticalCenter
+                MyRoundButton {
+                    id: back_button
 
-                text: "Back"
-                font_size: 12
-
-                onClicked: if (stack_view) stack_view.pop()
-            }
-
-            Rectangle {
-                id: calendar_color_block
-                anchors.left: back_button.right
-                anchors.verticalCenter: parent.verticalCenter
-                height: parent.height * 0.5
-                width: parent.height * 0.5
-                color: "indigo"
-            }
-            Rectangle {
-                id: calendar_title_content
-                anchors.left: calendar_color_block.right
-                anchors.verticalCenter: parent.verticalCenter
-                height: parent.height * 0.8
-//                width: 300
-//                color: "yellow"
-
-                Column {
                     anchors.verticalCenter: parent.verticalCenter
-                    spacing: 1
+                    width: parent.height * 0.45
+                    height: parent.height * 0.45
 
-                    Label {
-                        id: title_text
-                        text: qsTr("My Calendar")
-                        font.pointSize: left_part.title_font_size
-                    }
-//                    Rectangle {
-//                        color: "indigo"
-//                        height: 1
-//                        width: title_text.width
-//                    }
-//                    Label {
-//                        id: email_text
-//                        text: ""
-//                    }
+                    button_color: "indigo"
+                    icon_source: "images/back.png"
+
+                    onClicked: event_edit_view.cancel()
                 }
-            } // calendar_title_content
+
+                Rectangle {
+                    id: calendar_color_block
+
+                    anchors.verticalCenter: parent.verticalCenter
+                    height: parent.height * 0.5
+                    width: parent.height * 0.5
+                    color: "indigo"
+                }
+
+                Label {
+                    id: title_text
+
+                    anchors.verticalCenter: parent.verticalCenter
+
+                    text: qsTr("My Calendar")
+                    font.pointSize: left_part.title_font_size
+                }
+            } // row
         } // calendar_title_rect
 
         ListModel {
@@ -184,7 +161,8 @@ Rectangle {
                             id: start_date_edit
                             width: parent.width
                             height: left_part.item_height
-                            selected_date: event_item ? event_item.startDateTime :
+                            selected_date: event_edit_view.state == "edit"  ?
+                                               event_item.startDateTime :
                                                event_date
                         }
                     }
@@ -208,12 +186,22 @@ Rectangle {
                                 width: parent.width / 3
                                 height: left_part.item_height
                                 model: hour_model
+
+                                currentIndex: event_edit_view.state == "edit" ?
+                                                 event_item.startDateTime.getHours() :
+                                                 event_date.getHours()
                             }
                             ComboBox {
                                 id: start_minute_combo
                                 width: parent.width / 3
                                 height: left_part.item_height
                                 model: minute_model
+
+                                currentIndex:
+                                    event_edit_view.state == "edit"  ?
+                                        Math.floor(
+                                            event_item.startDateTime.getMinutes() / 5) :
+                                        Math.floor(event_date.getMinutes() / 5)
                             }
 
                             CheckBox {
@@ -224,7 +212,7 @@ Rectangle {
                                 checked: true
                             }
                         }
-                    }
+                    } // dt_start
 
                     // End DateTime
                     Column {
@@ -238,7 +226,8 @@ Rectangle {
                             id: end_date_edit
                             width: parent.width
                             height: left_part.item_height
-                            selected_date: event_item ? event_item.endDateTime :
+                            selected_date: event_edit_view.state == "edit" ?
+                                               event_item.endDateTime :
                                                event_date
                         }
                         Row {
@@ -251,15 +240,25 @@ Rectangle {
                                 width: parent.width / 3
                                 height: left_part.item_height
                                 model: hour_model
+
+                                currentIndex: event_edit_view.state == "edit" ?
+                                                 event_item.endDateTime.getHours() :
+                                                 event_date.getHours()
                             }
                             ComboBox {
                                 id: end_minute_combo
                                 width: parent.width / 3
                                 height: left_part.item_height
                                 model: minute_model
+
+                                currentIndex:
+                                    event_edit_view.state == "edit"  ?
+                                        Math.floor(
+                                            event_item.endDateTime.getMinutes() / 5) :
+                                        Math.floor(event_date.getMinutes() / 5)
                             }
                         }
-                    }
+                    } // dt_end
 
                     // Location
                     Column {
@@ -274,6 +273,8 @@ Rectangle {
                             id: location_label
                             width: parent.width
                             height: left_part.item_height
+                            // TODO: Add location in MyEvent
+//                            text:
                         }
                     }
 
@@ -282,6 +283,7 @@ Rectangle {
                         id: show_more_button
                         text: qsTr("More details")
                         font_size: event_edit_view.font_size
+                        text_color: "indigo"
                     }
 
                 } // column layout
@@ -316,6 +318,9 @@ Rectangle {
                 font.pointSize: 18
                 placeholderText: qsTr("Add a subject")
 
+                text: event_edit_view.state == "edit" ?
+                          event_item.displayLabel : ""
+
                 style: TextFieldStyle {
                     padding { top: 0; bottom: 0; left: 0; right: 0 }
                     background: Rectangle {
@@ -343,21 +348,13 @@ Rectangle {
 
                 font_size: 12
                 placeholder_text: qsTr("Add a description")
+
+                // TODO: Add description in MyEvent
+//                text:
             }
 
             property real button_width_level: 0.18
             property real button_font_size: 12
-
-//            MyTextButton {
-//                id: save_button
-//                anchors.left: parent.left
-//                anchors.bottom: parent.bottom
-//                text: qsTr("Save")
-//                font_size: parent.button_font_size
-//                button_color: "indigo"
-//                width: parent.width * parent.button_width_level
-//                height: text_height * 1.6
-//            }
 
             MyButton {
                 id: save_button
@@ -384,36 +381,36 @@ Rectangle {
                 button_color: Qt.darker("lightgray", 1.6)
 //                font_bold: true
 
-                onClicked: if (stack_view) stack_view.pop()
+                onClicked: event_edit_view.cancel();
             }
 
-//            MyTextButton {
-//                id: cancel_button
-//                anchors.left: save_button.right
-//                anchors.leftMargin: parent.width * 0.05
-//                anchors.bottom: parent.bottom
-//                width: parent.width * parent.button_width_level
-//                height: text_height * 1.6
-//                text: qsTr("Cancel")
-//                font_size: parent.button_font_size
-//                button_color: "lightgray"
-//                text_color: Qt.darker("darkgrey", 2.0)
-//                hovered_color: Qt.lighter(button_color, 1.1)
-//            }
-
-            MyTextButton {
+            MyButton {
                 id: delete_button
                 anchors.right: parent.right
                 anchors.bottom: parent.bottom
                 width: parent.width * parent.button_width_level
-                height: text_height * 1.6
+                height: parent.height * 0.08
+
                 text: qsTr("Delete")
                 font_size: parent.button_font_size
-                button_color: "lightgray"
-                text_color: "grey"
+                button_color: Qt.darker("lightgray", 1.6)
 
-                visible: event_item ? true : false
+                visible: event_edit_view.state === "edit" ? true : false
             }
+
+//            MyTextButton {
+//                id: delete_button
+//                anchors.right: parent.right
+//                anchors.bottom: parent.bottom
+//                width: parent.width * parent.button_width_level
+//                height: text_height * 1.6
+//                text: qsTr("Delete")
+//                font_size: parent.button_font_size
+//                button_color: "lightgray"
+//                text_color: "grey"
+
+//                visible: event_item ? true : false
+//            }
         } // right_part_content
     } // right_part
 }

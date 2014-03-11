@@ -32,6 +32,7 @@ Item {
         event_date = dt_start;
         loader.sourceComponent = event_add_panel;
         loader.item.title_text = "";
+        loader.item.forceActiveFocus();
         float_edit.visible = true;
     }
     onShowEdit: {
@@ -52,7 +53,14 @@ Item {
     onAddDetails: {
 //        stack_view.push({ item: Qt.resolvedUrl("EventEditWindow.qml"),
 //                        properties: {event_date: event_date} });
-        stack_view.push({item: event_edit_view, properties: {event_date: event_date}});
+        stack_view.push({item: event_edit_view,
+                            properties: {event_date: event_date, state: "add"}});
+        float_edit.hide();
+    }
+
+    onEditDetails: {
+        stack_view.push({item: event_edit_view,
+                            properties: {event_item: event_item, state: "edit"}});
         float_edit.hide();
     }
 
@@ -189,7 +197,7 @@ Item {
                     textColor: "indigo"
                     focus: true
                 }
-            }
+            } // edit_title
 
             Label {
                 id: edit_date_label
@@ -250,7 +258,7 @@ Item {
                     text: qsTr("Discard changes")
                     font_size: float_edit.font_size + 2
                 }
-            }
+            } // left_bottom_button
 
             Item {
                 id: right_bottom_button
@@ -291,8 +299,8 @@ Item {
 
                     onClicked: saveEventTitle();
                 }
-            }
-        }
+            } // right_bottom_button
+        } // edit_content
 
         MyIconButton {
             id: edit_close_button
@@ -313,13 +321,16 @@ Item {
             float_edit.hide();
             control.refreshEvents();
         }
-    }
+    } // event_edit_panel
 
     property Component event_add_panel: Rectangle {
         color: base_color
 
 //        property string event_title
         property alias title_text: title_edit.text
+        signal forceActiveFocus()
+
+        onForceActiveFocus: title_edit.forceActiveFocus()
 
         Rectangle {
             id: add_content
@@ -367,7 +378,7 @@ Item {
                         font.pointSize: float_edit.font_size
                         focus: true
                     }
-                }
+                } // grid_layout
 
                 RowLayout {
                     spacing: 20
@@ -392,9 +403,9 @@ Item {
 
                         onClicked: float_edit.addDetails()
                     }
-                }
-            }
-        }
+                } // button_layout
+            } // column_layout
+        } // add_content
 
         MyIconButton {
             id: close_button
@@ -438,8 +449,6 @@ Item {
             }
 
             new_event.destroy();
-        }
-
-        Component.onCompleted: title_edit.forceActiveFocus()
-    }
+        } // createAllDayEvent
+    } // event_add_panel
 }

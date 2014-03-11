@@ -4,7 +4,6 @@ import QtQuick.Controls.Styles 1.0
 
 Button {
     property color button_color
-//    property color text_color: "black"
     property real font_size: 12
     property bool font_bold: false
 
