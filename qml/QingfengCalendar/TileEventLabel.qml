@@ -30,16 +30,22 @@ Rectangle {
     readonly property int days_in_week: CalendarUtils.daysInAWeek
 //    property int grid_index: event_utils.gridIndex(eventItem.startDateTime)
     property int horizontal_index: grid_index % days_in_week
-    property int vertical_index: grid_index / days_in_week
+    property int vertical_index: Math.floor(grid_index / days_in_week)
 
     width: parent.width / days_in_week * last_days;
     height: parent.height / ( 3 * display_weeks)
     x: parent.width / days_in_week * horizontal_index
     y: parent.height / display_weeks * vertical_index + height * (show_flag_of_day + 1)
 
-//    EventUtils {
-//        id: event_utils
+//    Component.onCompleted: {
+//        console.log("In TileEventlabel.")
+//        console.log(eventItem.startDateTime, ", ", eventItem.displayLabel);
+//        console.log("Index: ", grid_index)
+//        console.log("h_index: ", horizontal_index);
+//        console.log("v_index: ", vertical_index);
 //    }
+
+    opacity: 0
 
     Item {
         id: view
@@ -92,7 +98,6 @@ Rectangle {
             parent.color = Qt.darker(base_color, 1.5);
 
             var date = control.__model.dateAt(grid_index);
-//            hoveredCellIndex = grid_index;
             if (__isValidDate(date)) {
 //                            control.clicked(date);
             }
@@ -109,6 +114,8 @@ Rectangle {
             float_edit.showEdit(eventItem);
         }
     }
+
+    NumberAnimation on opacity { from: 0; to: 1; duration: 200; }
 
 //    Component.onCompleted: event_label.destroy();
 }

@@ -21,11 +21,6 @@ Style {
 
     signal refreshEvents()
 
-
-    ListModel {
-        id: label_list_model
-    }
-
     EventUtils {
         id: event_utils
     }
@@ -53,6 +48,9 @@ Style {
 
         color: base_color
 
+        signal showPreviousMonth()
+        signal showNextMonth()
+
         readonly property real bottom_margin: 15
 
         Button {
@@ -69,7 +67,8 @@ Style {
             opacity: 0.6
 
             onClicked: {
-                control.showPreviousMonth();
+//                control.showPreviousMonth();
+                parent.showPreviousMonth();
             }
         }
         Label {
@@ -95,7 +94,8 @@ Style {
             iconSource: "images/arrow-right-mine.png"
             opacity: 0.6
 
-            onClicked: control.showNextMonth()
+//            onClicked: control.showNextMonth()
+            onClicked: parent.showNextMonth()
         }
     }
 

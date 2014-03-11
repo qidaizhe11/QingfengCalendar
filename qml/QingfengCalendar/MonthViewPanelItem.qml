@@ -31,26 +31,14 @@ Item {
     property int hoveredCellIndex: -1
     property int pressedCellIndex: -1
 
-    readonly property int max_month_list_count: 11
+    readonly property int max_month_list_count: 7
     readonly property int middle_index_of_month_list: (max_month_list_count - 1) / 2
 
     property int month_list_index: middle_index_of_month_list
 
-//    property date visible_month_date
-
-//    Component.onCompleted: {
-//        var select_date = new Date();
-//        visible_month_date = new Date(select_date.getFullYear(),
-//                                      select_date.getMonth(),
-//                                      1);
-//    }
-
-//    {
-//        var select_date = new Date();
-//        visible_month_date = new Date(select_date.getFullYear(),
-//                                      select_date.getMonth(),
-//                                      1);
-//    }
+    ListModel {
+        id: label_list_model
+    }
 
     Loader {
         id: backgroundLoader
@@ -201,7 +189,7 @@ Item {
             currentIndex: middle_index_of_month_list
 //            flickDeceleration: 0
             highlightFollowsCurrentItem: true
-            highlightMoveVelocity: 1600
+            highlightMoveVelocity: 1000
             highlightRangeMode: ListView.StrictlyEnforceRange
             boundsBehavior: Flickable.DragOverBounds
 //            preferredHighlightBegin: 0
@@ -212,6 +200,9 @@ Item {
                 console.log("List View onCompleted.")
 //                currentIndex = middle_index_of_month_list
             }
+
+//            onDragStarted: hideEventLabels();
+//            onDragEnded: showEventLabels();
         }
     }
 
@@ -239,7 +230,7 @@ Item {
 
     Timer {
         id: refresh_events_timer
-        interval: 800
+        interval: 550
         onTriggered: {
             control.refreshEvents()
         }
@@ -251,12 +242,12 @@ Item {
             console.log("Month list view, Current Item Changed.");
             console.log("Index: ", month_list_view.currentIndex);
 
+            panelItem.hideEventLabels();
+
             var index = month_list_view.currentIndex;
             control.visible_date = month_list_model.get(index).month_date;
 
             console.log(control.visible_date.toLocaleDateString());
-
-            refresh_events_timer.start();
 
             if (index === 0) {
                 insert_at_begin_timer.start();
@@ -264,7 +255,18 @@ Item {
             if (index === max_month_list_count - 1) {
                 insert_at_end_timer.start();
             }
+
+            refresh_events_timer.start();
         }
+    }
+
+    Connections {
+        target: navigationBarLoader.item
+        onShowPreviousMonth: month_list_view.decrementCurrentIndex();
+    }
+    Connections {
+        target: navigationBarLoader.item
+        onShowNextMonth: month_list_view.incrementCurrentIndex();
     }
 
     property Component month_delegate: Item {
@@ -352,11 +354,11 @@ Item {
             }
 
             onWheel: {
-                if (wheel.angleDelta.y > 0) {
+                if (wheel.angleDelta.y > 0 && wheel.angleDelta.y <= 120) {
                     month_list_view.decrementCurrentIndex();
                 }
 
-                if (wheel.angleDelta.y < 0) {
+                if (wheel.angleDelta.y < 0 && wheel.angleDelta.y >= -120) {
                     month_list_view.incrementCurrentIndex();
                 }
             }
@@ -480,10 +482,22 @@ Item {
         z: 1
     }
 
+    function hideEventLabels() {
+        for (var i = 0; i < label_list_model.count; ++i) {
+            label_list_model.get(i).object.opacity = 0;
+        }
+    }
+
+    function showEventLabels() {
+        for (var i = 0; i < label_list_model.count; ++i) {
+            label_list_model.get(i).object.opacity = 1;
+        }
+    }
+
     function clearLabelListModel() {
         while (label_list_model.count > 0) {
             console.log("Label list model, try to destroy.");
-            label_list_model.get(0).obj.destroy();
+            label_list_model.get(0).object.destroy();
             label_list_model.remove(0);
         }
     }
@@ -494,8 +508,8 @@ Item {
         control.event_model.updateEvents();
     }
 
-    function labelListModelAddItem(obj, source) {
-        label_list_model.append({"obj": obj, "source": source});
+    function labelListModelAddItem(object) {
+        label_list_model.append({"object": object});
     }
 
     Connections {
@@ -516,19 +530,13 @@ Item {
 
             var component = Qt.createComponent("TileEventLabel.qml");
 
-
-//            console.log("control.event_list.events.length: " + control.event_model.events.length);
-
             console.log("Come to create object.");
 
             for (var i = 0; i < control.event_model.events.length; ++i) {
                 var event = control.event_model.events[i];
 
-//                var index_of_cell = event_utils.gridIndex(event.startDateTime,
-//                visible_date);
                 var index_of_cell = event_utils.daysTo(
                             control.__model.firstVisibleDate, event.startDateTime);
-//                console.log("Index of cell: ", index_of_cell);
 
                 var day_event_count = event_counts_of_day[index_of_cell];
 
@@ -558,48 +566,28 @@ Item {
                                               index_of_cell,
                                               last_days);
 
-
-//                console.log("Event start: " + event.startDateTime + " " + event.displayLabel);
-//                console.log("Event end: ", event.endDateTime, " ");
-
                 var col = panelItem.columns;
+                var properties;
                 while (index_of_cell % col + last_days > col) {
                     var clipped_days = col - index_of_cell % col;
 
-                    if (component.status === Component.Ready) {
-                        var clipped_label =
-                                component.createObject(
-                                    viewContainer,
-                                    {"eventItem" : event,
-                                        "show_flag_of_day": show_flag_of_day,
-                                        "grid_index": index_of_cell,
-                                        "last_days": clipped_days});
+                    properties = {
+                        "eventItem": event,
+                        "show_flag_of_day": show_flag_of_day,
+                        "grid_index": index_of_cell,
+                        "last_days": clipped_days};
+                    CreateObject.createInComponent(
+                                component, viewContainer, properties,
+                                labelListModelAddItem);
 
-                        if (clipped_label === null) {
-                            console.log("Error creating object");
-                        }
-
-                        label_list_model.append({"obj": clipped_label,
-                                                    "source":"TileEventLabel.qml"});
-                        index_of_cell += clipped_days;
-                        last_days -= clipped_days;
-                    } else if (component.status === Component.Error) {
-                        console.log("Error loading component: ", component.errorString());
-                    }
+                    index_of_cell += clipped_days;
+                    last_days -= clipped_days;
                 }
 
-                if (component.status === Component.Ready) {
-                    var label = component.createObject(viewContainer, {"eventItem" : event, "show_flag_of_day": show_flag_of_day, "grid_index": index_of_cell, "last_days": last_days});
-
-                    if (label === null) {
-                        console.log("Error creating object");
-                    } else if (component.status === Component.Error) {
-                        console.log("Error loading component: ", component.errorString());
-                    }
-
-                    label_list_model.append({"obj": label,
-                                                "source":"TileEventLabel.qml"});
-                }
+                properties = {"eventItem": event, "show_flag_of_day": show_flag_of_day,
+                    "grid_index": index_of_cell, "last_days": last_days};
+                CreateObject.createInComponent(
+                            component, viewContainer, properties, labelListModelAddItem);
             }
 
             component.destroy();

@@ -35,6 +35,11 @@ Window {
         }
     }
 
+    EventEditWindow {
+        id: event_edit_view
+        visible: false
+    }
+
     StackViewDelegate {
         id: stack_view_delegate
 

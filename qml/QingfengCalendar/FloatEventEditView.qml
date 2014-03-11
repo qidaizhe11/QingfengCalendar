@@ -50,8 +50,9 @@ Item {
     }
 
     onAddDetails: {
-        stack_view.push({ item: Qt.resolvedUrl("EventEditWindow.qml"),
-                        properties: {event_date: event_date} });
+//        stack_view.push({ item: Qt.resolvedUrl("EventEditWindow.qml"),
+//                        properties: {event_date: event_date} });
+        stack_view.push({item: event_edit_view, properties: {event_date: event_date}});
         float_edit.hide();
     }
 
