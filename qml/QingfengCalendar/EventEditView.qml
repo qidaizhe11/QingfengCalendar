@@ -61,48 +61,54 @@ Rectangle {
         property real title_font_size: 16
         property real item_height: left_part.height * 0.05
 
-        Rectangle {
+        Item {
             id: calendar_title_rect
             anchors.left: parent.left
             anchors.leftMargin: parent.width * 0.07
             anchors.top: parent.top
             height: parent.height * 0.15
 
-            Row {
-                anchors.fill: parent
-                spacing: 6
+            MyRoundButton {
+                id: back_button
 
-                MyRoundButton {
-                    id: back_button
+                anchors.left: parent.left
+                anchors.verticalCenter: parent.verticalCenter
+                width: parent.height * 0.45
+                height: parent.height * 0.45
 
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: parent.height * 0.45
-                    height: parent.height * 0.45
+                button_color: "indigo"
+                icon_source: "images/back.png"
 
-                    button_color: "indigo"
-                    icon_source: "images/back.png"
+                onClicked: event_edit_view.cancel()
+            }
 
-                    onClicked: event_edit_view.cancel()
-                }
+            Item {
+                id: calendar_title
+                anchors.left: back_button.right
+                anchors.leftMargin: 15
+                height: parent.height
 
                 Rectangle {
                     id: calendar_color_block
 
+                    anchors.left: parent.left
                     anchors.verticalCenter: parent.verticalCenter
-                    height: parent.height * 0.5
                     width: parent.height * 0.5
+                    height: parent.height * 0.5
                     color: "indigo"
                 }
 
                 Label {
                     id: title_text
 
+                    anchors.left: calendar_color_block.right
+                    anchors.leftMargin: 2
                     anchors.verticalCenter: parent.verticalCenter
 
                     text: qsTr("My Calendar")
                     font.pointSize: left_part.title_font_size
                 }
-            } // row
+            }
         } // calendar_title_rect
 
         ListModel {
@@ -330,7 +336,7 @@ Rectangle {
             id: right_part_content
             anchors.fill: parent
             anchors.leftMargin: parent.width * 0.05
-            anchors.rightMargin: parent.width * 0.05
+            anchors.rightMargin: parent.width * 0.04
             anchors.topMargin: parent.height * 0.05
             anchors.bottomMargin: parent.height * 0.05
 
@@ -362,11 +368,12 @@ Rectangle {
                         cursorPosition = 0;
                     }
                 }
-                onActiveFocusChanged: {
-                    if(activeFocus) {
-                        selectAll();
-                    }
-                }
+
+//                onActiveFocusChanged: {
+//                    if (activeFocus) {
+//                        selectAll();
+//                    }
+//                }
             }
 
             Rectangle {
@@ -405,6 +412,7 @@ Rectangle {
                 button_color: "indigo"
                 font_size: parent.button_font_size
                 font_bold: true
+                border_width: 2
 
                 onClicked: event_edit_view.saveEvent();
             }

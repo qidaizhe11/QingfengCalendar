@@ -183,6 +183,7 @@ Item {
                         onClicked: {
 //                            loader.sourceComponent = event_edit_enter;
                             event_edit_panel.state = "edit";
+                            edit_title_enter.forceActiveFocus();
                         }
                     }
                 } // edit_title_show
@@ -263,7 +264,12 @@ Item {
                     text: qsTr("Save")
                     font_size: float_edit.font_size + 2
 
-                    onClicked: saveEventTitle();
+                    onClicked: {
+                        event_item.displayLabel = edit_title_enter.text;
+                        control.event_model.saveEvent(event_item);
+                        float_edit.hide();
+                        control.refreshEvents();
+                    }
                 }
             } // right_bottom_button
 
@@ -304,6 +310,8 @@ Item {
                     font_size: float_edit.font_size
                     width: text_width * 1.2
                     height: text_height * 1.8
+
+                    onClicked: float_edit.hide();
                 }
             } // left_bottom_button
         } // edit_content

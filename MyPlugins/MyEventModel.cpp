@@ -3,8 +3,10 @@
 #include <QOrganizerManager>
 #include <QVersitReader>
 #include <QVersitWriter>
-#include <QtVersitOrganizer/QVersitOrganizerImporter>
-#include <QtVersitOrganizer/QVersitOrganizerExporter>
+//#include <QtVersitOrganizer/QVersitOrganizerImporter>
+//#include <QtVersitOrganizer/QVersitOrganizerExporter>
+#include "versitorganizer/qversitorganizerimporter.h"
+#include "versitorganizer/qversitorganizerexporter.h"
 #include <QList>
 #include <QVariant>
 #include <QString>

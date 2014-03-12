@@ -397,7 +397,7 @@ Item {
                 if (indexOfCell !== -1) {
                     var date = view.model.dateAt(indexOfCell);
                     console.log("Date at this point: ", date.toLocaleDateString());
-//                    panelItem.hoveredCellIndex = indexOfCell;
+                    panelItem.hoveredCellIndex = indexOfCell;
                     if (__isValidDate(date)) {
                         //                            control.clicked(date);
                         var global_pos = viewContainer.mapToItem(null, mouseX, mouseY);

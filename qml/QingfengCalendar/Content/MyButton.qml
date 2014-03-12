@@ -6,6 +6,7 @@ Button {
     property color button_color
     property real font_size: 12
     property bool font_bold: false
+    property real border_width: 1
 
     property bool is_color_defined: button_color != undefined
 
@@ -16,6 +17,7 @@ Button {
 
             border.color: control.activeFocus ? "#47b" :
                                                 (is_color_defined ? button_color : "#999")
+            border.width: border_width
             implicitWidth: 100
             implicitHeight: 20
             gradient: Gradient {

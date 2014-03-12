@@ -11,11 +11,10 @@
 其中后者会出现在 [Qt 5.3](http://qt-project.org/wiki/New-Features-in-Qt-5.3)，至于前者何时会推到正式版，我真的不知道。
 </br>
 
----
 ###当前进度：
+------------
 
 ####正在解决：
-- QVersitOrganizer 中缺失Location项的修复
 - 与 Google Calendar 的同步（双向）
 
 ####待解决:
@@ -30,8 +29,8 @@
 - 事件编辑界面（EventEditView）的绘制
 </br>
 
----
 ###构建与运行：
+------------
 
 程序尚属初始阶段，离安装包还远......
 
@@ -56,6 +55,7 @@ QString file_name = "/home/daizhe/qidaizhe11@gmail.com-2.ics";
 qmake, make，应该可以看到当前程序运行效果了。
 </br>
 
----
 </br>
+###其它
+------------
 尚在不断完善中...

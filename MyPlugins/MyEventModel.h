@@ -7,7 +7,8 @@
 #include <QtOrganizer/QOrganizerManager>
 #include <QtOrganizer/qorganizerglobal.h>
 #include <QtOrganizer/qorganizerabstractrequest.h>
-#include <QtVersitOrganizer/qversitorganizerglobal.h>
+//#include <QtVersitOrganizer/qversitorganizerglobal.h>
+#include <versitorganizer/qversitorganizerglobal.h>
 #include "MyEvent.h"
 
 QTORGANIZER_USE_NAMESPACE

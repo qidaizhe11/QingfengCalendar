@@ -6,7 +6,7 @@ DEPLOYMENTFOLDERS = folder_01
 # Additional import path used to resolve QML modules in Creator's code model
 QML_IMPORT_PATH =
 
-QT += sql core gui widgets organizer versit versitorganizer
+QT += sql core gui widgets organizer versit
 
 #LIBS        += /usr/lib/libical.so.1
 
@@ -31,7 +31,14 @@ SOURCES += main.cpp \
     MyPlugins/MyEventModel.cpp \
     MyPlugins/MyTestEvent.cpp \
 #    MyPlugins/myplugins_plugin.cpp
-    MyPlugins/EventUtils.cpp
+    MyPlugins/EventUtils.cpp \
+    versitorganizer/qversitorganizerimporter_p.cpp \
+    versitorganizer/qversitorganizerhandler.cpp \
+    versitorganizer/qversitorganizerexporter.cpp \
+    versitorganizer/qversitorganizerexporter_p.cpp \
+    versitorganizer/qtimezones_p.cpp \
+    versitorganizer/qversitorganizerpluginloader_p.cpp \
+    versitorganizer/qversitorganizerimporter.cpp
 
 # Installation path
 # target.path =
@@ -63,7 +70,18 @@ HEADERS += \
     MyPlugins/MyEventModel.h \
     MyPlugins/MyTestEvent.h \
 #    MyPlugins/myplugins_plugin.h
-    MyPlugins/EventUtils.h
+    MyPlugins/EventUtils.h \
+    versitorganizer/qversitorganizerhandler.h \
+    versitorganizer/qversitorganizerglobal.h \
+    versitorganizer/qversitorganizerexporter.h \
+    versitorganizer/qversitorganizerexporter_p.h \
+    versitorganizer/qversitorganizerdefs_p.h \
+    versitorganizer/qtimezones_p.h \
+    versitorganizer/qversittimezonehandler.h \
+    versitorganizer/qversitorganizerpluginsearch_p.h \
+    versitorganizer/qversitorganizerpluginloader_p.h \
+    versitorganizer/qversitorganizerimporter.h \
+    versitorganizer/qversitorganizerimporter_p.h
 
 RESOURCES += \
     resources/Calendar.qrc
