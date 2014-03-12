@@ -35,11 +35,6 @@ Window {
         }
     }
 
-    EventEditView {
-        id: event_edit_view
-        visible: false
-    }
-
     StackViewDelegate {
         id: stack_view_delegate
 
@@ -108,6 +103,11 @@ Window {
             }
             property Component replaceTransition: pushTransition
         }
+    }
+
+    EventEditView {
+        id: event_edit_view
+        visible: false
     }
 
     Component.onCompleted: {

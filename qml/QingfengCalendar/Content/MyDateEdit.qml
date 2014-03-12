@@ -60,7 +60,7 @@ Item {
                 selected_date = calendar.selectedDate
                 date_edit.text = selected_date.toLocaleDateString()
                 item.state = ""
-                console.log(selected_date)
+//                console.log(selected_date)
             }
         }
     }

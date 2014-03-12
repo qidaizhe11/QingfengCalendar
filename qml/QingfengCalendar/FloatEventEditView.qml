@@ -62,6 +62,8 @@ Item {
         stack_view.push({item: event_edit_view,
                             properties: {event_item: event_item, state: "edit"}});
         float_edit.hide();
+
+        console.log("Is allday: ", event_item.allDay);
     }
 
     Connections {

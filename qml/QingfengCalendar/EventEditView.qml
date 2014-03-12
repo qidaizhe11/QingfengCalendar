@@ -12,26 +12,39 @@ Rectangle {
     width: parent.width
     height: parent.height
 
-    property real font_size: 12
-
     visible: true
     color: "white"
+
+    state: "add"
 
     property var event_item
     property date event_date: new Date()
 
-    property real left_part_width: event_edit_view.width * 0.4
-
-    Component.onCompleted: title_edit.forceActiveFocus()
-
-    state: "add"
-
     signal cancel()
 
     onCancel: {
-//        event_item = undefined;
         if (stack_view) stack_view.pop();
-        event_edit_view.state = "add";
+
+        if (state === "edit") {
+            state = "add";
+        }
+    }
+
+    property date start_date: state === "edit" ? event_item.startDateTime :
+                                                 event_date
+    property date end_date: state === "edit" ? event_item.endDateTime :
+                                               event_date
+
+
+
+//    property real left_part_width: width * 0.4
+
+    property real font_size: 12
+
+    property bool is_date_error: false
+
+    Component.onCompleted: {
+        title_edit.forceActiveFocus()
     }
 
     Rectangle {
@@ -116,12 +129,29 @@ Rectangle {
             }
         }
 
+        Label {
+            id: error_label
+
+            anchors.left: parent.left
+            anchors.leftMargin: parent.width * 0.07
+            anchors.top: calendar_title_rect.bottom
+
+            height: is_date_error ? (parent.height * 0.05) : 0
+            opacity: is_date_error ? 1 : 0
+
+            text: qsTr("End time is earlier than start time.")
+            color: "red"
+            font.pointSize: font_size
+
+            NumberAnimation on opacity { duration: 500; }
+        }
+
         ScrollView {
             id: event_scroll_view
 
             anchors.left: parent.left
             anchors.leftMargin: parent.width * 0.07
-            anchors.top: calendar_title_rect.bottom
+            anchors.top: error_label.bottom
             height: parent.height * 0.85
             width: parent.width * 0.93
 
@@ -161,9 +191,7 @@ Rectangle {
                             id: start_date_edit
                             width: parent.width
                             height: left_part.item_height
-                            selected_date: event_edit_view.state == "edit"  ?
-                                               event_item.startDateTime :
-                                               event_date
+                            selected_date: start_date
                         }
                     }
 
@@ -174,6 +202,7 @@ Rectangle {
 
                         Label {
                             text: "Start"
+                            enabled: allday_checkbox.checked ? false : true
                         }
 
                         Row {
@@ -187,9 +216,8 @@ Rectangle {
                                 height: left_part.item_height
                                 model: hour_model
 
-                                currentIndex: event_edit_view.state == "edit" ?
-                                                 event_item.startDateTime.getHours() :
-                                                 event_date.getHours()
+                                enabled: allday_checkbox.checked ? false : true
+                                currentIndex: 0
                             }
                             ComboBox {
                                 id: start_minute_combo
@@ -197,11 +225,8 @@ Rectangle {
                                 height: left_part.item_height
                                 model: minute_model
 
-                                currentIndex:
-                                    event_edit_view.state == "edit"  ?
-                                        Math.floor(
-                                            event_item.startDateTime.getMinutes() / 5) :
-                                        Math.floor(event_date.getMinutes() / 5)
+                                currentIndex: 0
+                                enabled: allday_checkbox.checked ? false : true
                             }
 
                             CheckBox {
@@ -226,9 +251,7 @@ Rectangle {
                             id: end_date_edit
                             width: parent.width
                             height: left_part.item_height
-                            selected_date: event_edit_view.state == "edit" ?
-                                               event_item.endDateTime :
-                                               event_date
+                            selected_date: end_date
                         }
                         Row {
                             width: parent.width
@@ -241,9 +264,8 @@ Rectangle {
                                 height: left_part.item_height
                                 model: hour_model
 
-                                currentIndex: event_edit_view.state == "edit" ?
-                                                 event_item.endDateTime.getHours() :
-                                                 event_date.getHours()
+                                currentIndex: 0
+                                enabled: allday_checkbox.checked ? false : true
                             }
                             ComboBox {
                                 id: end_minute_combo
@@ -251,11 +273,8 @@ Rectangle {
                                 height: left_part.item_height
                                 model: minute_model
 
-                                currentIndex:
-                                    event_edit_view.state == "edit"  ?
-                                        Math.floor(
-                                            event_item.endDateTime.getMinutes() / 5) :
-                                        Math.floor(event_date.getMinutes() / 5)
+                                enabled: allday_checkbox.checked ? false : true
+                                currentIndex: 0
                             }
                         }
                     } // dt_end
@@ -397,20 +416,139 @@ Rectangle {
 
                 visible: event_edit_view.state === "edit" ? true : false
             }
-
-//            MyTextButton {
-//                id: delete_button
-//                anchors.right: parent.right
-//                anchors.bottom: parent.bottom
-//                width: parent.width * parent.button_width_level
-//                height: text_height * 1.6
-//                text: qsTr("Delete")
-//                font_size: parent.button_font_size
-//                button_color: "lightgray"
-//                text_color: "grey"
-
-//                visible: event_item ? true : false
-//            }
         } // right_part_content
     } // right_part
+
+    states: [
+        State {
+            name: "edit"
+            PropertyChanges { target: allday_checkbox;
+                checked: event_item.allDay; }
+        },
+        State {
+            name: "add"
+            PropertyChanges { target: allday_checkbox; checked: true; }
+        }
+    ]
+
+    property alias selected_start_date: start_date_edit.selected_date
+    property alias selected_end_date: end_date_edit.selected_date
+
+    // TODO: 每次切入编辑窗时，需要刷新这两个变量，start_time和end_time。
+
+    property date start_time: {
+        var the_date;
+        if (state === "add") {
+            the_date = new Date();
+            var hour = the_date.getHours();
+            var minute = the_date.getMinutes();
+
+            if (minute >= 30) {
+                the_date.setHours(hour + 1);
+                the_date.setMinutes(0);
+            } else {
+                the_date.setHours(hour);
+                the_date.setMinutes(30);
+            }
+        } else {
+            the_date = event_item.startDateTime;
+        }
+
+        the_date;
+    }
+
+    property date end_time: {
+        var the_date;
+        if (state === "add") {
+            the_date = start_time;
+            the_date.setHours(the_date.getHours() + 1);
+        } else {
+            the_date = event_item.endDateTime;
+        }
+
+        console.log("End_time, add hour failed? ", the_date);
+
+        the_date;
+    }
+
+    Connections {
+        target: allday_checkbox
+        onCheckedChanged: {
+            if (!allday_checkbox.checked) {
+                end_hour_combo.currentIndex = end_time.getHours();
+                end_minute_combo.currentIndex =
+                        Math.floor(end_time.getMinutes() / 5);
+                start_hour_combo.currentIndex = start_time.getHours();
+                start_minute_combo.currentIndex =
+                        Math.floor(start_time.getMinutes() / 5);
+            }
+            if (allday_checkbox.checked) {
+                var date = start_time;
+                date.setHours(start_hour_combo.currentIndex);
+                date.setMinutes(start_minute_combo.currentIndex * 5);
+                start_time = date;
+
+                date = end_time;
+                date.setHours(end_hour_combo.currentIndex);
+                date.setMinutes(end_minute_combo.currentIndex * 5);
+                end_time = date;
+
+                start_hour_combo.currentIndex = 0;
+                start_minute_combo.currentIndex = 0;
+                end_hour_combo.currentIndex = 0;
+                end_minute_combo.currentIndex = 0;
+            }
+        }
+    }
+
+    property date selected_start_time: {
+        var the_time = selected_start_date;
+
+        the_time.setHours(start_hour_combo.currentIndex);
+        the_time.setMinutes(start_minute_combo.currentIndex * 5);
+
+        the_time;
+    }
+
+    property date selected_end_time: {
+        var the_time = selected_end_date;
+
+        the_time.setHours(end_hour_combo.currentIndex);
+        the_time.setMinutes(end_minute_combo.currentIndex * 5);
+
+        the_time;
+    }
+
+    onSelected_start_dateChanged: {
+        if (selected_end_date < selected_start_date) {
+            selected_end_date = selected_start_date;
+        }
+    }
+
+    onSelected_start_timeChanged: {
+        if (selected_end_time.getTime() < selected_start_time.getTime()) {
+            end_hour_combo.currentIndex = start_hour_combo.currentIndex;
+            end_minute_combo.currentIndex = start_minute_combo.currentIndex;
+
+            console.log("Come here?")
+        } else if (is_date_error) {
+            is_date_error = false;
+        }
+
+        console.log("Start time changed.")
+        console.log("Start time: ", selected_start_time.toLocaleString());
+        console.log("End time: ", selected_end_time.toLocaleString());
+    }
+
+    onSelected_end_timeChanged: {
+        if (selected_end_time.getTime() < selected_start_time.getTime()) {
+            is_date_error = true;
+        } else {
+            is_date_error = false;
+        }
+
+        console.log("End time changed.")
+        console.log("Start time: ", selected_start_time.toLocaleString());
+        console.log("End time: ", selected_end_time.toLocaleString());
+    }
 }
