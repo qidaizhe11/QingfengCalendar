@@ -3,7 +3,7 @@ import QtQuick.Controls 1.0
 import QtQuick.Controls.Styles 1.0
 //import QtQuick.Window 2.1
 import QtQuick.Layouts 1.0
-import MyCalendar.Utils.Events 1.0
+import MyCalendar2.Utils.Events 1.0
 import "Content"
 
 Rectangle {
@@ -21,21 +21,24 @@ Rectangle {
     property date event_date: new Date()
 
     signal cancel()
+    signal saveEvent()
+    signal deleteEvent()
 
     onCancel: {
         if (stack_view) stack_view.pop();
+    }
 
-        if (state === "edit") {
-            state = "add";
-        }
+    onDeleteEvent: {
+        calendar.event_model.deleteEvent(event_item);
+        calendar.refreshEvents();
+        state = "add";
+        if (stack_view) stack_view.pop();
     }
 
     property date start_date: state === "edit" ? event_item.startDateTime :
                                                  event_date
     property date end_date: state === "edit" ? event_item.endDateTime :
                                                event_date
-
-
 
 //    property real left_part_width: width * 0.4
 
@@ -292,8 +295,10 @@ Rectangle {
                             id: location_label
                             width: parent.width
                             height: left_part.item_height
-                            // TODO: Add location in MyEvent
-//                            text:
+                            font_size: event_edit_view.font_size
+
+                            text: event_edit_view.state === "edit" ?
+                                      event_item.location : ""
                         }
                     }
 
@@ -340,11 +345,26 @@ Rectangle {
                 text: event_edit_view.state == "edit" ?
                           event_item.displayLabel : ""
 
+                focus: true
+
                 style: TextFieldStyle {
                     padding { top: 0; bottom: 0; left: 0; right: 0 }
                     background: Rectangle {
                         anchors.fill: parent
                         color: "transparent"
+                    }
+                }
+
+                horizontalAlignment: Text.AlignLeft
+
+                onFocusChanged: {
+                    if (!focus) {
+                        cursorPosition = 0;
+                    }
+                }
+                onActiveFocusChanged: {
+                    if(activeFocus) {
+                        selectAll();
                     }
                 }
             }
@@ -368,8 +388,8 @@ Rectangle {
                 font_size: 12
                 placeholder_text: qsTr("Add a description")
 
-                // TODO: Add description in MyEvent
-//                text:
+                text: event_edit_view.state === "edit" ?
+                          event_item.description : ""
             }
 
             property real button_width_level: 0.18
@@ -385,6 +405,8 @@ Rectangle {
                 button_color: "indigo"
                 font_size: parent.button_font_size
                 font_bold: true
+
+                onClicked: event_edit_view.saveEvent();
             }
 
             MyButton {
@@ -415,6 +437,8 @@ Rectangle {
                 button_color: Qt.darker("lightgray", 1.6)
 
                 visible: event_edit_view.state === "edit" ? true : false
+
+                onClicked: event_edit_view.deleteEvent();
             }
         } // right_part_content
     } // right_part
@@ -433,8 +457,6 @@ Rectangle {
 
     property alias selected_start_date: start_date_edit.selected_date
     property alias selected_end_date: end_date_edit.selected_date
-
-    // TODO: 每次切入编辑窗时，需要刷新这两个变量，start_time和end_time。
 
     property date start_time: {
         var the_date;
@@ -550,5 +572,20 @@ Rectangle {
         console.log("End time changed.")
         console.log("Start time: ", selected_start_time.toLocaleString());
         console.log("End time: ", selected_end_time.toLocaleString());
+    }
+
+    onSaveEvent: {
+        var new_event = Qt.createQmlObject(
+                    "import QtQuick 2.1; import MyCalendar2.Utils.Events 1.0; MyEvent {}",
+                    event_edit_view);
+        new_event.startDateTime = selected_start_time;
+        new_event.allDay = allday_checkbox.checked;
+        new_event.endDateTime = selected_end_time;
+        new_event.displayLabel = title_edit.text;
+        new_event.description = description_edit.text;
+        new_event.location = location_label.text;
+        calendar.event_model.saveEvent(new_event);
+        calendar.refreshEvents();
+        if (stack_view) stack_view.pop();
     }
 }

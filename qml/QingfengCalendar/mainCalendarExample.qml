@@ -3,7 +3,7 @@ import QtQuick.Controls 1.0
 import QtQuick.Controls.Styles 1.0
 import QtQuick.Window 2.1
 import QtOrganizer 5.0
-import MyCalendar.Utils.Events 1.0
+import MyCalendar2.Utils.Events 1.0
 
 Window {
     visible: true
@@ -105,9 +105,9 @@ Window {
         }
     }
 
-    EventEditView {
-        id: event_edit_view
-        visible: false
+    property Component edit_view: EventEditView {
+//        id: event_edit_view
+//        visible: false
     }
 
     Component.onCompleted: {

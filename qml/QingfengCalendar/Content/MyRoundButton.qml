@@ -19,6 +19,8 @@ Rectangle {
 
     radius: width
 
+    color: "transparent"
+
     signal clicked()
 
     activeFocusOnTab: true
@@ -56,6 +58,4 @@ Rectangle {
 
         onClicked: parent.clicked()
     }
-
-//    color:  mouse_area.pressed ? clicked_color : "transparent"
 }

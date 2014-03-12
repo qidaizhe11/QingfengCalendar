@@ -3,7 +3,7 @@ import QtQuick.Window 2.1
 import QtQuick.Controls 1.1
 import QtQuick.Layouts 1.1
 import QtGraphicalEffects 1.0
-import MyCalendar.Utils.Events 1.0
+import MyCalendar2.Utils.Events 1.0
 import "Content"
 
 Window {
@@ -272,7 +272,7 @@ Window {
 
         function createEmptyAllDayEvent() {
             var new_event = Qt.createQmlObject(
-                        "import QtQuick 2.1; import MyCalendar.Utils.Events 1.0; MyEvent {}", float_event_edit);
+                        "import QtQuick 2.1; import MyCalendar2.Utils.Events 1.0; MyEvent {}", float_event_edit);
             console.log("New Event: " + new_event);
 
             new_event.startDateTime = event_date;

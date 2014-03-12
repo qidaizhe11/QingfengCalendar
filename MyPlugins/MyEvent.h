@@ -19,8 +19,6 @@ class MyEvent : public QObject
   Q_OBJECT
 
   Q_PROPERTY(QString itemId READ itemId NOTIFY valueChanged)
-//  Q_PROPERTY(QString description READ description WRITE setDescription
-//             NOTIFY valueChanged)
   Q_PROPERTY(QString displayLabel READ displayLabel WRITE setDisplayLabel
              NOTIFY valueChanged)
   Q_PROPERTY(bool allDay READ allDay WRITE setAllDay NOTIFY valueChanged)
@@ -28,6 +26,10 @@ class MyEvent : public QObject
              NOTIFY startDateTimeChanged)
   Q_PROPERTY(QDateTime endDateTime READ endDateTime WRITE setEndDateTime
              NOTIFY endDateTimeChanged)
+  Q_PROPERTY(QString description READ description WRITE setDescription
+             NOTIFY valueChanged)
+  Q_PROPERTY(QString location READ location WRITE setLocation
+             NOTIFY valueChanged)
 
 public:
   MyEvent(QObject *parent = 0);
@@ -35,11 +37,6 @@ public:
 //  explicit MyEvent(const QString& description, const QString& display_label);
 
   QString itemId() const;
-
-//  QString description() const { return m_description; }
-//  void setDescription(const QString& description) {
-//    m_description = description;
-//  }
 
   QString displayLabel() const { return m_display_label; }
   void setDisplayLabel(QString display_label) {
@@ -57,6 +54,14 @@ public:
   QDateTime endDateTime() const { return m_end_date_time; }
   void setEndDateTime(const QDateTime& end) { m_end_date_time = end; }
 
+  QString description() const { return m_description; }
+  void setDescription(const QString& description) {
+    m_description = description;
+  }
+
+  QString location() const { return m_location; }
+  void setLocation(const QString& location) { m_location = location;}
+
 //  void setItem(const QOrganizerItem& item);
 
   QOrganizerEvent toQOrganizerEvent() const;
@@ -69,11 +74,12 @@ public:
 private:
 
   QOrganizerItemId m_id;
-//  QString m_description;
   QString m_display_label;
   bool m_all_day;
   QDateTime m_start_date_time;
   QDateTime m_end_date_time;
+  QString m_description;
+  QString m_location;
 };
 
 Q_DECLARE_METATYPE(MyEvent*)

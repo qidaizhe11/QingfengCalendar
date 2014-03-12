@@ -2,32 +2,20 @@ import QtQuick 2.1
 import QtQuick.Controls 1.0
 import QtQuick.Controls.Styles 1.0
 
-Item {
+FocusScope {
     id: textfield
-
-    implicitWidth: 100
-    implicitHeight: 20
-
-    activeFocusOnTab: true
 
     signal accepted()
 
     property alias text: text_input.text
 
+    activeFocusOnTab: true
+
+    implicitWidth: background.implicitWidth ? background.implicitWidth : 100
+    implicitHeight: background.implicitHeight ? background.implicitHeight : 20
+
     property alias contentHeight: text_input.contentHeight
     property alias contentWidth: text_input.contentWidth
-
-//    Accessible.name: text
-//    Accessible.role: Accessible.
-
-    MouseArea {
-        id: mouse_area
-        anchors.fill: parent
-        hoverEnabled: true
-        onEntered: cursorShape = Qt.IBeamCursor
-        onExited: cursorShape = Qt.ArrowCursor
-        onClicked: textfield.forceActiveFocus()
-    }
 
     SystemPalette {
         id: __syspal
@@ -36,6 +24,10 @@ Item {
     }
 
     property font font
+    property alias font_size: text_input.font.pointSize
+
+    property alias border_radius: background.radius
+//    property alias border_width: bac
 
     property color textColor: __syspal.text
 
@@ -43,29 +35,32 @@ Item {
 
     property color selectedTextColor: __syspal.highlightedText
 
-    Item {
+    Rectangle {
+        id: background
+
         implicitWidth: Math.round(contentHeight * 8)
-        implicitHeight: Math.max(25, Math.round(contentHeight * 1.2))
+        implicitHeight: Math.max(30, Math.round(contentHeight * 1.2))
 
         anchors.fill: parent
 
-        Rectangle {
-            anchors.fill: parent
-            anchors.bottomMargin: -1
-            color: "#44ffffff"
-            radius: baserect.radius
+        gradient: Gradient {
+            GradientStop {color: "#e0e0e0" ; position: 0}
+            GradientStop {color: "#fff" ; position: 0.1}
+            GradientStop {color: "#fff" ; position: 1}
         }
-        Rectangle {
-            id: baserect
-            gradient: Gradient {
-                GradientStop {color: "#e0e0e0" ; position: 0}
-                GradientStop {color: "#fff" ; position: 0.1}
-                GradientStop {color: "#fff" ; position: 1}
-            }
-            radius: contentHeight * 0.16
-            anchors.fill: parent
-            border.color: textfield.activeFocus ? "#47b" : "#999"
-        }
+        radius: contentHeight * 0.16
+
+        border.color: textfield.activeFocus ? "#47b" : "#999"
+    }
+
+    MouseArea {
+        id: mouse_area
+
+        anchors.fill: parent
+        hoverEnabled: true
+        onEntered: cursorShape = Qt.IBeamCursor
+        onExited: cursorShape = Qt.ArrowCursor
+        onClicked: textfield.forceActiveFocus()
     }
 
     TextInput {
@@ -76,14 +71,14 @@ Item {
         selectedTextColor: selectedTextColor
 
         font: font
-//        font: __panel ? __panel.
-//        anchors.leftMargin:  0
-//        anchors.topMargin:  0
-//        anchors.rightMargin:  0
-//        anchors.bottomMargin: 0
+        anchors.leftMargin:  4
+        anchors.topMargin:  4
+        anchors.rightMargin:  4
+        anchors.bottomMargin: 4
 
         anchors.fill: parent
         verticalAlignment: Text.AlignVCenter
+        horizontalAlignment: TextInput.AlignLeft
 
         color: textColor
         clip: contentWidth > width
@@ -98,6 +93,6 @@ Item {
             textfield.accepted()
         }
 
-//        onEditingFinished: textfield.editingFinished()
+        //        onEditingFinished: textfield.editingFinished()
     }
 }

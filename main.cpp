@@ -30,7 +30,7 @@ int main(int argc, char *argv[])
     qmlRegisterType<QQuickCalendarModel>(private_uri, 1, 0, "CalendarModel");
 
     const char* uri = "MyCalendar2.Utils.Events";
-    // @uri MyCalendar.Utils.Events
+    // @uri MyCalendar2.Utils.Events
     qmlRegisterType<EventUtils>(uri, 1, 0, "EventUtils");
     qmlRegisterType<MyEventModel>(uri, 1, 0, "MyEventModel");
     qmlRegisterType<MyEvent>(uri, 1, 0, "MyEvent");

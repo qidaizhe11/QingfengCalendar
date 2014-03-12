@@ -3,7 +3,7 @@ import QtQuick.Controls 1.0
 //import QtQuick.Controls.Styles 1.0
 import QtQuick.Layouts 1.0
 import QtGraphicalEffects 1.0
-import MyCalendar.Utils.Events 1.0
+import MyCalendar2.Utils.Events 1.0
 import "Content"
 
 Item {
@@ -53,13 +53,13 @@ Item {
     onAddDetails: {
 //        stack_view.push({ item: Qt.resolvedUrl("EventEditWindow.qml"),
 //                        properties: {event_date: event_date} });
-        stack_view.push({item: event_edit_view,
+        stack_view.push({item: main_window.edit_view,
                             properties: {event_date: event_date, state: "add"}});
         float_edit.hide();
     }
 
     onEditDetails: {
-        stack_view.push({item: event_edit_view,
+        stack_view.push({item: main_window.edit_view,
                             properties: {event_item: event_item, state: "edit"}});
         float_edit.hide();
 
@@ -187,16 +187,17 @@ Item {
                     }
                 } // edit_title_show
 
-                TextField {
+                MyTextField {
                     id: edit_title_enter
                     width: parent.width
 
                     visible: event_edit_panel.state === "edit" ? true : false
 
                     text: event_item ? event_item.displayLabel : ""
-                    font.pointSize: float_edit.font_size + 2
-                    font.bold: true
+                    font_size: float_edit.font_size + 2
+//                    font.bold: true
                     textColor: "indigo"
+                    border_radius: 0
                     focus: true
                 }
             } // edit_title
@@ -223,6 +224,48 @@ Item {
 
                 color: "lightgray"
             }
+
+            Item {
+                id: right_bottom_button
+                anchors.right: parent.right
+//                anchors.rightMargin: parent.width * 0.1
+                anchors.bottom: parent.bottom
+                height: event_edit_panel.state === "show" ?
+                            edit_detail_button.height :
+                            edit_save_button.height
+                width: event_edit_panel.state === "show" ?
+                           edit_detail_button.width :
+                           edit_save_button.width
+
+                MyTextLinkButton {
+                    id: edit_detail_button
+                    anchors.centerIn: parent
+
+                    visible: event_edit_panel.state === "show" ? true : false
+
+                    text_color: Qt.lighter("blue", 1.3)
+                    text: qsTr("Edit >>")
+                    font_size: float_edit.font_size + 2
+                    font_bold: true
+
+                    onClicked: float_edit.editDetails()
+                }
+
+                MyTextButton {
+                    id: edit_save_button
+                    anchors.centerIn: parent
+
+                    visible: event_edit_panel.state === "edit" ? true : false
+
+                    width: text_width * 2.0
+
+                    button_color: "indigo"
+                    text: qsTr("Save")
+                    font_size: float_edit.font_size + 2
+
+                    onClicked: saveEventTitle();
+                }
+            } // right_bottom_button
 
             Item {
                 id: left_bottom_button
@@ -256,52 +299,13 @@ Item {
 
                     button_color: "lightgrey"
                     hovered_color: Qt.lighter(button_color, 1.05)
-                    text_color: "black"
+                    text_color: Qt.darker("darkgrey", 1.1)
                     text: qsTr("Discard changes")
-                    font_size: float_edit.font_size + 2
+                    font_size: float_edit.font_size
+                    width: text_width * 1.2
+                    height: text_height * 1.8
                 }
             } // left_bottom_button
-
-            Item {
-                id: right_bottom_button
-                anchors.right: parent.right
-                anchors.rightMargin: parent.width * 0.1
-                anchors.bottom: parent.bottom
-                height: event_edit_panel.state === "show" ?
-                            edit_detail_button.height :
-                            edit_save_button.height
-                width: event_edit_panel.state === "show" ?
-                           edit_detail_button.width :
-                           edit_save_button.width
-
-                MyTextLinkButton {
-                    id: edit_detail_button
-                    anchors.centerIn: parent
-
-                    visible: event_edit_panel.state === "show" ? true : false
-
-                    text_color: Qt.lighter("blue", 1.3)
-                    text: qsTr("Edit >>")
-                    font_size: float_edit.font_size + 2
-                    font_bold: true
-
-                    onClicked: float_edit.editDetails()
-                }
-
-                MyTextButton {
-                    id: edit_save_button
-                    anchors.centerIn: parent
-
-                    visible: event_edit_panel.state === "edit" ? true : false
-
-                    width: text_width * 2.0
-
-                    text: qsTr("Save")
-                    font_size: float_edit.font_size + 2
-
-                    onClicked: saveEventTitle();
-                }
-            } // right_bottom_button
         } // edit_content
 
         MyIconButton {
@@ -373,11 +377,12 @@ Item {
                         text: qsTr("What: ")
                         font.pointSize: float_edit.font_size
                     }
-                    TextField {
+                    MyTextField {
                         id: title_edit
                         text: ""
                         Layout.fillWidth: true
-                        font.pointSize: float_edit.font_size
+                        font_size: float_edit.font_size
+                        border_radius: 2
                         focus: true
                     }
                 } // grid_layout
@@ -432,7 +437,7 @@ Item {
                 dt_end.setTime(dt_start.getTime() + 24*60*60*1000);
 
                 var new_event = Qt.createQmlObject(
-                            "import QtQuick 2.1; import MyCalendar.Utils.Events 1.0; MyEvent {}",
+                            "import QtQuick 2.1; import MyCalendar2.Utils.Events 1.0; MyEvent {}",
                             float_edit);
 
                 new_event.startDateTime = dt_start;

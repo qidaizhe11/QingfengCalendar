@@ -14,11 +14,12 @@ MyEvent::MyEvent(const QOrganizerEvent &event, QObject* parent)
   : QObject(parent)
 {
   m_id = event.id();
-//  m_description = event.description();
   m_display_label = event.displayLabel();
   m_all_day = event.isAllDay();
   m_start_date_time = event.startDateTime();
   m_end_date_time = event.endDateTime();
+  m_description = event.description();
+  m_location = event.location();
 }
 
 //MyEvent::MyEvent(const QString &description, const QString& display_label)
@@ -45,6 +46,9 @@ QOrganizerEvent MyEvent::toQOrganizerEvent() const
   } else {
     event.setDisplayLabel(tr("(No Title)"));
   }
+
+  event.setDescription(m_description);
+  event.setLocation(m_location);
 
   return event;
 }

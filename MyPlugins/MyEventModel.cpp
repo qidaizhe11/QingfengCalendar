@@ -95,7 +95,7 @@ void MyEventModel::importEvents()
   QString message_title(tr("Import of Items failed"));
 
   QString doc_path = QStandardPaths::standardLocations(
-        QStandardPaths::DataLocation).first();
+        QStandardPaths::HomeLocation).first();
   if (doc_path.isEmpty()) {
     doc_path = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
   }
@@ -272,6 +272,19 @@ void MyEventModel::updateEvents()
       if (event_items[i].type() == QOrganizerItemType::TypeEvent) {
         QOrganizerEvent event = static_cast<QOrganizerEvent>(event_items[i]);
 //        qDebug() << "Event Id: " + event.id().toString();
+
+        QStringList list = event.comments();
+        if (list.count() != 0) {
+          qDebug() << "Comments count: " + QString::number(list.count());
+        }
+        foreach (QString str, list) {
+          qDebug() << "Commnet: " + str;
+        }
+
+//        qDebug() << "Description: " + event.description();
+        QOrganizerItemLocation location =
+            event.detail(QOrganizerItemDetail::TypeLocation);
+        qDebug() << "Location: " + location.label();
 
         MyEvent* my_event = new MyEvent(event);
         QString description = QString("Description: ") + QString::number(i);
