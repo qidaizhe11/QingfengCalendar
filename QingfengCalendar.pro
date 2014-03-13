@@ -6,7 +6,7 @@ DEPLOYMENTFOLDERS = folder_01
 # Additional import path used to resolve QML modules in Creator's code model
 QML_IMPORT_PATH =
 
-QT += sql core gui widgets organizer versit
+QT += core gui widgets organizer versit webkitwidgets
 
 #LIBS        += /usr/lib/libical.so.1
 
@@ -38,7 +38,10 @@ SOURCES += main.cpp \
     versitorganizer/qversitorganizerexporter_p.cpp \
     versitorganizer/qtimezones_p.cpp \
     versitorganizer/qversitorganizerpluginloader_p.cpp \
-    versitorganizer/qversitorganizerimporter.cpp
+    versitorganizer/qversitorganizerimporter.cpp \
+    Google/OAuth2.cpp \
+    Google/LoginDialog.cpp \
+    Google/MainWindow.cpp
 
 # Installation path
 # target.path =
@@ -81,7 +84,10 @@ HEADERS += \
     versitorganizer/qversitorganizerpluginsearch_p.h \
     versitorganizer/qversitorganizerpluginloader_p.h \
     versitorganizer/qversitorganizerimporter.h \
-    versitorganizer/qversitorganizerimporter_p.h
+    versitorganizer/qversitorganizerimporter_p.h \
+    Google/OAuth2.h \
+    Google/LoginDialog.h \
+    Google/MainWindow.h
 
 RESOURCES += \
     resources/Calendar.qrc
