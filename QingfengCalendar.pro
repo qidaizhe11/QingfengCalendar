@@ -41,7 +41,8 @@ SOURCES += main.cpp \
     versitorganizer/qversitorganizerimporter.cpp \
     Google/OAuth2.cpp \
     Google/LoginDialog.cpp \
-    Google/MainWindow.cpp
+    Google/MainWindow.cpp \
+    Google/GoogleSettings.cpp
 
 # Installation path
 # target.path =
@@ -87,7 +88,8 @@ HEADERS += \
     versitorganizer/qversitorganizerimporter_p.h \
     Google/OAuth2.h \
     Google/LoginDialog.h \
-    Google/MainWindow.h
+    Google/MainWindow.h \
+    Google/GoogleSettings.h
 
 RESOURCES += \
     resources/Calendar.qrc
@@ -100,4 +102,5 @@ OTHER_FILES += \
     qml/QingfengCalendar/Content/MyTextButton.qml \
     qml/QingfengCalendar/MyCalendar.qml \
     qml/QingfengCalendar/Content/MyButton.qml \
-    qml/QingfengCalendar/EventEditView.qml
+    qml/QingfengCalendar/EventEditView.qml \
+    qml/QingfengCalendar/GoogleOAuth.js

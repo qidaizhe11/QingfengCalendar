@@ -5,7 +5,7 @@
 一个基于 C++/Qt 的日历客户端。
 
 当前主界面效果：
-![ScreenShot](/resources/screenshot-1.png)
+![ScreenShot](/resources/screenshot-main.jpg)
 
 UI界面采用 Qt Quick/ Qml 绘制
 
@@ -63,6 +63,6 @@ qmake, make，应该可以看到当前程序运行效果了。
 ##其它
 ------------
 当前编辑界面效果：
-![ScreenShot](/resources/screenshot-2.png)
+![ScreenShot](/resources/screenshot-edit-view.jpg)
 
 尚在不断完善中...

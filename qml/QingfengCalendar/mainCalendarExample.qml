@@ -1,9 +1,10 @@
 import QtQuick 2.1
 import QtQuick.Controls 1.0
-import QtQuick.Controls.Styles 1.0
+//import QtQuick.Controls.Styles 1.0
 import QtQuick.Window 2.1
-import QtOrganizer 5.0
-import MyCalendar2.Utils.Events 1.0
+//import QtOrganizer 5.0
+//import MyCalendar2.Utils.Events 1.0
+import MyCalendar.Sync.Google 1.0
 
 Window {
     visible: true
@@ -16,6 +17,10 @@ Window {
     title: "Qingfeng Calendar"
 
     id: main_window
+
+    GoogleSettings {
+        id: google_settings
+    }
 
     StackView {
         id: stack_view
@@ -110,7 +115,23 @@ Window {
 //        visible: false
     }
 
+    GoogleOAuth {
+        id: google_oauth
+        anchors.fill: parent
+
+        onLoginDone: {
+            console.log("Login Done")
+            google_settings.accessToken = google_oauth.access_token;
+        }
+    }
+
     Component.onCompleted: {
-        console.log("The last");
+        if (google_settings.refreshToken == "") {
+            console.log("onCompleted!!")
+            google_oauth.login();
+        } else {
+            google_oauth.refreshAccessToken(google_settings.refreshToken);
+        }
+//        google_oauth.login();
     }
 }

@@ -19,6 +19,7 @@
 #include "CalendarPlugin/Private/qquickrangeddate_p.h"
 
 #include "Google/MainWindow.h"
+#include "Google/GoogleSettings.h"
 
 int main(int argc, char *argv[])
 {
@@ -38,13 +39,18 @@ int main(int argc, char *argv[])
     qRegisterMetaType< QList<QObject*> >();
     qRegisterMetaType< QList<MyEvent*> >();
 
-//    QtQuick2ControlsApplicationViewer viewer;
-//    viewer.setMainQmlFile(QStringLiteral("qml/QingfengCalendar/mainCalendarExample.qml"));
+    uri = "MyCalendar.Sync.Google";
+    // @uri MyCalendar.Sync.Google
+    qmlRegisterType<GoogleSettings>(uri, 1, 0, "GoogleSettings");
 
-//    viewer.show();
+    QtQuick2ControlsApplicationViewer viewer;
+    viewer.setMainQmlFile(QStringLiteral("qml/QingfengCalendar/mainCalendarExample.qml"));
+//    viewer.setMainQmlFile(QStringLiteral("qml/QingfengCalendar/GoogleOAuth.qml"));
 
-    MainWindow window;
-    window.show();
+    viewer.show();
+
+//    MainWindow window;
+//    window.show();
 
     return app.exec();
 }
