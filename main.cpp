@@ -44,7 +44,7 @@ int main(int argc, char *argv[])
     qmlRegisterType<GoogleSettings>(uri, 1, 0, "GoogleSettings");
 
     QtQuick2ControlsApplicationViewer viewer;
-    viewer.setMainQmlFile(QStringLiteral("qml/QingfengCalendar/mainCalendarExample.qml"));
+    viewer.setMainQmlFile(QStringLiteral("qml/QingfengCalendar/main.qml"));
 //    viewer.setMainQmlFile(QStringLiteral("qml/QingfengCalendar/GoogleOAuth.qml"));
 
     viewer.show();

@@ -2,6 +2,7 @@ import QtQuick 2.1
 import QtQuick.Controls 1.0
 //import QtQuick.Controls.Styles 1.0
 import QtQuick.Window 2.1
+import QtQuick.Dialogs 1.0
 //import QtOrganizer 5.0
 //import MyCalendar2.Utils.Events 1.0
 import MyCalendar.Sync.Google 1.0
@@ -115,6 +116,22 @@ Window {
 //        visible: false
     }
 
+    FileDialog {
+        id: file_dialog
+        title: qsTr("Select iCalendar file")
+        nameFilters: [ "icalendar files (*.ics)"]
+        modality: Qt.WindowModal
+        selectMultiple: false
+
+        onAccepted: {
+            console.log("FileDialog: ", file_dialog.fileUrl)
+            calendar.event_model.importEvents(file_dialog.fileUrl)
+        }
+
+        visible: false
+//        Component.onCompleted: visible = true
+    }
+
     GoogleOAuth {
         id: google_oauth
         anchors.fill: parent
@@ -130,6 +147,7 @@ Window {
     Component.onCompleted: {
         if (google_settings.refreshToken === "") {
             console.log("onCompleted!!")
+            google_oauth.visible = true;
             google_oauth.login();
         } else {
 //            google_oauth.refreshAccessToken(google_settings.refreshToken);

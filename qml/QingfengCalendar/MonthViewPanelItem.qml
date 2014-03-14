@@ -192,7 +192,7 @@ Item {
             currentIndex: middle_index_of_month_list
 //            flickDeceleration: 0
             highlightFollowsCurrentItem: true
-            highlightMoveVelocity: 1000
+            highlightMoveVelocity: 1600
 //            maximumFlickVelocity: 1000
             highlightRangeMode: ListView.StrictlyEnforceRange
             boundsBehavior: Flickable.DragOverBounds

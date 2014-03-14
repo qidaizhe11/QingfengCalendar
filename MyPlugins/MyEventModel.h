@@ -7,12 +7,15 @@
 #include <QtOrganizer/QOrganizerManager>
 #include <QtOrganizer/qorganizerglobal.h>
 #include <QtOrganizer/qorganizerabstractrequest.h>
+#include <QtVersit/QVersitReader>
+#include <QtVersit/QVersitWriter>
 //#include <QtVersitOrganizer/qversitorganizerglobal.h>
 #include <versitorganizer/qversitorganizerglobal.h>
 #include "MyEvent.h"
 
-//QTORGANIZER_USE_NAMESPACE
-//QTVERSITORGANIZER_USE_NAMESPACE
+QTORGANIZER_USE_NAMESPACE
+QTVERSIT_USE_NAMESPACE
+QTVERSITORGANIZER_USE_NAMESPACE
 
 class MyEventModel : public QQuickItem
 {
@@ -46,7 +49,7 @@ public:
   };
 
   MyEventModel(QQuickItem* parent = 0);
-  ~MyEventModel() {}
+  ~MyEventModel();
 
   QDateTime startDate() const { return m_start_date; }
   void setStartDate(const QDateTime& start_date);
@@ -83,6 +86,8 @@ public slots:
 
 private slots:
   void onRequestStateChanged(QOrganizerAbstractRequest::State new_state);
+  void startImport(QVersitReader::State state);
+  void itemsExported(QVersitWriter::State state);
 
 private:
   void checkError(const QOrganizerAbstractRequest* request);
@@ -92,7 +97,13 @@ private:
   QDateTime m_start_date;
   QDateTime m_end_date;
   QVariantList m_events;
+  QVariantList m_collections;
   QOrganizerManager::Error m_error;
+  QStringList m_import_profiles;
+  QVersitReader* m_reader;
+  QVersitWriter* m_writer;
+  QUrl m_last_import_url;
+  QUrl m_last_export_url;
 };
 
 #endif // EVENTLISTUTILS_H

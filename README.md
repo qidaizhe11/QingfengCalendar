@@ -49,11 +49,11 @@ git clone 后 qmake, make, make install
 
 ####Qingfeng Calendar
 
-修改文件 [MyEventModel.cpp](https://github.com/qidaizhe11/QingfengCalendar/blob/master/MyPlugins/MyEventModel.cpp) 中代码：
+修改文件 [main.qml](https://github.com/qidaizhe11/QingfengCalendar/blob/master/qml/QingfengCalendar/main.qml) 中 FileDialog 下代码：
 ```
-QString file_name = "/home/daizhe/qidaizhe11@gmail.com-2.ics";
+visible: false
 ```
-注释掉此行，并将其上面三行反注释。
+注释掉此行，并将其上面一行反注释。
 
 另外，出于个人开发需要，程序 qml 中引用的模块与 [main.cpp](https://github.com/qidaizhe11/QingfengCalendar/blob/master/main.cpp) 中注册的名称可能略有不同，类似 **MyCalendar2.Utils.Events** 与 **MyCalendar.Utils.Events** 的区别，需自行调整一致。
 

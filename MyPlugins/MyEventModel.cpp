@@ -14,8 +14,28 @@
 #include <QFileDialog>
 #include <QStandardPaths>
 
+//-------------------------------------------------------------------------
+// static local function
+
+static QString urlToLocalFileName(const QUrl& url)
+{
+  if (!url.isValid()) {
+    return url.toString();
+  } else if (url.scheme() == "qrc") {
+    return url.toString().remove(0, 5).prepend(':');
+  } else {
+    return url.toLocalFile();
+  }
+}
+
+//-------------------------------------------------------------------------
+// Construction
+
 MyEventModel::MyEventModel(QQuickItem* parent) :
   QQuickItem(parent),
+  m_manager(0),
+  m_reader(0),
+  m_writer(0),
   m_start_date(QDateTime::currentDateTime()),
   m_end_date(QDateTime::currentDateTime()),
   m_error(QOrganizerManager::NoError)
@@ -26,27 +46,32 @@ MyEventModel::MyEventModel(QQuickItem* parent) :
 //    qDebug() << "Avialable manager: " << manager;
 //  }
 
-  importEvents();
+//  importEvents(QUrl("file:///home/daizhe/qidaizhe11@gmail.com-2.ics"));
 
-  QOrganizerCollection collection;
-  collection.setMetaData(QOrganizerCollection::KeyName, "MyCalendar");
-  m_manager->saveCollection(&collection);
+//  QOrganizerCollection collection;
+//  collection.setMetaData(QOrganizerCollection::KeyName, "MyCalendar");
+//  m_manager->saveCollection(&collection);
 
-  QList<QOrganizerCollection> collections = m_manager->collections();
-  foreach (QOrganizerCollection collection, collections) {
-    qDebug() << collection.metaData(QOrganizerCollection::KeyName).toString() <<
-                collection.metaData(QOrganizerCollection::KeyDescription).toString() <<
-                collection.metaData(QOrganizerCollection::KeyColor).toString() <<
-                collection.id().managerUri() << collection.id().toString();
+//  QList<QOrganizerCollection> collections = m_manager->collections();
+//  foreach (QOrganizerCollection collection, collections) {
+//    qDebug() << collection.metaData(QOrganizerCollection::KeyName).toString() <<
+//                collection.metaData(QOrganizerCollection::KeyDescription).toString() <<
+//                collection.metaData(QOrganizerCollection::KeyColor).toString() <<
+//                collection.id().managerUri() << collection.id().toString();
+//  }
+
+//  QOrganizerCollection default_collection = m_manager->defaultCollection();
+//  qDebug() << "Default_collection: " << default_collection.metaData(
+//                QOrganizerCollection::KeyName).toString();
+}
+
+MyEventModel::~MyEventModel()
+{
+  if (m_manager) {
+    delete m_manager;
   }
-
-  QOrganizerCollection default_collection = m_manager->defaultCollection();
-  qDebug() << "Default_collection: " << default_collection.metaData(
-                QOrganizerCollection::KeyName).toString();
-
-  QMessageBox::information(NULL, tr("Remove failed"),
-      tr("Can't remove an occurrence item, please modify the parent "
-         "item's recurrence rule instead!"));
+  delete m_writer;
+  delete m_reader;
 }
 
 //-------------------------------------------------------------------------
@@ -114,88 +139,87 @@ QString MyEventModel::error() const
 }
 
 //-------------------------------------------------------------------------
-// Q_INVOKABLE
+// Q_INVOKABLE functions
 
-void MyEventModel::importEvents()
+//
+// importEvents
+//
+
+void MyEventModel::importEvents(const QUrl &url, const QStringList &profiles)
 {
-  QString message_title(tr("Import of Items failed"));
+  ImportError import_error = ImportNotReadyError;
 
-  QString doc_path = QStandardPaths::standardLocations(
-        QStandardPaths::HomeLocation).first();
-  if (doc_path.isEmpty()) {
-    doc_path = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
-  }
-  if (doc_path.isEmpty()) {
-    doc_path = ".";
-  }
+  if (!m_reader || m_reader->state() != QVersitReader::ActiveState) {
+    m_import_profiles = profiles;
 
-//  QString file_name = QFileDialog::getOpenFileName(
-//        NULL, tr("Select iCalendar file"), doc_path,
-//        tr("iCalendar files (*.ics)"));
-  QString file_name = "/home/daizhe/qidaizhe11@gmail.com-2.ics";
-
-  if (file_name.isEmpty()) {
-    return;
-  }
-
-  QFile file(file_name);
-  if (!file.open(QIODevice::ReadOnly) || !file.isReadable()) {
-    QMessageBox::warning(NULL, message_title,
-                         tr("Unable to read from file: %1").arg(file_name));
-    return;
-  }
-
-  QVersitReader reader;
-  reader.setDevice(&file);
-  if (!reader.startReading() || !reader.waitForFinished()) {
-    QMessageBox::warning(NULL, message_title,
-                         tr("Versit reader failed: %1").arg(reader.error()));
-    return;
-  }
-
-  QVersitOrganizerImporter importer;
-  QList<QOrganizerItem> all_items;
-  QString error_message;
-  foreach (const QVersitDocument& document, reader.results()) {
-    if (!importer.importDocument(document)) {
-      error_message += tr("Import failed.");
-      QMap<int, QVersitOrganizerImporter::Error>::const_iterator iterator =
-          importer.errorMap().constBegin();
-      while (iterator != importer.errorMap().constEnd()) {
-        switch (iterator.value()) {
-        case QVersitOrganizerImporter::InvalidDocumentError:
-          error_message += QString(" index %1:").arg(iterator.key());
-          error_message += tr("One of the documents is not an iCalendar file");
-          break;
-        case QVersitOrganizerImporter::EmptyDocumentError:
-          error_message += QString(" index %1:").arg(iterator.key());
-          error_message += tr("One of the documents is empty");
-          break;
-        default:
-          error_message += QString(" index %1:").arg(iterator.key());
-          error_message += tr("Unknown error");
-        }
-        ++iterator;
+    QFile* file = new QFile(urlToLocalFileName(url));
+    if (file->open(QIODevice::ReadOnly)) {
+      if (!m_reader) {
+        m_reader = new QVersitReader;
+        connect(m_reader, SIGNAL(stateChanged(QVersitReader::State)),
+                this, SLOT(startImport(QVersitReader::State)));
       }
-      error_message += QLatin1String("\n");
-      continue;
-    }
-    QList<QOrganizerItem> items = importer.items();
-    foreach (const QOrganizerItem& item, items) {
-      all_items.append(item);
-      qDebug() << "CollectionId:" << item.collectionId().toString();
+      m_reader->setDevice(file);
+      if (m_reader->startReading()) {
+        m_last_import_url = url;
+        return;
+      }
+      import_error = MyEventModel::ImportError(m_reader->error());
+    } else {
+      import_error = ImportIOError;
     }
   }
 
-  if (!error_message.isEmpty()) {
-    QMessageBox::warning(NULL, message_title, error_message);
-//    qDebug() << error_message;
-  }
-
-  if (!m_manager->saveItems(&all_items)) {
-    qDebug() << "Save failed.";
-  }
+  qDebug() << "MyEventModel::importEvents." << "Url:" << url <<
+              ", Error:" << import_error;
+  emit importCompleted(import_error, url);
 }
+
+//
+// exportEvents
+//
+
+void MyEventModel::exportEvents(const QUrl &url, const QStringList &profiles)
+{
+  ExportError export_error = ExportNotReadyError;
+
+  if (!m_writer ||  m_writer->state() != QVersitWriter::ActiveState) {
+    QString profile = profiles.isEmpty() ? QString() : profiles.at(0);
+
+    QVersitOrganizerExporter exporter(profile);
+    QList<QOrganizerItem> items;
+    foreach (QVariant var, m_events) {
+      items.append(var.value<MyEvent*>()->toQOrganizerEvent());
+    }
+
+    exporter.exportItems(items, QVersitDocument::ICalendar20Type);
+    QVersitDocument document = exporter.document();
+    QFile* file = new QFile(urlToLocalFileName(url));
+    if (file->open(QIODevice::ReadWrite)) {
+      if (!m_writer) {
+        m_writer = new QVersitWriter;
+        connect(m_writer, SIGNAL(stateChanged(QVersitWriter::State)),
+                this, SLOT(itemsExported(QVersitWriter::State)));
+      }
+      m_writer->setDevice(file);
+      if (m_writer->startWriting(document)) {
+        m_last_export_url = url;
+        return;
+      }
+      export_error = MyEventModel::ExportError(m_writer->error());
+    } else {
+      export_error = ExportIOError;
+    }
+  }
+
+  qDebug() << "MyEventModel::exportEvents. Url:" << url <<
+              "Error: " << export_error;
+  emit exportCompleted(export_error, url);
+}
+
+//
+// saveEvent
+//
 
 void MyEventModel::saveEvent(MyEvent* my_event)
 {
@@ -224,6 +248,10 @@ void MyEventModel::saveEvent(MyEvent* my_event)
 
 //  my_event->deleteLater();
 }
+
+//
+// deleteEvent
+//
 
 void MyEventModel::deleteEvent(const QString &id)
 {
@@ -258,7 +286,7 @@ void MyEventModel::deleteEvent(MyEvent *my_event)
 }
 
 //-------------------------------------------------------------------------
-// private slots
+// public slots
 
 void MyEventModel::updateEvents()
 {
@@ -274,13 +302,19 @@ void MyEventModel::updateEvents()
     QList<QOrganizerItem> event_items = m_manager->items(
           m_start_date, m_end_date);
 
-    foreach (QVariant var, m_events) {
-      MyEvent* object = var.value<MyEvent*>();
-      object->deleteLater();
-//      QObject::destroyed(object);
-//      delete object;
-      qDebug() << "Delete Events:" << object->displayLabel() <<
-                  object->startDateTime().toString();
+//    foreach (QVariant var, m_events) {
+////      MyEvent* object = var.value<MyEvent*>();
+////      object->deleteLater();
+////      QObject::destroyed(object);
+////      delete object;
+//      qDebug() << "Delete Events:" << object->displayLabel() <<
+//                  object->startDateTime().toString();
+//    }
+
+    for (int i = m_events.count() - 1; i >= 0; --i) {
+      qDebug() << "Remove Event: " <<
+                  m_events.at(i).value<MyEvent*>()->displayLabel();
+      m_events.removeAt(i);
     }
 
     m_events.clear();
@@ -327,6 +361,9 @@ void MyEventModel::updateEvents()
   }
 }
 
+//-------------------------------------------------------------------------
+// private slots
+
 void MyEventModel::onRequestStateChanged(
     QOrganizerAbstractRequest::State new_state)
 {
@@ -339,6 +376,45 @@ void MyEventModel::onRequestStateChanged(
 
   checkError(request);
   request->deleteLater();
+}
+
+void MyEventModel::startImport(QVersitReader::State state)
+{
+  if (state == QVersitReader::FinishedState ||
+      state == QVersitReader::CanceledState) {
+    if (!m_reader->results().isEmpty()) {
+      QVersitOrganizerImporter importer;
+      importer.importDocument(m_reader->results().at(0));
+      QList<QOrganizerItem> items = importer.items();
+      delete m_reader->device();
+      m_reader->setDevice(0);
+
+      if (m_manager && !m_manager->saveItems(&items) &&
+          m_error != m_manager->error()) {
+        m_error = m_manager->error();
+        emit errorChanged();
+      }
+    }
+    qDebug() << "MyEventModel::startImport. Import Completed" <<
+                m_last_import_url << MyEventModel::ImportError(m_reader->error());
+    qDebug() << "Imported events count: " << m_manager->items().count();
+    emit importCompleted(MyEventModel::ImportError(m_reader->error()),
+                         m_last_import_url);
+  }
+}
+
+void MyEventModel::itemsExported(QVersitWriter::State state)
+{
+  if (state == QVersitWriter::FinishedState ||
+      state == QVersitWriter::CanceledState) {
+    qDebug() << "MyEventModel::itemsExported. Exported Completed" <<
+                m_last_export_url << MyEventModel::ExportError(m_writer->error());
+    qDebug() << "Exported events count: " << m_manager->items().count();
+    emit exportCompleted(MyEventModel::ExportError(m_writer->error()),
+                         m_last_export_url);
+    delete m_writer->device();
+    m_writer->setDevice(0);
+  }
 }
 
 //-------------------------------------------------------------------------

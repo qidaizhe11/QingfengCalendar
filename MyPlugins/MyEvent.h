@@ -35,6 +35,7 @@ public:
   MyEvent(QObject *parent = 0);
   MyEvent(const QOrganizerEvent& event, QObject *parent = 0);
 //  explicit MyEvent(const QString& description, const QString& display_label);
+  ~MyEvent() {}
 
   QString itemId() const;
 

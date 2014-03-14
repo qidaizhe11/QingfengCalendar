@@ -103,4 +103,5 @@ OTHER_FILES += \
     qml/QingfengCalendar/MyCalendar.qml \
     qml/QingfengCalendar/Content/MyButton.qml \
     qml/QingfengCalendar/EventEditView.qml \
-    qml/QingfengCalendar/GoogleOAuth.js
+    qml/QingfengCalendar/GoogleOAuth.js \
+    qml/QingfengCalendar/main.qml
