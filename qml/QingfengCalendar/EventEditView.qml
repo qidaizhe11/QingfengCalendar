@@ -3,7 +3,7 @@ import QtQuick.Controls 1.0
 import QtQuick.Controls.Styles 1.0
 //import QtQuick.Window 2.1
 import QtQuick.Layouts 1.0
-import MyCalendar2.Utils.Events 1.0
+import MyCalendar2.Events 1.0
 import "Content"
 
 Rectangle {
@@ -48,6 +48,60 @@ Rectangle {
 
     Component.onCompleted: {
         title_edit.forceActiveFocus()
+    }
+
+    property date start_time: {
+        var the_date;
+        if (state === "add") {
+            the_date = new Date();
+            var hour = the_date.getHours();
+            var minute = the_date.getMinutes();
+
+            if (minute >= 30) {
+                the_date.setHours(hour + 1);
+                the_date.setMinutes(0);
+            } else {
+                the_date.setHours(hour);
+                the_date.setMinutes(30);
+            }
+        } else {
+            the_date = event_item.startDateTime;
+        }
+
+        the_date;
+    }
+
+    property date end_time: {
+        var the_date;
+        if (state === "add") {
+            the_date = start_time;
+            the_date.setHours(the_date.getHours() + 1);
+        } else {
+            the_date = event_item.endDateTime;
+        }
+
+//        console.log("End_time, add hour failed? ", the_date);
+
+        the_date;
+    }
+
+    property var event_collection: {
+        var the_collection;
+//        console.log("Collections count: ", calendar.event_model.collections.length);
+        console.log("Collections: ", calendar.event_model.collections);
+        the_collection = calendar.event_model.defaultCollection();
+
+        for (var i = 0; i < calendar.event_model.collections.length; ++i) {
+            var collection = calendar.event_model.collections[i];
+            console.log(collection.collectionId);
+            if (event_item &&
+                    collection.collectionId === event_item.collectionId) {
+                the_collection = collection;
+            }
+        }
+//        console.log(the_collection);
+        console.log("Event collection: ", the_collection.name);
+        the_collection;
     }
 
     Rectangle {
@@ -105,7 +159,7 @@ Rectangle {
                     anchors.leftMargin: 2
                     anchors.verticalCenter: parent.verticalCenter
 
-                    text: qsTr("My Calendar")
+                    text: event_collection.name
                     font.pointSize: left_part.title_font_size
                 }
             }
@@ -466,41 +520,6 @@ Rectangle {
     property alias selected_start_date: start_date_edit.selected_date
     property alias selected_end_date: end_date_edit.selected_date
 
-    property date start_time: {
-        var the_date;
-        if (state === "add") {
-            the_date = new Date();
-            var hour = the_date.getHours();
-            var minute = the_date.getMinutes();
-
-            if (minute >= 30) {
-                the_date.setHours(hour + 1);
-                the_date.setMinutes(0);
-            } else {
-                the_date.setHours(hour);
-                the_date.setMinutes(30);
-            }
-        } else {
-            the_date = event_item.startDateTime;
-        }
-
-        the_date;
-    }
-
-    property date end_time: {
-        var the_date;
-        if (state === "add") {
-            the_date = start_time;
-            the_date.setHours(the_date.getHours() + 1);
-        } else {
-            the_date = event_item.endDateTime;
-        }
-
-        console.log("End_time, add hour failed? ", the_date);
-
-        the_date;
-    }
-
     Connections {
         target: allday_checkbox
         onCheckedChanged: {
@@ -560,7 +579,7 @@ Rectangle {
             end_hour_combo.currentIndex = start_hour_combo.currentIndex;
             end_minute_combo.currentIndex = start_minute_combo.currentIndex;
 
-            console.log("Come here?")
+//            console.log("Come here?")
         } else if (is_date_error) {
             is_date_error = false;
         }
@@ -584,7 +603,7 @@ Rectangle {
 
     onSaveEvent: {
         var new_event = Qt.createQmlObject(
-                    "import QtQuick 2.1; import MyCalendar2.Utils.Events 1.0; MyEvent {}",
+                    "import QtQuick 2.1; import MyCalendar2.Events 1.0; MyEvent {}",
                     event_edit_view);
         new_event.startDateTime = selected_start_time;
         new_event.allDay = allday_checkbox.checked;

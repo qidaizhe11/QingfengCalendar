@@ -42,7 +42,8 @@ SOURCES += main.cpp \
     Google/OAuth2.cpp \
     Google/LoginDialog.cpp \
     Google/MainWindow.cpp \
-    Google/GoogleSettings.cpp
+    Google/GoogleSettings.cpp \
+    MyPlugins/MyCollection.cpp
 
 # Installation path
 # target.path =
@@ -89,7 +90,8 @@ HEADERS += \
     Google/OAuth2.h \
     Google/LoginDialog.h \
     Google/MainWindow.h \
-    Google/GoogleSettings.h
+    Google/GoogleSettings.h \
+    MyPlugins/MyCollection.h
 
 RESOURCES += \
     resources/Calendar.qrc

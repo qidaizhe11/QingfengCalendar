@@ -10,6 +10,7 @@
 #include "MyPlugins/MyEventModel.h"
 #include "MyPlugins/EventUtils.h"
 #include "MyPlugins/MyEvent.h"
+#include "MyPlugins/MyCollection.h"
 #include "MyPlugins/MyTestEvent.h"
 
 #include "CalendarPlugin/Private/qquickabstractstyle_p.h"
@@ -31,13 +32,15 @@ int main(int argc, char *argv[])
     qmlRegisterType<QQuickRangedDate>(private_uri, 1, 0, "RangedDate");
     qmlRegisterType<QQuickCalendarModel>(private_uri, 1, 0, "CalendarModel");
 
-    const char* uri = "MyCalendar2.Utils.Events";
-    // @uri MyCalendar2.Utils.Events
+    const char* uri = "MyCalendar2.Events";
+    // @uri MyCalendar2.Events
     qmlRegisterType<EventUtils>(uri, 1, 0, "EventUtils");
     qmlRegisterType<MyEventModel>(uri, 1, 0, "MyEventModel");
     qmlRegisterType<MyEvent>(uri, 1, 0, "MyEvent");
+    qmlRegisterType<MyCollection>(uri, 1, 0, "MyCollection");
     qRegisterMetaType< QList<QObject*> >();
     qRegisterMetaType< QList<MyEvent*> >();
+    qRegisterMetaType< QList<MyCollection*> >();
 
     uri = "MyCalendar.Sync.Google";
     // @uri MyCalendar.Sync.Google

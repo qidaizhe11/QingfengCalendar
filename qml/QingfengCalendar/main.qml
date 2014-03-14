@@ -4,7 +4,7 @@ import QtQuick.Controls 1.0
 import QtQuick.Window 2.1
 import QtQuick.Dialogs 1.0
 //import QtOrganizer 5.0
-//import MyCalendar2.Utils.Events 1.0
+//import MyCalendar2.Events 1.0
 import MyCalendar.Sync.Google 1.0
 
 Window {

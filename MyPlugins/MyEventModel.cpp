@@ -34,35 +34,41 @@ static QString urlToLocalFileName(const QUrl& url)
 MyEventModel::MyEventModel(QQuickItem* parent) :
   QQuickItem(parent),
   m_manager(0),
-  m_reader(0),
-  m_writer(0),
   m_start_date(QDateTime::currentDateTime()),
   m_end_date(QDateTime::currentDateTime()),
-  m_error(QOrganizerManager::NoError)
+  m_error(QOrganizerManager::NoError),
+  m_reader(0),
+  m_writer(0)
 {
   m_manager = new QOrganizerManager("memory");
+
+  m_default_collection_id = m_manager->defaultCollection().id().toString();
 
 //  foreach (const QString& manager, QOrganizerManager::availableManagers()) {
 //    qDebug() << "Avialable manager: " << manager;
 //  }
 
-//  importEvents(QUrl("file:///home/daizhe/qidaizhe11@gmail.com-2.ics"));
+  QOrganizerCollection collection;
+  collection.setId(m_manager->defaultCollection().id());
+  collection.setMetaData(QOrganizerCollection::KeyName, "MyCalendar2");
+  collection.setMetaData(QOrganizerCollection::KeyColor, QColor("darkcyan"));
+  m_manager->saveCollection(&collection);
 
-//  QOrganizerCollection collection;
-//  collection.setMetaData(QOrganizerCollection::KeyName, "MyCalendar");
-//  m_manager->saveCollection(&collection);
+  MyCollection* my_collection = new MyCollection();
+  my_collection->setCollection(collection);
+  m_collections.append(QVariant::fromValue<QObject*>(my_collection));
+  m_default_collection_id = my_collection->id();
 
-//  QList<QOrganizerCollection> collections = m_manager->collections();
-//  foreach (QOrganizerCollection collection, collections) {
-//    qDebug() << collection.metaData(QOrganizerCollection::KeyName).toString() <<
-//                collection.metaData(QOrganizerCollection::KeyDescription).toString() <<
-//                collection.metaData(QOrganizerCollection::KeyColor).toString() <<
-//                collection.id().managerUri() << collection.id().toString();
-//  }
+//  qDebug() << "m_default_collection_id:" << m_default_collection_id;
 
-//  QOrganizerCollection default_collection = m_manager->defaultCollection();
-//  qDebug() << "Default_collection: " << default_collection.metaData(
-//                QOrganizerCollection::KeyName).toString();
+  QList<QOrganizerCollection> collections = m_manager->collections();
+  foreach (QOrganizerCollection collection, collections) {
+    qDebug() << collection.id().toString() <<
+                collection.metaData(QOrganizerCollection::KeyName).toString() <<
+                collection.metaData(QOrganizerCollection::KeyColor).toString();
+  }
+
+  importEvents(QUrl("file:///home/daizhe/qidaizhe11@gmail.com-2.ics"));
 }
 
 MyEventModel::~MyEventModel()
@@ -72,6 +78,10 @@ MyEventModel::~MyEventModel()
   }
   delete m_writer;
   delete m_reader;
+//  m_events.removeAll();
+  m_events.clear();
+//  m_collections.removeAll();
+  m_collections.clear();
 }
 
 //-------------------------------------------------------------------------
@@ -96,6 +106,11 @@ QVariantList MyEventModel::events() const
 {
 //  return QQmlListProperty<MyEvent>(this, m_events);
   return m_events;
+}
+
+QVariantList MyEventModel::collections() const
+{
+  return m_collections;
 }
 
 QString MyEventModel::error() const
@@ -285,6 +300,51 @@ void MyEventModel::deleteEvent(MyEvent *my_event)
   req->start();
 }
 
+void MyEventModel::saveCollection(MyCollection *my_collection)
+{
+  if (my_collection) {
+    QOrganizerCollection collection = my_collection->collection();
+    QOrganizerCollectionSaveRequest* req =
+        new QOrganizerCollectionSaveRequest(this);
+    req->setManager(m_manager);
+    req->setCollection(collection);
+
+    connect(req, SIGNAL(stateChanged(QOrganizerAbstractRequest::State)), this,
+            SLOT(onRequestStateChanged(QOrganizerAbstractRequest::State)));
+
+    req->start();
+  }
+}
+
+void MyEventModel::removeCollection(const QString &collectionId)
+{
+  QOrganizerCollectionRemoveRequest* req =
+      new QOrganizerCollectionRemoveRequest(this);
+  req->setManager(m_manager);
+  req->setCollectionId(QOrganizerCollectionId::fromString(collectionId));
+
+  connect(req, SIGNAL(stateChanged(QOrganizerAbstractRequest::State)),
+          this, SLOT(onRequestStateChanged(QOrganizerAbstractRequest::State)));
+
+  req->start();
+}
+
+QVariant MyEventModel::defaultCollection()
+{
+  return collection(m_manager->defaultCollection().id().toString());
+}
+
+QVariant MyEventModel::collection(const QString &collection_id)
+{
+  foreach (QVariant var, m_collections) {
+    if (var.value<MyCollection*>()->id() == collection_id) {
+      qDebug() << "MyEventModel::collection, var: " << var;
+      return var;
+    }
+  }
+  return QVariant();
+}
+
 //-------------------------------------------------------------------------
 // public slots
 
@@ -323,28 +383,25 @@ void MyEventModel::updateEvents()
     for (int i = 0; i < event_items.length(); ++i) {
       if (event_items[i].type() == QOrganizerItemType::TypeEvent) {
         QOrganizerEvent event = static_cast<QOrganizerEvent>(event_items[i]);
-//        qDebug() << "Event Id: " + event.id().toString();
 
-//        QStringList list = event.comments();
-//        if (list.count() != 0) {
-//          qDebug() << "Comments count: " + QString::number(list.count());
-//        }
-//        foreach (QString str, list) {
-//          qDebug() << "Commnet: " + str;
-//        }
-
-//        qDebug() << "Description: " + event.description();
-//        QOrganizerItemLocation location =
-//            event.detail(QOrganizerItemDetail::TypeLocation);
-//        qDebug() << "Location: " + location.label();
+        QString event_collection_name;
+        QList<QOrganizerCollection> collections = m_manager->collections();
+        foreach (QOrganizerCollection collection, collections) {
+          if (collection.id() == event.collectionId()) {
+            event_collection_name = collection.metaData(
+                          QOrganizerCollection::KeyName).toString();
+          }
+        }
 
         MyEvent* my_event = new MyEvent(event);
   //      MyEvent* my_event = new MyEvent(description, display_label);
 
         qDebug() << "Find Event:" <<
                     my_event->displayLabel() <<
-                    my_event->startDateTime().toString() <<
-                    my_event->endDateTime().toString() <<
+                    my_event->startDateTime().toString("yyyy-MM-d hh:mm") <<
+                    " End:" <<
+                    my_event->endDateTime().toString("yyyy-MM-d hh:mm") <<
+                    event_collection_name <<
                     my_event->allDay() <<
                     my_event->location();
 

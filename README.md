@@ -19,9 +19,9 @@ UI界面采用 Qt Quick/ Qml 绘制
 - 与 Google Calendar 的同步
 
 ####待解决:
-- 底层 SQLite 数据库的重新使用
-- 农历，节假日
 - 周视图
+- 底层 SQLite 数据库的重新启用
+- 农历，节假日
 - 桌面透明工具
 - 配置界面
 - ......
@@ -55,7 +55,7 @@ visible: false
 ```
 注释掉此行，并将其上面一行反注释。
 
-另外，出于个人开发需要，程序 qml 中引用的模块与 [main.cpp](https://github.com/qidaizhe11/QingfengCalendar/blob/master/main.cpp) 中注册的名称可能略有不同，类似 **MyCalendar2.Utils.Events** 与 **MyCalendar.Utils.Events** 的区别，需自行调整一致。
+另外，出于个人开发需要，程序 qml 中引用的模块与 [main.cpp](https://github.com/qidaizhe11/QingfengCalendar/blob/master/main.cpp) 中注册的名称可能略有不同，类似 **MyCalendar2.Events** 与 **MyCalendar.Events** 的区别，需自行调整一致。
 
 qmake, make，应该可以看到当前程序运行效果了。
 </br>

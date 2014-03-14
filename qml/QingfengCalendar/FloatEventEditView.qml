@@ -3,7 +3,7 @@ import QtQuick.Controls 1.0
 //import QtQuick.Controls.Styles 1.0
 import QtQuick.Layouts 1.0
 import QtGraphicalEffects 1.0
-import MyCalendar2.Utils.Events 1.0
+import MyCalendar2.Events 1.0
 import "Content"
 
 Item {
@@ -445,7 +445,7 @@ Item {
                 dt_end.setTime(dt_start.getTime() + 24*60*60*1000);
 
                 var new_event = Qt.createQmlObject(
-                            "import QtQuick 2.1; import MyCalendar2.Utils.Events 1.0; MyEvent {}",
+                            "import QtQuick 2.1; import MyCalendar2.Events 1.0; MyEvent {}",
                             float_edit);
 
                 new_event.startDateTime = dt_start;

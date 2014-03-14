@@ -10,7 +10,7 @@
 #include <QtOrganizer/QOrganizerEvent>
 #include <QtOrganizer/qorganizerglobal.h>
 
-QT_USE_NAMESPACE
+//QT_USE_NAMESPACE
 
 QTORGANIZER_USE_NAMESPACE
 
@@ -19,6 +19,8 @@ class MyEvent : public QObject
   Q_OBJECT
 
   Q_PROPERTY(QString itemId READ itemId NOTIFY valueChanged)
+  Q_PROPERTY(QString collectionId READ collectionId WRITE setCollectionId
+             NOTIFY valueChanged)
   Q_PROPERTY(QString displayLabel READ displayLabel WRITE setDisplayLabel
              NOTIFY valueChanged)
   Q_PROPERTY(bool allDay READ allDay WRITE setAllDay NOTIFY valueChanged)
@@ -38,6 +40,9 @@ public:
   ~MyEvent() {}
 
   QString itemId() const;
+
+  QString collectionId() const;
+  void setCollectionId(const QString& collectionId);
 
   QString displayLabel() const { return m_display_label; }
   void setDisplayLabel(QString display_label) {
@@ -75,6 +80,7 @@ public:
 private:
 
   QOrganizerItemId m_id;
+  QOrganizerCollectionId m_collection_id;
   QString m_display_label;
   bool m_all_day;
   QDateTime m_start_date_time;

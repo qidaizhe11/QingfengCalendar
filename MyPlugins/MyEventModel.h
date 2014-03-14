@@ -12,6 +12,7 @@
 //#include <QtVersitOrganizer/qversitorganizerglobal.h>
 #include <versitorganizer/qversitorganizerglobal.h>
 #include "MyEvent.h"
+#include "MyCollection.h"
 
 QTORGANIZER_USE_NAMESPACE
 QTVERSIT_USE_NAMESPACE
@@ -25,6 +26,7 @@ class MyEventModel : public QQuickItem
              NOTIFY startDateChanged)
   Q_PROPERTY(QDateTime endDate READ endDate WRITE setEndDate NOTIFY endDateChanged)
   Q_PROPERTY(QVariantList events READ events NOTIFY eventsChanged)
+  Q_PROPERTY(QVariant collections READ collections NOTIFY collectionsChanged)
   Q_PROPERTY(QString error READ error NOTIFY errorChanged)
 
   Q_ENUMS(ExportError)
@@ -59,6 +61,7 @@ public:
 
 //  QList<QObject*> events() const { return m_events; }
   QVariantList events() const;
+  QVariantList collections() const;
 
   QString error() const;
 
@@ -72,10 +75,17 @@ public:
   Q_INVOKABLE void deleteEvent(const QString& id);
   Q_INVOKABLE void deleteEvent(MyEvent* my_event);
 
+  Q_INVOKABLE void saveCollection(MyCollection* my_collection);
+  Q_INVOKABLE void removeCollection(const QString& collectionId);
+
+  Q_INVOKABLE QVariant defaultCollection();
+  Q_INVOKABLE QVariant collection(const QString& collection_id);
+
 Q_SIGNALS:
   void startDateChanged();
   void endDateChanged();
   void eventsChanged();
+  void collectionsChanged();
   void errorChanged();
 
   void exportCompleted(ExportError error, QUrl url);
@@ -98,6 +108,7 @@ private:
   QDateTime m_end_date;
   QVariantList m_events;
   QVariantList m_collections;
+  QString m_default_collection_id;
   QOrganizerManager::Error m_error;
   QStringList m_import_profiles;
   QVersitReader* m_reader;
