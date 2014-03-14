@@ -38,18 +38,6 @@ function urlChanged(url) {
 
 function requestPermanentToken(code) {
     var req = new XMLHttpRequest();
-    req.onreadystatechange = function() {
-        console.log("req.readyState", req.readyState);
-        if (req.readyState == 4 && req.status == 200) {
-            console.log("responseText", req.responseText);
-            var result = eval("(" + req.responseText + ")");
-            google_oauth.access_token = result["access_token"];
-            google_settings.refreshToken = result["refresh_token"];
-        } else if (req.readyState == 4) {
-            console.log("Status, headers ", req.status,
-                        req.getAllResponseHeaders());
-        }
-    }
 
     req.open("POST", "https://accounts.google.com/o/oauth2/token", true);
     req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
@@ -58,28 +46,45 @@ function requestPermanentToken(code) {
              "&client_secret=" + client_secret +
              "&grant_type=authorization_code" +
              "&code=" + code);
-}
 
-function refreshAccessToken(refresh_token) {
-    console.log("called refreshAccessToken", refresh_token);
-    var req = new XMLHttpRequest();
     req.onreadystatechange = function() {
         console.log("req.readyState", req.readyState);
-        if (req.readyState == 4) {
-            console.log("Status, headers ", req.status,
-                        req.getAllResponseHeaders());
-        }
         if (req.readyState == 4 && req.status == 200) {
             console.log("responseText", req.responseText);
             var result = eval("(" + req.responseText + ")");
             google_oauth.access_token = result["access_token"];
+            google_settings.refreshToken = result["refresh_token"];
+        } else if (req.readyState == 4) {
+            console.log("Status, headers: ", req.status,
+                        req.getAllResponseHeaders());
         }
     }
+}
+
+function refreshAccessToken(refresh_token) {
+    console.log("called refreshAccessToken", refresh_token);
+    console.log("Before refresh, access token: ", google_settings.accessToken);
+    var req = new XMLHttpRequest();
 
     req.open("POST", "https://accounts.google.com/o/oauth2/token", true);
-    req.setRequestHeader("Content-Type", "application/x-www-from-urlencoded");
+    req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
     req.send("client_id=" + client_id +
              "&client_secret=" + client_secret +
              "&grant_type=refresh_token" +
-             "&refrensh_token=" + refresh_token);
+             "&refresh_token=" + refresh_token);
+
+    req.onreadystatechange = function() {
+        console.log("req.readyState", req.readyState);
+
+        if (req.readyState == 4 && req.status == 200) {
+            console.log("responseText", req.responseText);
+            var result = eval("(" + req.responseText + ")");
+            google_oauth.access_token = result["access_token"];
+        } else if (req.readyState == 4) {
+            console.log("Status: ", req.status);
+            console.log("Status Text: ", req.statusText);
+            console.log("Headers: ", req.getAllResponseHeaders());
+        }
+    }
 }

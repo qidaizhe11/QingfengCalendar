@@ -38,7 +38,7 @@ Rectangle {
     }
 
     function refreshAccessToken(refresh_token) {
-//        OAuth.refreshAccessToken()
+        OAuth.refreshAccessToken(refresh_token)
     }
 
     Item {

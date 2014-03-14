@@ -22,7 +22,31 @@ MyEventModel::MyEventModel(QQuickItem* parent) :
 {
   m_manager = new QOrganizerManager("memory");
 
+//  foreach (const QString& manager, QOrganizerManager::availableManagers()) {
+//    qDebug() << "Avialable manager: " << manager;
+//  }
+
   importEvents();
+
+  QOrganizerCollection collection;
+  collection.setMetaData(QOrganizerCollection::KeyName, "MyCalendar");
+  m_manager->saveCollection(&collection);
+
+  QList<QOrganizerCollection> collections = m_manager->collections();
+  foreach (QOrganizerCollection collection, collections) {
+    qDebug() << collection.metaData(QOrganizerCollection::KeyName).toString() <<
+                collection.metaData(QOrganizerCollection::KeyDescription).toString() <<
+                collection.metaData(QOrganizerCollection::KeyColor).toString() <<
+                collection.id().managerUri() << collection.id().toString();
+  }
+
+  QOrganizerCollection default_collection = m_manager->defaultCollection();
+  qDebug() << "Default_collection: " << default_collection.metaData(
+                QOrganizerCollection::KeyName).toString();
+
+  QMessageBox::information(NULL, tr("Remove failed"),
+      tr("Can't remove an occurrence item, please modify the parent "
+         "item's recurrence rule instead!"));
 }
 
 //-------------------------------------------------------------------------
@@ -159,6 +183,7 @@ void MyEventModel::importEvents()
     QList<QOrganizerItem> items = importer.items();
     foreach (const QOrganizerItem& item, items) {
       all_items.append(item);
+      qDebug() << "CollectionId:" << item.collectionId().toString();
     }
   }
 
@@ -174,15 +199,13 @@ void MyEventModel::importEvents()
 
 void MyEventModel::saveEvent(MyEvent* my_event)
 {
-  qDebug() << "In saveEvent function.";
+  qDebug() << "MyEventModel::SaveEvent.";
 //  qDebug() << "Organizer_event id: " + organizer_event.id().toString();
 
 //  MyEvent* new_event = my_event;
-  qDebug() << my_event->allDay();
-  qDebug() << my_event->displayLabel();
-
-  qDebug() << my_event->startDateTime();
-  qDebug() << my_event->endDateTime();
+  qDebug() << my_event->displayLabel() << my_event->allDay() <<
+              my_event->startDateTime().toString() <<
+              my_event->endDateTime().toString();
 
   if (my_event->startDateTime().isValid()) {
     QOrganizerEvent organizer_event = my_event->toQOrganizerEvent();
@@ -239,17 +262,9 @@ void MyEventModel::deleteEvent(MyEvent *my_event)
 
 void MyEventModel::updateEvents()
 {
-  qDebug() << "Begin to search events from manager.";
+  qDebug() << "MyEventModel::updateEvents.";
 
   if (m_end_date >= m_start_date) {
-//    QOrganizerItemSortOrder sort_order;
-//    sort_order.setDetail(QOrganizerItemDetail::TypeEventTime,
-//                           QOrganizerEventTime::FieldStartDateTime);
-//    sort_order.setDirection(Qt::AscendingOrder);
-//    sort_order.setCaseSensitivity(Qt::CaseInsensitive);
-//    sort_order.setBlankPolicy(QOrganizerItemSortOrder::BlanksLast);
-//    QList<QOrganizerItemSortOrder> sort_order_list;
-//    sort_order_list.append(sort_order);
 
 //    QList<QOrganizerItem> event_items = m_manager->items(
 //          QDateTime(m_start_date, QTime(0, 0, 0)),
@@ -264,7 +279,8 @@ void MyEventModel::updateEvents()
       object->deleteLater();
 //      QObject::destroyed(object);
 //      delete object;
-      qDebug() << "try to delete Events: " + object->displayLabel() + " " + object->startDateTime().toString();
+      qDebug() << "Delete Events:" << object->displayLabel() <<
+                  object->startDateTime().toString();
     }
 
     m_events.clear();
@@ -275,27 +291,28 @@ void MyEventModel::updateEvents()
         QOrganizerEvent event = static_cast<QOrganizerEvent>(event_items[i]);
 //        qDebug() << "Event Id: " + event.id().toString();
 
-        QStringList list = event.comments();
-        if (list.count() != 0) {
-          qDebug() << "Comments count: " + QString::number(list.count());
-        }
-        foreach (QString str, list) {
-          qDebug() << "Commnet: " + str;
-        }
+//        QStringList list = event.comments();
+//        if (list.count() != 0) {
+//          qDebug() << "Comments count: " + QString::number(list.count());
+//        }
+//        foreach (QString str, list) {
+//          qDebug() << "Commnet: " + str;
+//        }
 
 //        qDebug() << "Description: " + event.description();
-        QOrganizerItemLocation location =
-            event.detail(QOrganizerItemDetail::TypeLocation);
-        qDebug() << "Location: " + location.label();
+//        QOrganizerItemLocation location =
+//            event.detail(QOrganizerItemDetail::TypeLocation);
+//        qDebug() << "Location: " + location.label();
 
         MyEvent* my_event = new MyEvent(event);
-        QString description = QString("Description: ") + QString::number(i);
-        QString display_label = QString("Display: ") + QString::number(i);
   //      MyEvent* my_event = new MyEvent(description, display_label);
 
-        qDebug() << "Event: " + my_event->displayLabel() + ", " +
-                    my_event->startDateTime().toString();
-//        qDebug() << "Event Id: " + my_event->itemId();
+        qDebug() << "Find Event:" <<
+                    my_event->displayLabel() <<
+                    my_event->startDateTime().toString() <<
+                    my_event->endDateTime().toString() <<
+                    my_event->allDay() <<
+                    my_event->location();
 
   //      QObject* item_object = static_cast<QObject*>(&my_event);
         m_events.append(QVariant::fromValue<QObject*>(my_event));
@@ -303,7 +320,7 @@ void MyEventModel::updateEvents()
       }
     }
 
-    qDebug() << "Find event numbers: " + QString::number(m_events.length());
+    qDebug() << "Find events count:" << m_events.length();
   } else {
     qDebug() << "Error: endDate < startDate";
     return;

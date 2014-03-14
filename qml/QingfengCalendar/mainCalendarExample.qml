@@ -118,19 +118,21 @@ Window {
     GoogleOAuth {
         id: google_oauth
         anchors.fill: parent
+        visible: false
 
         onLoginDone: {
             console.log("Login Done")
+            visible = false;
             google_settings.accessToken = google_oauth.access_token;
         }
     }
 
     Component.onCompleted: {
-        if (google_settings.refreshToken == "") {
+        if (google_settings.refreshToken === "") {
             console.log("onCompleted!!")
             google_oauth.login();
         } else {
-            google_oauth.refreshAccessToken(google_settings.refreshToken);
+//            google_oauth.refreshAccessToken(google_settings.refreshToken);
         }
 //        google_oauth.login();
     }

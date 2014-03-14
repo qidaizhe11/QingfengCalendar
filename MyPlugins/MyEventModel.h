@@ -11,12 +11,8 @@
 #include <versitorganizer/qversitorganizerglobal.h>
 #include "MyEvent.h"
 
-QTORGANIZER_USE_NAMESPACE
-QTVERSITORGANIZER_USE_NAMESPACE
-
-QT_BEGIN_NAMESPACE_ORGANIZER
-//class QOrganizerManager;
-QT_END_NAMESPACE_ORGANIZER
+//QTORGANIZER_USE_NAMESPACE
+//QTVERSITORGANIZER_USE_NAMESPACE
 
 class MyEventModel : public QQuickItem
 {
@@ -28,7 +24,27 @@ class MyEventModel : public QQuickItem
   Q_PROPERTY(QVariantList events READ events NOTIFY eventsChanged)
   Q_PROPERTY(QString error READ error NOTIFY errorChanged)
 
+  Q_ENUMS(ExportError)
+  Q_ENUMS(ImportError)
+
 public:
+  enum ExportError {
+    ExportNoError          = QVersitWriter::NoError,
+    ExportUnspecifiedError = QVersitWriter::UnspecifiedError,
+    ExportIOError          = QVersitWriter::IOError,
+    ExportOutOfMemoryError = QVersitWriter::OutOfMemoryError,
+    ExportNotReadyError    = QVersitWriter::NotReadyError
+  };
+
+  enum ImportError {
+    ImportNoError          = QVersitReader::NoError,
+    ImportUnspecifiedError = QVersitReader::UnspecifiedError,
+    ImportIOError          = QVersitReader::IOError,
+    ImportOutOfMemoryError = QVersitReader::OutOfMemoryError,
+    ImportNotReadyError    = QVersitReader::NotReadyError,
+    ImportParseError       = QVersitReader::ParseError
+  };
+
   MyEventModel(QQuickItem* parent = 0);
   ~MyEventModel() {}
 
@@ -43,7 +59,11 @@ public:
 
   QString error() const;
 
-  Q_INVOKABLE void importEvents();
+//  Q_INVOKABLE void importEvents();
+  Q_INVOKABLE void importEvents(const QUrl& url,
+                                const QStringList& profiles = QStringList());
+  Q_INVOKABLE void exportEvents(const QUrl& url,
+                                const QStringList& profiles = QStringList());
 
   Q_INVOKABLE void saveEvent(MyEvent* my_event);
   Q_INVOKABLE void deleteEvent(const QString& id);
@@ -54,6 +74,9 @@ Q_SIGNALS:
   void endDateChanged();
   void eventsChanged();
   void errorChanged();
+
+  void exportCompleted(ExportError error, QUrl url);
+  void importCompleted(ImportError error, QUrl url);
 
 public slots:
   void updateEvents();

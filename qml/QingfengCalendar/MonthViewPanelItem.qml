@@ -129,7 +129,7 @@ Item {
 
             for (var i = 0; i < max_month_list_count; ++i) {
                 month_list_model.append({ "month_date": date} );
-                console.log("In month_list_model: ", date.toLocaleDateString());
+                console.log("month_list_model, append: ", date.toLocaleDateString());
                 date.setMonth(date.getMonth() + 1);
             }
             month_list_view.currentIndex = middle_index_of_month_list;
@@ -141,11 +141,11 @@ Item {
             for (var i = 0; i < middle_index_of_month_list; ++i) {
                 date.setMonth(date.getMonth() - 1);
                 month_list_model.insert(0, { "month_date": date});
-                console.log("Insert date: ", date);
+                console.log("OnInsertAtBeingning Insert Month date: ",
+                            date.toLocaleDateString());
 
-                console.log("Try to delete item form month_list_model.",
-                            month_list_model.count);
                 month_list_model.remove(max_month_list_count);
+                console.log("Delete Month date of index: ", max_month_list_count);
             }
 
             month_list_view.positionViewAtIndex(middle_index_of_month_list,
@@ -158,9 +158,10 @@ Item {
             for (var i = 0; i < middle_index_of_month_list; ++i) {
                 date.setMonth(date.getMonth() + 1);
                 month_list_model.append({"month_date": date});
-                console.log("Insert date: ", date);
+                console.log("onInsertAtEnd Insert Month date: ",
+                            date.toLocaleDateString());
                 month_list_model.remove(0);
-                console.log("Try to delete date, ", month_list_model.count);
+                console.log("Delete Month date of index: 0");
             }
 
             month_list_view.positionViewAtIndex(middle_index_of_month_list,
@@ -217,7 +218,7 @@ Item {
         running: false
         repeat: false
         onTriggered: {
-            console.log("Timer triggered.")
+//            console.log("Timer triggered.")
             month_list_model.insertAtBeginning();
         }
     }
@@ -228,7 +229,7 @@ Item {
         running: false
         repeat: false
         onTriggered: {
-            console.log("Timer triggered.")
+//            console.log("Timer triggered.")
             month_list_model.insertAtEnd();
         }
     }
@@ -523,7 +524,8 @@ Item {
 
     function clearLabelListModel() {
         while (label_list_model.count > 0) {
-            console.log("Label list model, try to destroy.");
+            console.log("clearLabelListModel, destroy: ",
+                        label_list_model.get(0).object.eventItem.displayLabel);
             label_list_model.get(0).object.destroy();
             label_list_model.remove(0);
         }
@@ -542,7 +544,8 @@ Item {
     Connections {
         target: control
         onRefreshEvents: {
-            console.log("Come to RefreshEvents function, Label model count: " + label_list_model.count);
+            console.log("OnRefreshEvents, label_list_model count: ",
+                        label_list_model.count);
 
             clearLabelListModel();
 
@@ -557,7 +560,7 @@ Item {
 
             var component = Qt.createComponent("TileEventLabel.qml");
 
-            console.log("Come to create object.");
+//            console.log("Come to create object.");
 
             for (var i = 0; i < control.event_model.events.length; ++i) {
                 var event = control.event_model.events[i];

@@ -9,7 +9,7 @@
 
 UI界面采用 Qt Quick/ Qml 绘制
 
-程序整体基于 [Qt Organizer](https://qt.gitorious.org/qt/qtpim/) 和 [QtQuick.Controls.Calendar](https://qt.gitorious.org/qt/qtquickcontrols/)，皆为 Qt 未正式面世的模块，其中后者会出现在 [Qt 5.3](http://qt-project.org/wiki/New-Features-in-Qt-5.3)，至于前者，似乎还远。
+程序整体基于 [Qt Organizer](https://qt.gitorious.org/qt/qtpim/) 和 [QtQuick.Controls.Calendar](https://qt.gitorious.org/qt/qtquickcontrols/)，皆为 Qt 未正式面世的模块，后者会在 [Qt 5.3](http://qt-project.org/wiki/New-Features-in-Qt-5.3)面世，至于前者，似乎还远。
 </br>
 
 ##当前进度：
@@ -19,17 +19,17 @@ UI界面采用 Qt Quick/ Qml 绘制
 - 与 Google Calendar 的同步
 
 ####待解决:
-- 农历，节假日，国内法定节假日安排
+- 底层 SQLite 数据库的重新使用
+- 农历，节假日
 - 周视图
 - 桌面透明工具
 - 配置界面
 - ......
 
 ####已解决:
-- 月视图上提醒事件的显示
-- 与数据库的交互（直接调用的 Qt Organizer）
-- 事件的增删改逻辑
-- 事件编辑界面（EventEditView）的绘制
+- 月视图
+- Qt Organizer 代理层
+- 事件编辑界面（EventEditView）
 </br>
 
 ##构建与运行：
@@ -41,7 +41,7 @@ UI界面采用 Qt Quick/ Qml 绘制
 
 下载安装即可
 
-注：因为一个严重的bug, [QTBUG-35989](https://bugreports.qt-project.org/browse/QTBUG-35989), Linux系统需回退到**Qt 5.1**版本，否则可能会因下拉框，下拉按钮(ContextMenu)等导致崩溃。
+注：因为一个严重的bug, [QTBUG-35989](https://bugreports.qt-project.org/browse/QTBUG-35989), Linux系统需回退到 **Qt 5.1** 版本，否则可能会因 ComboBox 等导致崩溃。
 
 ####[Qt Organizer](https://qt.gitorious.org/qt/qtpim/)
 
