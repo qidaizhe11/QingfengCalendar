@@ -21,6 +21,7 @@
 
 #include "Google/MainWindow.h"
 #include "Google/GoogleSettings.h"
+#include "Google/GoogleManager.h"
 
 int main(int argc, char *argv[])
 {
@@ -51,6 +52,10 @@ int main(int argc, char *argv[])
 //    viewer.setMainQmlFile(QStringLiteral("qml/QingfengCalendar/GoogleOAuth.qml"));
 
     viewer.show();
+
+//    GoogleManager google_manager;
+//    google_manager.getCalendars();
+//    google_manager.getEventsForCalendar("");
 
 //    MainWindow window;
 //    window.show();

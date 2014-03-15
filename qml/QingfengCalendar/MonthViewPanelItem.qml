@@ -133,7 +133,7 @@ Item {
                 date.setMonth(date.getMonth() + 1);
             }
             month_list_view.currentIndex = middle_index_of_month_list;
-            control.refreshEvents();
+//            control.refreshEvents();
         }
 
         onInsertAtBeginning: {

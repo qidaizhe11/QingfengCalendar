@@ -13,10 +13,13 @@
 #include <versitorganizer/qversitorganizerglobal.h>
 #include "MyEvent.h"
 #include "MyCollection.h"
+//#include "Google/GoogleManager.h"
 
 QTORGANIZER_USE_NAMESPACE
 QTVERSIT_USE_NAMESPACE
 QTVERSITORGANIZER_USE_NAMESPACE
+
+class GoogleManager;
 
 class MyEventModel : public QQuickItem
 {
@@ -103,6 +106,8 @@ private:
   void checkError(const QOrganizerAbstractRequest* request);
 
   QOrganizerManager* m_manager;
+
+  GoogleManager* m_google_manager;
 
   QDateTime m_start_date;
   QDateTime m_end_date;

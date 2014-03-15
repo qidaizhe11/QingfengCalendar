@@ -6,6 +6,7 @@ import QtQuick.Dialogs 1.0
 //import QtOrganizer 5.0
 //import MyCalendar2.Events 1.0
 import MyCalendar.Sync.Google 1.0
+import "Content"
 
 Window {
     visible: true
@@ -19,16 +20,12 @@ Window {
 
     id: main_window
 
-    GoogleSettings {
-        id: google_settings
-    }
-
     StackView {
         id: stack_view
         anchors.fill: parent
         focus: true
 
-        delegate: stack_view_delegate
+        delegate: MyStackViewDelegate {}
 
         initialItem: MyCalendar {
             id: calendar
@@ -38,76 +35,6 @@ Window {
             height: parent.height
             selectedDate: new Date()
             focus: true
-        }
-    }
-
-    StackViewDelegate {
-        id: stack_view_delegate
-
-        property bool horizontal : true
-
-        function getTransition(properties)
-        {
-            return stack_view_delegate["horizontalSlide"][properties.name]
-        }
-
-        function transitionFinished(properties)
-        {
-            properties.exitItem.x = 0
-            properties.exitItem.y = 0
-        }
-
-        property QtObject horizontalSlide: QtObject {
-            property Component pushTransition: StackViewTransition {
-                PropertyAnimation {
-                    target: enterItem
-//                    property: "x"
-//                    from: target.width
-//                    to: 0
-//                    duration: 200
-                    property: "opacity"
-                    from: 0
-                    to: 1
-                    duration: 300
-                }
-                PropertyAnimation {
-                    target: exitItem
-                    property: "x"
-                    from: 0
-                    to: -target.width
-                    duration: 300
-//                    property: "opacity"
-//                    from: 1
-//                    to: 0
-//                    duration: 200
-                }
-            }
-
-            property Component popTransition: StackViewTransition {
-                PropertyAnimation {
-                    target: enterItem
-                    property: "x"
-                    from: -target.width
-                    to: 0
-                    duration: 300
-//                    property: "opacity"
-//                    from: 0
-//                    to: 1
-//                    duration: 200
-                }
-                PropertyAnimation {
-                    target: exitItem
-//                    property: "x"
-//                    from: 0
-//                    to: target.width
-//                    duration: 200
-                    property: "opacity"
-                    from: 1
-                    to: 0
-                    duration: 300
-                }
-            }
-            property Component replaceTransition: pushTransition
         }
     }
 
@@ -132,6 +59,10 @@ Window {
 //        Component.onCompleted: visible = true
     }
 
+    GoogleSettings {
+        id: google_settings
+    }
+
     GoogleOAuth {
         id: google_oauth
         anchors.fill: parent
@@ -141,6 +72,8 @@ Window {
             console.log("Login Done")
             visible = false;
             google_settings.accessToken = google_oauth.access_token;
+
+            calendar.refreshEvents();
         }
     }
 
@@ -153,5 +86,6 @@ Window {
 //            google_oauth.refreshAccessToken(google_settings.refreshToken);
         }
 //        google_oauth.login();
+        calendar.refreshEvents();
     }
 }

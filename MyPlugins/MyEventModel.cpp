@@ -13,6 +13,7 @@
 #include <QMessageBox>
 #include <QFileDialog>
 #include <QStandardPaths>
+#include "Google/GoogleManager.h"
 
 //-------------------------------------------------------------------------
 // static local function
@@ -34,6 +35,7 @@ static QString urlToLocalFileName(const QUrl& url)
 MyEventModel::MyEventModel(QQuickItem* parent) :
   QQuickItem(parent),
   m_manager(0),
+  m_google_manager(0),
   m_start_date(QDateTime::currentDateTime()),
   m_end_date(QDateTime::currentDateTime()),
   m_error(QOrganizerManager::NoError),
@@ -69,6 +71,9 @@ MyEventModel::MyEventModel(QQuickItem* parent) :
   }
 
   importEvents(QUrl("file:///home/daizhe/qidaizhe11@gmail.com-2.ics"));
+
+  m_google_manager = new GoogleManager(this);
+  m_google_manager->setOrganizerManager(m_manager);
 }
 
 MyEventModel::~MyEventModel()
@@ -76,6 +81,7 @@ MyEventModel::~MyEventModel()
   if (m_manager) {
     delete m_manager;
   }
+  delete m_google_manager;
   delete m_writer;
   delete m_reader;
 //  m_events.removeAll();
@@ -300,6 +306,10 @@ void MyEventModel::deleteEvent(MyEvent *my_event)
   req->start();
 }
 
+//
+// saveCollection
+//
+
 void MyEventModel::saveCollection(MyCollection *my_collection)
 {
   if (my_collection) {
@@ -316,6 +326,10 @@ void MyEventModel::saveCollection(MyCollection *my_collection)
   }
 }
 
+//
+// removeCollection
+//
+
 void MyEventModel::removeCollection(const QString &collectionId)
 {
   QOrganizerCollectionRemoveRequest* req =
@@ -328,6 +342,10 @@ void MyEventModel::removeCollection(const QString &collectionId)
 
   req->start();
 }
+
+//
+// defaultCollection
+//
 
 QVariant MyEventModel::defaultCollection()
 {
@@ -348,6 +366,10 @@ QVariant MyEventModel::collection(const QString &collection_id)
 //-------------------------------------------------------------------------
 // public slots
 
+//
+// updateEvents
+//
+
 void MyEventModel::updateEvents()
 {
   qDebug() << "MyEventModel::updateEvents.";
@@ -361,6 +383,7 @@ void MyEventModel::updateEvents()
 
     QList<QOrganizerItem> event_items = m_manager->items(
           m_start_date, m_end_date);
+    qDebug() << "event_items length: " << event_items.length();
 
 //    foreach (QVariant var, m_events) {
 ////      MyEvent* object = var.value<MyEvent*>();
@@ -408,6 +431,11 @@ void MyEventModel::updateEvents()
   //      QObject* item_object = static_cast<QObject*>(&my_event);
         m_events.append(QVariant::fromValue<QObject*>(my_event));
   //      m_events.append(QVariant::fromValue(str));
+      } else if (event_items[i].type() ==
+                 QOrganizerItemType::TypeEventOccurrence) {
+//        QOrganizerEventOccurrence event_occurrence =
+//            static_cast<QOrganizerEventOccurrence>(event_items[i]);
+        qDebug() << "Find Event Occurrence:";
       }
     }
 

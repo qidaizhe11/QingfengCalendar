@@ -43,7 +43,9 @@ SOURCES += main.cpp \
     Google/LoginDialog.cpp \
     Google/MainWindow.cpp \
     Google/GoogleSettings.cpp \
-    MyPlugins/MyCollection.cpp
+    MyPlugins/MyCollection.cpp \
+    Google/GoogleManager.cpp \
+    MyPlugins/MyEventDetail.cpp
 
 # Installation path
 # target.path =
@@ -91,7 +93,9 @@ HEADERS += \
     Google/LoginDialog.h \
     Google/MainWindow.h \
     Google/GoogleSettings.h \
-    MyPlugins/MyCollection.h
+    MyPlugins/MyCollection.h \
+    Google/GoogleManager.h \
+    MyPlugins/MyEventDetail.h
 
 RESOURCES += \
     resources/Calendar.qrc
