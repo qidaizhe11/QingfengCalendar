@@ -66,18 +66,18 @@ MyEventDetail::DetailType MyEventType::type() const
     return MyEventDetail::ItemType;
 }
 
-void MyEventType::setItemType(ItemType newType)
+void MyEventType::setEventType(EventType newType)
 {
-    if (newType != itemType()) {
+    if (newType != EventType()) {
         m_detail.setValue(QOrganizerItemType::FieldType,
                           static_cast<QOrganizerItemType::ItemType>(newType));
         emit valueChanged();
     }
 }
 
-MyEventType::ItemType MyEventType::itemType() const
+MyEventType::EventType MyEventType::eventType() const
 {
-    return static_cast<ItemType>(
+    return static_cast<EventType>(
           m_detail.value(QOrganizerItemType::FieldType).toInt());
 }
 

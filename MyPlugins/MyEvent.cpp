@@ -1,6 +1,8 @@
 #include "MyEvent.h"
 #include <QDateTime>
 
+//-------------------------------------------------------------------------
+
 MyEvent::MyEvent(QObject *parent) :
   QObject(parent)
 {
@@ -23,11 +25,28 @@ MyEvent::MyEvent(const QOrganizerEvent &event, QObject* parent)
   m_location = event.location();
 }
 
-//MyEvent::MyEvent(const QString &description, const QString& display_label)
-//{
-////  m_description = description;
-//  m_display_label = display_label;
-//}
+MyEvent::~MyEvent()
+{
+  if (!m_details.empty()) {
+    foreach (MyEventDetail* detail, m_details) {
+      delete detail;
+    }
+    m_details.clear();
+  }
+}
+
+//-------------------------------------------------------------------------
+// public
+
+MyEventType::EventType MyEvent::eventType() const
+{
+  foreach (MyEventDetail* detail, m_details) {
+    if (MyEventDetail::ItemType == detail->type()) {
+      return static_cast<MyEventType* >(detail)->eventType();
+    }
+  }
+  return MyEventType::Undefined;
+}
 
 QString MyEvent::itemId() const
 {
@@ -70,6 +89,31 @@ QOrganizerEvent MyEvent::toQOrganizerEvent() const
   event.setLocation(m_location);
 
   return event;
+}
+
+//-------------------------------------------------------------------------
+// Q_INVOKABLE functions
+
+MyEventDetail* MyEvent::detail(int type)
+{
+  foreach (MyEventDetail* detail, m_details) {
+    if (type == detail->type()) {
+//      MyEventDetail* event_detail =
+      return detail;
+    }
+  }
+  return 0;
+}
+
+QVariantList MyEvent::details(int type)
+{
+  QVariantList list;
+  foreach (MyEventDetail* detail, m_details) {
+    if (type = detail->type()) {
+      list.append(QVariant::fromValue<QObject*>(detail));
+    }
+  }
+  return list;
 }
 
 //-------------------------------------------------------------------------

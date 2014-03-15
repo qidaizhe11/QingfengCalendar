@@ -48,7 +48,7 @@ public:
   };
 
   explicit MyEventDetail(QObject *parent = 0);
-  ~MyEventDetail() {}
+  ~MyEventDetail();
 
   virtual DetailType type() const;
 
@@ -75,17 +75,18 @@ class MyEventType : public MyEventDetail
 {
     Q_OBJECT
 
-    Q_ENUMS(ItemTypeField)
-    Q_ENUMS(ItemType)
+    Q_ENUMS(EventTypeField)
+    Q_ENUMS(EventType)
 
-    Q_PROPERTY(ItemType itemType READ itemType WRITE setItemType NOTIFY valueChanged)
+    Q_PROPERTY(EventType eventType READ eventType WRITE setEventType
+               NOTIFY valueChanged)
 
 public:
-    enum ItemTypeField {
+    enum EventTypeField {
         FieldType = QOrganizerItemType::FieldType
     };
 
-    enum ItemType {
+    enum EventType {
         Undefined = QOrganizerItemType::TypeUndefined,
         Event = QOrganizerItemType::TypeEvent,
         EventOccurrence = QOrganizerItemType::TypeEventOccurrence
@@ -99,8 +100,8 @@ public:
 
     virtual DetailType type() const;
 
-    void setItemType(ItemType newType);
-    ItemType itemType() const;
+    void setEventType(EventType newType);
+    EventType eventType() const;
 
 Q_SIGNALS:
     void valueChanged();

@@ -9,14 +9,19 @@
 //#include <QtOrganizer/qorganizeritem.h>
 #include <QtOrganizer/QOrganizerEvent>
 #include <QtOrganizer/qorganizerglobal.h>
+#include "MyEventDetail.h"
 
 //QT_USE_NAMESPACE
 
-QTORGANIZER_USE_NAMESPACE
+//QTORGANIZER_USE_NAMESPACE
+using namespace QtOrganizer;
 
 class MyEvent : public QObject
 {
   Q_OBJECT
+
+  Q_PROPERTY(MyEventType::EventType eventType READ eventType
+             NOTIFY valueChanged)
 
   Q_PROPERTY(QString itemId READ itemId NOTIFY valueChanged)
   Q_PROPERTY(QString collectionId READ collectionId WRITE setCollectionId
@@ -36,8 +41,9 @@ class MyEvent : public QObject
 public:
   MyEvent(QObject *parent = 0);
   MyEvent(const QOrganizerEvent& event, QObject *parent = 0);
-//  explicit MyEvent(const QString& description, const QString& display_label);
-  ~MyEvent() {}
+  ~MyEvent();
+
+  MyEventType::EventType eventType() const;
 
   QString itemId() const;
 
@@ -68,16 +74,20 @@ public:
   QString location() const { return m_location; }
   void setLocation(const QString& location) { m_location = location;}
 
-//  void setItem(const QOrganizerItem& item);
-
   QOrganizerEvent toQOrganizerEvent() const;
 
-  Q_SIGNALS:
+  Q_INVOKABLE MyEventDetail* detail(int type);
+  Q_INVOKABLE QVariantList details(int type);
+//  Q_INVOKABLE MyEventDetail* detail(MyEventDetail::ItemType type);
+//  Q_INVOKABLE MyEventDetail* details(MyEventDetail::ItemType type);
+
+Q_SIGNALS:
   void valueChanged();
   void startDateTimeChanged();
   void endDateTimeChanged();
 
 private:
+  QList<MyEventDetail*> m_details;
 
   QOrganizerItemId m_id;
   QOrganizerCollectionId m_collection_id;

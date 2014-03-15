@@ -13,6 +13,7 @@
 #include <QMessageBox>
 #include <QFileDialog>
 #include <QStandardPaths>
+#include <QtQml/QQmlEngine>
 #include "Google/GoogleManager.h"
 
 //-------------------------------------------------------------------------
@@ -58,7 +59,8 @@ MyEventModel::MyEventModel(QQuickItem* parent) :
 
   MyCollection* my_collection = new MyCollection();
   my_collection->setCollection(collection);
-  m_collections.append(QVariant::fromValue<QObject*>(my_collection));
+//  m_collections.append(QVariant::fromValue<QObject*>(my_collection));
+  m_collections.append(my_collection);
   m_default_collection_id = my_collection->id();
 
 //  qDebug() << "m_default_collection_id:" << m_default_collection_id;
@@ -84,10 +86,18 @@ MyEventModel::~MyEventModel()
   delete m_google_manager;
   delete m_writer;
   delete m_reader;
-//  m_events.removeAll();
-  m_events.clear();
-//  m_collections.removeAll();
-  m_collections.clear();
+  if (!m_events.isEmpty()) {
+    foreach (MyEvent* my_event, m_events) {
+      delete my_event;
+    }
+    m_events.clear();
+  }
+  if (!m_collections.isEmpty()) {
+    foreach (MyCollection* my_collection, m_collections) {
+      delete my_collection;
+    }
+    m_collections.clear();
+  }
 }
 
 //-------------------------------------------------------------------------
@@ -111,12 +121,24 @@ void MyEventModel::setEndDate(const QDateTime &end_date)
 QVariantList MyEventModel::events() const
 {
 //  return QQmlListProperty<MyEvent>(this, m_events);
-  return m_events;
+//  return m_events;
+  QVariantList list;
+  foreach (MyEvent* event, m_events) {
+    QQmlEngine::setObjectOwnership(event, QQmlEngine::JavaScriptOwnership);
+    list.append(QVariant::fromValue<QObject*>(event));
+  }
+  return list;
 }
 
 QVariantList MyEventModel::collections() const
 {
-  return m_collections;
+//  return m_collections;
+  QVariantList list;
+  foreach (MyCollection* collection, m_collections) {
+    QQmlEngine::setObjectOwnership(collection, QQmlEngine::JavaScriptOwnership);
+    list.append(QVariant::fromValue<QObject*>(collection));
+  }
+  return list;
 }
 
 QString MyEventModel::error() const
@@ -209,8 +231,11 @@ void MyEventModel::exportEvents(const QUrl &url, const QStringList &profiles)
 
     QVersitOrganizerExporter exporter(profile);
     QList<QOrganizerItem> items;
-    foreach (QVariant var, m_events) {
-      items.append(var.value<MyEvent*>()->toQOrganizerEvent());
+//    foreach (QVariant var, m_events) {
+//      items.append(var.value<MyEvent*>()->toQOrganizerEvent());
+//    }
+    foreach (MyEvent* event, m_events) {
+      items.append(event->toQOrganizerEvent());
     }
 
     exporter.exportItems(items, QVersitDocument::ICalendar20Type);
@@ -347,20 +372,29 @@ void MyEventModel::removeCollection(const QString &collectionId)
 // defaultCollection
 //
 
-QVariant MyEventModel::defaultCollection()
+MyCollection* MyEventModel::defaultCollection()
 {
-  return collection(m_manager->defaultCollection().id().toString());
+  MyCollection* my_collection =
+      collection(m_manager->defaultCollection().id().toString());
+  QQmlEngine::setObjectOwnership(my_collection, QQmlEngine::JavaScriptOwnership);
+  return my_collection;
 }
 
-QVariant MyEventModel::collection(const QString &collection_id)
+MyCollection* MyEventModel::collection(const QString &collection_id)
 {
-  foreach (QVariant var, m_collections) {
-    if (var.value<MyCollection*>()->id() == collection_id) {
-      qDebug() << "MyEventModel::collection, var: " << var;
-      return var;
+//  foreach (QVariant var, m_collections) {
+//    if (var.value<MyCollection*>()->id() == collection_id) {
+//      qDebug() << "MyEventModel::collection, var: " << var;
+//      return var;
+//    }
+//  }
+//  return QVariant();
+  foreach (MyCollection* collection, m_collections) {
+    if (collection->id() == collection_id) {
+      qDebug() << "MyEventModel::collection, return:" << collection;
     }
   }
-  return QVariant();
+  return 0;
 }
 
 //-------------------------------------------------------------------------
@@ -385,22 +419,21 @@ void MyEventModel::updateEvents()
           m_start_date, m_end_date);
     qDebug() << "event_items length: " << event_items.length();
 
-//    foreach (QVariant var, m_events) {
-////      MyEvent* object = var.value<MyEvent*>();
-////      object->deleteLater();
-////      QObject::destroyed(object);
-////      delete object;
-//      qDebug() << "Delete Events:" << object->displayLabel() <<
-//                  object->startDateTime().toString();
+//    for (int i = m_events.count() - 1; i >= 0; --i) {
+//      qDebug() << "Remove Event: " <<
+//                  m_events.at(i)->displayLabel();
+//      m_events.removeAt(i);
 //    }
 
-    for (int i = m_events.count() - 1; i >= 0; --i) {
-      qDebug() << "Remove Event: " <<
-                  m_events.at(i).value<MyEvent*>()->displayLabel();
-      m_events.removeAt(i);
-    }
+//    m_events.clear();
 
-    m_events.clear();
+    if (!m_events.isEmpty()) {
+      foreach (MyEvent* my_event, m_events) {
+        qDebug() << "Delete Event: " << my_event->displayLabel();
+        delete my_event;
+      }
+      m_events.clear();
+    }
 
 
     for (int i = 0; i < event_items.length(); ++i) {
@@ -429,7 +462,8 @@ void MyEventModel::updateEvents()
                     my_event->location();
 
   //      QObject* item_object = static_cast<QObject*>(&my_event);
-        m_events.append(QVariant::fromValue<QObject*>(my_event));
+//        m_events.append(QVariant::fromValue<QObject*>(my_event));
+        m_events.append(my_event);
   //      m_events.append(QVariant::fromValue(str));
       } else if (event_items[i].type() ==
                  QOrganizerItemType::TypeEventOccurrence) {

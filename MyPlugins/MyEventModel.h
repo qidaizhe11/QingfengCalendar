@@ -81,8 +81,10 @@ public:
   Q_INVOKABLE void saveCollection(MyCollection* my_collection);
   Q_INVOKABLE void removeCollection(const QString& collectionId);
 
-  Q_INVOKABLE QVariant defaultCollection();
-  Q_INVOKABLE QVariant collection(const QString& collection_id);
+//  Q_INVOKABLE QVariant defaultCollection();
+//  Q_INVOKABLE QVariant collection(const QString& collection_id);
+  Q_INVOKABLE MyCollection* defaultCollection();
+  Q_INVOKABLE MyCollection* collection(const QString& collection_id);
 
 Q_SIGNALS:
   void startDateChanged();
@@ -111,8 +113,10 @@ private:
 
   QDateTime m_start_date;
   QDateTime m_end_date;
-  QVariantList m_events;
-  QVariantList m_collections;
+//  QVariantList m_events;
+//  QVariantList m_collections;
+  QList<MyEvent*> m_events;
+  QList<MyCollection*> m_collections;
   QString m_default_collection_id;
   QOrganizerManager::Error m_error;
   QStringList m_import_profiles;
