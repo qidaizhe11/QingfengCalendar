@@ -73,19 +73,22 @@ Window {
             visible = false;
             google_settings.accessToken = google_oauth.access_token;
 
-            calendar.refreshEvents();
+            calendar.event_model.initGoogleSync();
+//            calendar.refreshEvents();
         }
     }
 
     Component.onCompleted: {
+        calendar.refreshEvents();
+
         if (google_settings.refreshToken === "") {
             console.log("onCompleted!!")
             google_oauth.visible = true;
             google_oauth.login();
         } else {
-//            google_oauth.refreshAccessToken(google_settings.refreshToken);
+            google_oauth.refreshAccessToken(google_settings.refreshToken);
         }
 //        google_oauth.login();
-        calendar.refreshEvents();
+//        calendar.refreshEvents();
     }
 }

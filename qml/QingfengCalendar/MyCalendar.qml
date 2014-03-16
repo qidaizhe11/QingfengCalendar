@@ -84,6 +84,11 @@ Control {
 //        endDate: __model.lastVisibleDate
         startDate: new Date()
         endDate: new Date()
+
+        onEventsChanged: {
+            console.log("MyEventModel, onEventsChanged.");
+            my_calendar.refreshEvents();
+        }
     }
 
     style: Qt.createComponent("CalendarMonthViewStyle.qml", my_calendar)

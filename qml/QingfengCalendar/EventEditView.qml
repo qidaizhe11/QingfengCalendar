@@ -85,25 +85,6 @@ Rectangle {
         the_date;
     }
 
-    property var event_collection: {
-        var the_collection;
-//        console.log("Collections count: ", calendar.event_model.collections.length);
-        console.log("Collections: ", calendar.event_model.collections);
-        the_collection = calendar.event_model.defaultCollection();
-
-        for (var i = 0; i < calendar.event_model.collections.length; ++i) {
-            var collection = calendar.event_model.collections[i];
-            console.log(collection.collectionId);
-            if (event_item &&
-                    collection.collectionId === event_item.collectionId) {
-                the_collection = collection;
-            }
-        }
-//        console.log(the_collection);
-        console.log("Event collection: ", the_collection.name);
-        the_collection;
-    }
-
     Rectangle {
         id: left_part
 
@@ -159,7 +140,8 @@ Rectangle {
                     anchors.leftMargin: 2
                     anchors.verticalCenter: parent.verticalCenter
 
-                    text: event_collection.name
+//                    text: event_collection.name
+                    text: "MyCallendar"
                     font.pointSize: left_part.title_font_size
                 }
             }

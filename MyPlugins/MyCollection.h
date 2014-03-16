@@ -9,7 +9,8 @@
 
 //QT_USE_NAMESPACE
 
-QTORGANIZER_USE_NAMESPACE
+//QTORGANIZER_USE_NAMESPACE
+using namespace QtOrganizer;
 
 QT_BEGIN_NAMESPACE
 
@@ -24,6 +25,10 @@ class MyCollection : public QObject
   Q_PROPERTY(QString description READ description WRITE setDescription
              NOTIFY valueChanged)
   Q_PROPERTY(QColor color READ color WRITE setColor NOTIFY valueChanged)
+  Q_PROPERTY(QString extendedId READ extendedId WRITE setExtendedId
+             NOTIFY valueChanged)
+  Q_PROPERTY(QString storage READ storage WRITE setStorage
+             NOTIFY valueChanged)
 public:
   enum MetaDataKey {
     KeyName = QOrganizerCollection::KeyName,
@@ -46,9 +51,19 @@ public:
   QColor color() const;
   void setColor(const QColor& color);
 
+  QString extendedId() const;
+  void setExtendedId(const QString& extended_id);
+
+  QString storage() const;
+  void setStorage(const QString& storage);
+
   Q_INVOKABLE void setMetaData(QOrganizerCollection::MetaDataKey key,
                                const QVariant& value);
   Q_INVOKABLE QVariant metaData(QOrganizerCollection::MetaDataKey key) const;
+
+  Q_INVOKABLE void setExtendedMetaData(const QString& key,
+                                       const QVariant& value);
+  Q_INVOKABLE QVariant extendedMetaData(const QString& key) const;
 
   // used by model
   QOrganizerCollection collection() const;

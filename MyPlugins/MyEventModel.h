@@ -96,10 +96,16 @@ Q_SIGNALS:
   void exportCompleted(ExportError error, QUrl url);
   void importCompleted(ImportError error, QUrl url);
 
+  void initGoogleSync();
+
 public slots:
   void updateEvents();
+  void updateCollections();
 
 private slots:
+  void saveGoogleCalendars(QVariantList calendars);
+  void saveGoogleEvents(const QString& cal_id, QVariantList events);
+
   void onRequestStateChanged(QOrganizerAbstractRequest::State new_state);
   void startImport(QVersitReader::State state);
   void itemsExported(QVersitWriter::State state);

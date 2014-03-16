@@ -76,6 +76,13 @@ MyEventModel::MyEventModel(QQuickItem* parent) :
 
   m_google_manager = new GoogleManager(this);
   m_google_manager->setOrganizerManager(m_manager);
+
+  connect(this, SIGNAL(initGoogleSync()),
+          m_google_manager,SLOT(freshStartSync()));
+  connect(m_google_manager, SIGNAL(calendarListReady(QVariantList)),
+          this, SLOT(saveGoogleCalendars(QVariantList)));
+  connect(m_google_manager, SIGNAL(eventsReady(QString,QVariantList)),
+          this, SLOT(saveGoogleEvents(QString,QVariantList)));
 }
 
 MyEventModel::~MyEventModel()
@@ -269,13 +276,13 @@ void MyEventModel::exportEvents(const QUrl &url, const QStringList &profiles)
 
 void MyEventModel::saveEvent(MyEvent* my_event)
 {
-  qDebug() << "MyEventModel::SaveEvent.";
+//  qDebug() << "MyEventModel::SaveEvent.";
 //  qDebug() << "Organizer_event id: " + organizer_event.id().toString();
 
 //  MyEvent* new_event = my_event;
-  qDebug() << my_event->displayLabel() << my_event->allDay() <<
-              my_event->startDateTime().toString() <<
-              my_event->endDateTime().toString();
+//  qDebug() << my_event->displayLabel() << my_event->allDay() <<
+//              my_event->startDateTime().toString() <<
+//              my_event->endDateTime().toString();
 
   if (my_event->startDateTime().isValid()) {
     QOrganizerEvent organizer_event = my_event->toQOrganizerEvent();
@@ -376,7 +383,7 @@ MyCollection* MyEventModel::defaultCollection()
 {
   MyCollection* my_collection =
       collection(m_manager->defaultCollection().id().toString());
-  QQmlEngine::setObjectOwnership(my_collection, QQmlEngine::JavaScriptOwnership);
+//  QQmlEngine::setObjectOwnership(my_collection, QQmlEngine::JavaScriptOwnership);
   return my_collection;
 }
 
@@ -391,7 +398,8 @@ MyCollection* MyEventModel::collection(const QString &collection_id)
 //  return QVariant();
   foreach (MyCollection* collection, m_collections) {
     if (collection->id() == collection_id) {
-      qDebug() << "MyEventModel::collection, return:" << collection;
+//      qDebug() << "MyEventModel::collection, return:" << collection;
+      return collection;
     }
   }
   return 0;
@@ -430,7 +438,7 @@ void MyEventModel::updateEvents()
     if (!m_events.isEmpty()) {
       foreach (MyEvent* my_event, m_events) {
         qDebug() << "Delete Event: " << my_event->displayLabel();
-        delete my_event;
+        my_event->deleteLater();
       }
       m_events.clear();
     }
@@ -480,8 +488,55 @@ void MyEventModel::updateEvents()
   }
 }
 
+void MyEventModel::updateCollections()
+{
+  foreach (MyCollection* my_collection, m_collections) {
+    delete my_collection;
+  }
+  m_collections.clear();
+
+  qDebug() << "MyEventModel::updateCollections.";
+  foreach (QOrganizerCollection collection, m_manager->collections()) {
+//    qDebug() << collection;
+    MyCollection* my_collection = new MyCollection();
+    my_collection->setCollection(collection);
+    m_collections.append(my_collection);
+  }
+}
+
 //-------------------------------------------------------------------------
 // private slots
+
+void MyEventModel::saveGoogleCalendars(QVariantList calendars)
+{
+  foreach (QVariant calender_var, calendars) {
+    MyCollection* collection = new MyCollection();
+    m_google_manager->parseCalendar(calender_var, collection);
+    saveCollection(collection);
+  }
+  updateCollections();
+}
+
+void MyEventModel::saveGoogleEvents(const QString &cal_id, QVariantList events)
+{
+  QString collection_id;
+  foreach (MyCollection* my_collection, m_collections) {
+    if (my_collection->extendedId() == cal_id) {
+      collection_id = my_collection->id();
+    }
+  }
+
+  foreach (QVariant event_var, events) {
+    MyEvent* event = new MyEvent();
+    m_google_manager->parseEvent(event_var, event);
+    event->setCollectionId(collection_id);
+    saveEvent(event);
+  }
+//  updateEvents();
+  if (events.count() != 0) {
+    emit eventsChanged();
+  }
+}
 
 void MyEventModel::onRequestStateChanged(
     QOrganizerAbstractRequest::State new_state)
