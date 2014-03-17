@@ -23,6 +23,18 @@ MyEvent::MyEvent(const QOrganizerEvent &event, QObject* parent)
   m_end_date_time = event.endDateTime();
   m_description = event.description();
   m_location = event.location();
+
+  foreach (MyEventDetail* detail, m_details) {
+    delete detail;
+  }
+  m_details.clear();
+  QList<QOrganizerItemDetail> details(event.details());
+  foreach (const QOrganizerItemDetail& detail, details) {
+    MyEventDetail* item_detail = MyEventDetailFactory::createItemDetail(
+          static_cast<MyEventDetail::DetailType>(detail.type()));
+    item_detail->setDetail(detail);
+    m_details.append(item_detail);
+  }
 }
 
 MyEvent::~MyEvent()
@@ -38,14 +50,14 @@ MyEvent::~MyEvent()
 //-------------------------------------------------------------------------
 // public
 
-MyEventType::EventType MyEvent::eventType() const
+MyItemType::ItemType MyEvent::itemType() const
 {
   foreach (MyEventDetail* detail, m_details) {
     if (MyEventDetail::ItemType == detail->type()) {
-      return static_cast<MyEventType* >(detail)->eventType();
+      return static_cast<MyItemType* >(detail)->itemType();
     }
   }
-  return MyEventType::Undefined;
+  return MyItemType::Undefined;
 }
 
 QString MyEvent::itemId() const
@@ -88,6 +100,11 @@ QOrganizerEvent MyEvent::toQOrganizerEvent() const
   event.setDescription(m_description);
   event.setLocation(m_location);
 
+  foreach (MyEventDetail* detail, m_details) {
+    QOrganizerItemDetail item_detail = detail->detail();
+    event.saveDetail(&item_detail);
+  }
+
   return event;
 }
 
@@ -98,8 +115,11 @@ MyEventDetail* MyEvent::detail(int type)
 {
   foreach (MyEventDetail* detail, m_details) {
     if (type == detail->type()) {
-//      MyEventDetail* event_detail =
-      return detail;
+      MyEventDetail* event_detail =
+          MyEventDetailFactory::createItemDetail(detail->type());
+//      QQmlEngine::setObjectOwnerShip
+      event_detail->setDetail(detail->detail());
+      return event_detail;
     }
   }
   return 0;
@@ -109,8 +129,10 @@ QVariantList MyEvent::details(int type)
 {
   QVariantList list;
   foreach (MyEventDetail* detail, m_details) {
-    if (type = detail->type()) {
-      list.append(QVariant::fromValue<QObject*>(detail));
+    if (type == detail->type()) {
+      MyEventDetail* item_detail =
+          MyEventDetailFactory::createItemDetail(detail->type());
+      list.append(QVariant::fromValue<QObject*>(item_detail));
     }
   }
   return list;

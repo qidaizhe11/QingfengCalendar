@@ -9,6 +9,7 @@ QML_IMPORT_PATH =
 QT += core gui widgets organizer versit webkitwidgets
 
 #LIBS        += /usr/lib/libical.so.1
+#LIBS        += /usr/lib/x86_64-linux-gnu/
 
 # The .cpp file which was generated for your project. Feel free to hack it.
 SOURCES += main.cpp \

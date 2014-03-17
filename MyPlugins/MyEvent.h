@@ -20,7 +20,7 @@ class MyEvent : public QObject
 {
   Q_OBJECT
 
-  Q_PROPERTY(MyEventType::EventType eventType READ eventType
+  Q_PROPERTY(MyItemType::ItemType itemType READ itemType
              NOTIFY valueChanged)
 
   Q_PROPERTY(QString itemId READ itemId NOTIFY valueChanged)
@@ -43,7 +43,7 @@ public:
   MyEvent(const QOrganizerEvent& event, QObject *parent = 0);
   ~MyEvent();
 
-  MyEventType::EventType eventType() const;
+  MyItemType::ItemType itemType() const;
 
   QString itemId() const;
 

@@ -44,10 +44,10 @@ void GoogleManager::setOrganizerManager(QOrganizerManager *organizer_manager)
 void GoogleManager::replyFinished(QNetworkReply *reply)
 {
   QString reply_json = reply->readAll();
-  QString reply_url = reply->url().toString();
+  QString reply_url = QUrl::fromPercentEncoding(reply->url().toEncoded());
 
-  qDebug() << "URL = " << reply->url();
 //  qDebug() << "Reply = " << reply_json;
+  qDebug() << "URL = " << reply_url;
 
   if (reply_json.isEmpty()) {
     qDebug() << "Empty answer";
@@ -85,7 +85,7 @@ void GoogleManager::replyFinished(QNetworkReply *reply)
   }
 
   case GetEventsOfCalendar: {
-    qDebug() << "Reply = " << reply_json;
+//    qDebug() << "Reply = " << reply_json;
     if (error.error == QJsonParseError::NoError) {
       if (!(json_document.isNull() || json_document.isEmpty()) &&
           json_document.isObject()) {

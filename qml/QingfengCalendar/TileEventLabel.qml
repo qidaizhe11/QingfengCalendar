@@ -22,7 +22,7 @@ Rectangle {
 //                                                 eventItem.endDateTime)
     property bool is_multi_days: (last_days === 1) ? true : false
 
-    property color base_color: Qt.darker("lightblue", 1.3)
+//    property color base_color: Qt.darker("lightblue", 1.3)
     property color left_block_color: "yellow"
     property color font_color: "white"
 
@@ -46,6 +46,18 @@ Rectangle {
 //    }
 
     opacity: 0
+
+    property color base_color: {
+        var the_color = Qt.darker("lightblue", 1.3);
+        for( var i = 0; i < control.event_model.collections.length; ++i) {
+            var collection = control.event_model.collections[i];
+            if (eventItem &&
+                    collection.collectionId === eventItem.collectionId) {
+                the_color = collection.color;
+            }
+        }
+        the_color;
+    }
 
     Item {
         id: view

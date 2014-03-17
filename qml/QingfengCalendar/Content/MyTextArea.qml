@@ -5,7 +5,7 @@ Item {
     id: my_text_area
 
     property alias text: text_area.text
-    property alias font_size: text_area.font.pointSize
+//    property alias font_size: text_area.font.pointSize
     property alias placeholder_text: placeholder.text
 
 //    activeFocusOnTab: true

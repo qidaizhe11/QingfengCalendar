@@ -534,7 +534,7 @@ Item {
     function updateEventModel() {
         control.event_model.startDate = control.__model.firstVisibleDate;
         control.event_model.endDate = control.__model.lastVisibleDate;
-//        control.event_model.updateCollections();
+        control.event_model.updateCollections();
         control.event_model.updateEvents();
     }
 

@@ -74,7 +74,6 @@ Window {
             google_settings.accessToken = google_oauth.access_token;
 
             calendar.event_model.initGoogleSync();
-//            calendar.refreshEvents();
         }
     }
 
@@ -89,6 +88,5 @@ Window {
             google_oauth.refreshAccessToken(google_settings.refreshToken);
         }
 //        google_oauth.login();
-//        calendar.refreshEvents();
     }
 }

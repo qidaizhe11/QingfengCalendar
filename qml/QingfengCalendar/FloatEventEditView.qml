@@ -229,7 +229,8 @@ Item {
             Item {
                 id: right_bottom_button
                 anchors.right: parent.right
-//                anchors.rightMargin: parent.width * 0.1
+                anchors.rightMargin: event_edit_panel.state === "show" ?
+                                         parent.width * 0.1 : 0
                 anchors.bottom: parent.bottom
                 height: event_edit_panel.state === "show" ?
                             edit_detail_button.height :

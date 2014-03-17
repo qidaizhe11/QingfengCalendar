@@ -85,6 +85,30 @@ Rectangle {
         the_date;
     }
 
+    property var event_collection: {
+        var collection;
+//        var collection = calendar.event_model.defaultCollection();
+        console.log("EventEditView.qml.")
+//        console.log(collection);
+
+//        console.log("calendar_summary:",
+//                    collection.collectionId);
+//        var summary = calendar.event_model.defaultCollection().name;
+
+        for( var i = 0; i < calendar.event_model.collections.length; ++i) {
+            var temp_collection = calendar.event_model.collections[i];
+            if (event_item &&
+                    temp_collection.collectionId === event_item.collectionId) {
+                collection = temp_collection;
+            }
+        }
+        console.log("Collection:", collection);
+        collection;
+    }
+
+    property color event_color: event_collection ? event_collection.color :
+                                                   "indigo"
+
     Rectangle {
         id: left_part
 
@@ -111,7 +135,8 @@ Rectangle {
                 width: parent.height * 0.45
                 height: parent.height * 0.45
 
-                button_color: "indigo"
+//                button_color: "indigo"
+                button_color: event_color
                 icon_source: "images/back.png"
 
                 onClicked: event_edit_view.cancel()
@@ -130,7 +155,8 @@ Rectangle {
                     anchors.verticalCenter: parent.verticalCenter
                     width: parent.height * 0.5
                     height: parent.height * 0.5
-                    color: "indigo"
+//                    color: "indigo"
+                    color: event_color
                 }
 
                 Label {
@@ -140,8 +166,9 @@ Rectangle {
                     anchors.leftMargin: 2
                     anchors.verticalCenter: parent.verticalCenter
 
-//                    text: event_collection.name
-                    text: "MyCallendar"
+                    text: event_collection ? event_collection.name :
+                                             qsTr("MyCalendar")
+//                    text: "MyCallendar"
                     font.pointSize: left_part.title_font_size
                 }
             }
@@ -333,6 +360,7 @@ Rectangle {
                         }
                         // 注：系统原生TextField，在我的MyDateEdit中日历展开时，
                         // MouseEvent将被莫名其妙地获取。
+                        // 发现此问题5.2版本已不再
                         MyTextField {
                             id: location_label
                             width: parent.width
@@ -428,7 +456,7 @@ Rectangle {
                 height: parent.height * 0.75
                 width: parent.width
 
-                font_size: 12
+//                font_size: 12
                 placeholder_text: qsTr("Add a description")
 
                 text: event_edit_view.state === "edit" ?
@@ -445,7 +473,8 @@ Rectangle {
                 text: qsTr("Save")
                 width: parent.width * parent.button_width_level
                 height: parent.height * 0.08
-                button_color: "indigo"
+//                button_color: "indigo"
+                button_color: event_color
                 font_size: parent.button_font_size
                 font_bold: true
                 border_width: 2

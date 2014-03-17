@@ -28,7 +28,7 @@ public:
     ItemType = QOrganizerItemDetail::TypeItemType,
 //    Guid = QOrganizerItemDetail::TypeGuid,
 //    Location = QOrganizerItemDetail::TypeLocation,
-    Parent = QOrganizerItemDetail::TypeParent
+    Parent = QOrganizerItemDetail::TypeParent,
 ////    Priority = QOrganizerItemDetail::TypePriority,
 //    Recurrence = QOrganizerItemDetail::TypeRecurrence,
 ////    Tag = QOrganizerItemDetail::TypeTag,
@@ -39,7 +39,7 @@ public:
 //    EmailReminder = QOrganizerItemDetail::TypeEmailReminder,
 //    VisualReminder = QOrganizerItemDetail::TypeVisualReminder,
 ////    ExtendedDetail = QOrganizerItemDetail::TypeExtendedDetail,
-//    EventAttendee = QOrganizerItemDetail::TypeEventAttendee,
+    EventAttendee = QOrganizerItemDetail::TypeEventAttendee
 ////    EventRsvp = QOrganizerItemDetail::TypeEventRsvp,
 //    EventTime = QOrganizerItemDetail::TypeEventTime
 ////    JournalTime = QOrganizerItemDetail::TypeJournalTime,
@@ -71,22 +71,22 @@ private:
 
 };
 
-class MyEventType : public MyEventDetail
+class MyItemType : public MyEventDetail
 {
     Q_OBJECT
 
-    Q_ENUMS(EventTypeField)
-    Q_ENUMS(EventType)
+    Q_ENUMS(ItemTypeField)
+    Q_ENUMS(ItemType)
 
-    Q_PROPERTY(EventType eventType READ eventType WRITE setEventType
+    Q_PROPERTY(ItemType itemType READ itemType WRITE setItemType
                NOTIFY valueChanged)
 
 public:
-    enum EventTypeField {
+    enum ItemTypeField {
         FieldType = QOrganizerItemType::FieldType
     };
 
-    enum EventType {
+    enum ItemType {
         Undefined = QOrganizerItemType::TypeUndefined,
         Event = QOrganizerItemType::TypeEvent,
         EventOccurrence = QOrganizerItemType::TypeEventOccurrence
@@ -96,12 +96,12 @@ public:
 //        Note = QOrganizerItemType::TypeNote
     };
 
-    MyEventType(QObject *parent = 0);
+    MyItemType(QObject *parent = 0);
 
     virtual DetailType type() const;
 
-    void setEventType(EventType newType);
-    EventType eventType() const;
+    void setItemType(ItemType newType);
+    ItemType itemType() const;
 
 Q_SIGNALS:
     void valueChanged();
@@ -406,75 +406,75 @@ Q_SIGNALS:
 //    void valueChanged();
 //};
 
-//class MyEventAttendee : public MyEventDetail
-//{
-//    Q_OBJECT
+class MyEventAttendee : public MyEventDetail
+{
+    Q_OBJECT
 
-//    Q_ENUMS(EventAttendeeField)
-//    Q_ENUMS(ParticipationStatus)
-//    Q_ENUMS(ParticipationRole)
+    Q_ENUMS(EventAttendeeField)
+    Q_ENUMS(ParticipationStatus)
+    Q_ENUMS(ParticipationRole)
 
-//    Q_PROPERTY(QString name READ name WRITE setName NOTIFY valueChanged)
-//    Q_PROPERTY(QString emailAddress READ emailAddress WRITE setEmailAddress
-//               NOTIFY valueChanged)
-//    Q_PROPERTY(QString attendeeId READ attendeeId WRITE setAttendeeId
-//               NOTIFY valueChanged)
-//    Q_PROPERTY(ParticipationStatus participationStatus READ participationStatus
-//               WRITE setParticipationStatus NOTIFY valueChanged)
-//    Q_PROPERTY(ParticipationRole participationRole READ participationRole
-//               WRITE setParticipationRole NOTIFY valueChanged)
+    Q_PROPERTY(QString name READ name WRITE setName NOTIFY valueChanged)
+    Q_PROPERTY(QString emailAddress READ emailAddress WRITE setEmailAddress
+               NOTIFY valueChanged)
+    Q_PROPERTY(QString attendeeId READ attendeeId WRITE setAttendeeId
+               NOTIFY valueChanged)
+    Q_PROPERTY(ParticipationStatus participationStatus READ participationStatus
+               WRITE setParticipationStatus NOTIFY valueChanged)
+    Q_PROPERTY(ParticipationRole participationRole READ participationRole
+               WRITE setParticipationRole NOTIFY valueChanged)
 
-//public:
-//    enum EventAttendeeField {
-//        FieldName = QOrganizerEventAttendee::FieldName,
-//        FieldEmailAddress = QOrganizerEventAttendee::FieldEmailAddress,
-//        FieldAddendeeId = QOrganizerEventAttendee::FieldAttendeeId,
-//        FieldParticipationStatus = QOrganizerEventAttendee::FieldParticipationStatus,
-//        FieldParticipationRole = QOrganizerEventAttendee::FieldParticipationRole
-//    };
+public:
+    enum EventAttendeeField {
+        FieldName = QOrganizerEventAttendee::FieldName,
+        FieldEmailAddress = QOrganizerEventAttendee::FieldEmailAddress,
+        FieldAddendeeId = QOrganizerEventAttendee::FieldAttendeeId,
+        FieldParticipationStatus = QOrganizerEventAttendee::FieldParticipationStatus,
+        FieldParticipationRole = QOrganizerEventAttendee::FieldParticipationRole
+    };
 
-//    enum ParticipationStatus {
-//        StatusUnknown = QOrganizerEventAttendee::StatusUnknown,
-//        StatusAccepted = QOrganizerEventAttendee::StatusAccepted,
-//        StatusDeclined = QOrganizerEventAttendee::StatusDeclined,
-//        StatusTentative = QOrganizerEventAttendee::StatusTentative,
-//        StatusDelegated = QOrganizerEventAttendee::StatusDelegated,
-//        StatusInProcess = QOrganizerEventAttendee::StatusInProcess,
-//        StatusCompleted = QOrganizerEventAttendee::StatusCompleted
-//    };
+    enum ParticipationStatus {
+        StatusUnknown = QOrganizerEventAttendee::StatusUnknown,
+        StatusAccepted = QOrganizerEventAttendee::StatusAccepted,
+        StatusDeclined = QOrganizerEventAttendee::StatusDeclined,
+        StatusTentative = QOrganizerEventAttendee::StatusTentative,
+        StatusDelegated = QOrganizerEventAttendee::StatusDelegated,
+        StatusInProcess = QOrganizerEventAttendee::StatusInProcess,
+        StatusCompleted = QOrganizerEventAttendee::StatusCompleted
+    };
 
-//    enum ParticipationRole {
-//        RoleUnknown = QOrganizerEventAttendee::RoleUnknown,
-//        RoleOrganizer = QOrganizerEventAttendee::RoleOrganizer,
-//        RoleChairperson = QOrganizerEventAttendee::RoleChairperson,
-//        RoleHost = QOrganizerEventAttendee::RoleHost,
-//        RoleRequiredParticipant = QOrganizerEventAttendee::RoleRequiredParticipant,
-//        RoleOptionalParticipant = QOrganizerEventAttendee::RoleOptionalParticipant,
-//        RoleNonParticipant = QOrganizerEventAttendee::RoleNonParticipant
-//    };
+    enum ParticipationRole {
+        RoleUnknown = QOrganizerEventAttendee::RoleUnknown,
+        RoleOrganizer = QOrganizerEventAttendee::RoleOrganizer,
+        RoleChairperson = QOrganizerEventAttendee::RoleChairperson,
+        RoleHost = QOrganizerEventAttendee::RoleHost,
+        RoleRequiredParticipant = QOrganizerEventAttendee::RoleRequiredParticipant,
+        RoleOptionalParticipant = QOrganizerEventAttendee::RoleOptionalParticipant,
+        RoleNonParticipant = QOrganizerEventAttendee::RoleNonParticipant
+    };
 
-//    MyEventAttendee(QObject *parent = 0);
+    MyEventAttendee(QObject *parent = 0);
 
-//    virtual DetailType type() const;
+    virtual DetailType type() const;
 
-//    void setName(const QString &newName);
-//    QString name() const;
+    void setName(const QString &newName);
+    QString name() const;
 
-//    void setEmailAddress(const QString &newEmailAddress);
-//    QString emailAddress() const;
+    void setEmailAddress(const QString &newEmailAddress);
+    QString emailAddress() const;
 
-//    void setParticipationStatus(ParticipationStatus status);
-//    ParticipationStatus participationStatus() const;
+    void setParticipationStatus(ParticipationStatus status);
+    ParticipationStatus participationStatus() const;
 
-//    void setParticipationRole(ParticipationRole role);
-//    ParticipationRole participationRole() const;
+    void setParticipationRole(ParticipationRole role);
+    ParticipationRole participationRole() const;
 
-//    void setAttendeeId(const QString &newAttendeeId);
-//    QString attendeeId() const;
+    void setAttendeeId(const QString &newAttendeeId);
+    QString attendeeId() const;
 
-//Q_SIGNALS:
-//    void valueChanged();
-//};
+Q_SIGNALS:
+    void valueChanged();
+};
 
 
 //class MyEventRsvp : public MyEventDetail
@@ -544,6 +544,12 @@ Q_SIGNALS:
 //    void valueChanged();
 //};
 
+class MyEventDetailFactory
+{
+public:
+    static MyEventDetail *createItemDetail(MyEventDetail::DetailType type);
+};
+
 QML_DECLARE_TYPE(MyEventDetail)
 //QML_DECLARE_TYPE(MyEventTime)
 //QML_DECLARE_TYPE(MyEventComment)
@@ -556,7 +562,7 @@ QML_DECLARE_TYPE(MyEventParent)
 //QML_DECLARE_TYPE(MyEventRecurrence)
 ////QML_DECLARE_TYPE(MyEventTag)
 //QML_DECLARE_TYPE(MyEventTimestamp)
-QML_DECLARE_TYPE(MyEventType)
+QML_DECLARE_TYPE(MyItemType)
 ////QML_DECLARE_TYPE(MyJournalTime)
 ////QML_DECLARE_TYPE(MyTodoProgress)
 ////QML_DECLARE_TYPE(MyTodoTime)

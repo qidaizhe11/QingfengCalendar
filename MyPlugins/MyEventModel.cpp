@@ -54,7 +54,9 @@ MyEventModel::MyEventModel(QQuickItem* parent) :
   QOrganizerCollection collection;
   collection.setId(m_manager->defaultCollection().id());
   collection.setMetaData(QOrganizerCollection::KeyName, "MyCalendar2");
-  collection.setMetaData(QOrganizerCollection::KeyColor, QColor("darkcyan"));
+  collection.setMetaData(QOrganizerCollection::KeyColor,
+                         QColor("lightblue").darker(130));
+//  Qt.darker("lightblue", 1.3);
   m_manager->saveCollection(&collection);
 
   MyCollection* my_collection = new MyCollection();
@@ -65,12 +67,10 @@ MyEventModel::MyEventModel(QQuickItem* parent) :
 
 //  qDebug() << "m_default_collection_id:" << m_default_collection_id;
 
-  QList<QOrganizerCollection> collections = m_manager->collections();
-  foreach (QOrganizerCollection collection, collections) {
-    qDebug() << collection.id().toString() <<
-                collection.metaData(QOrganizerCollection::KeyName).toString() <<
-                collection.metaData(QOrganizerCollection::KeyColor).toString();
-  }
+//  foreach (MyCollection* collection, m_collections) {
+//    qDebug() << "MyCollection:" << collection->id();
+//    qDebug() << "MyCollection name:" << collection->name();
+//  }
 
   importEvents(QUrl("file:///home/daizhe/qidaizhe11@gmail.com-2.ics"));
 
@@ -131,7 +131,7 @@ QVariantList MyEventModel::events() const
 //  return m_events;
   QVariantList list;
   foreach (MyEvent* event, m_events) {
-    QQmlEngine::setObjectOwnership(event, QQmlEngine::JavaScriptOwnership);
+//    QQmlEngine::setObjectOwnership(event, QQmlEngine::JavaScriptOwnership);
     list.append(QVariant::fromValue<QObject*>(event));
   }
   return list;
@@ -139,10 +139,9 @@ QVariantList MyEventModel::events() const
 
 QVariantList MyEventModel::collections() const
 {
-//  return m_collections;
   QVariantList list;
   foreach (MyCollection* collection, m_collections) {
-    QQmlEngine::setObjectOwnership(collection, QQmlEngine::JavaScriptOwnership);
+//    QQmlEngine::setObjectOwnership(collection, QQmlEngine::JavaScriptOwnership);
     list.append(QVariant::fromValue<QObject*>(collection));
   }
   return list;
@@ -238,9 +237,7 @@ void MyEventModel::exportEvents(const QUrl &url, const QStringList &profiles)
 
     QVersitOrganizerExporter exporter(profile);
     QList<QOrganizerItem> items;
-//    foreach (QVariant var, m_events) {
-//      items.append(var.value<MyEvent*>()->toQOrganizerEvent());
-//    }
+
     foreach (MyEvent* event, m_events) {
       items.append(event->toQOrganizerEvent());
     }
@@ -389,16 +386,20 @@ MyCollection* MyEventModel::defaultCollection()
 
 MyCollection* MyEventModel::collection(const QString &collection_id)
 {
-//  foreach (QVariant var, m_collections) {
-//    if (var.value<MyCollection*>()->id() == collection_id) {
-//      qDebug() << "MyEventModel::collection, var: " << var;
-//      return var;
-//    }
+//  qDebug() << "MyEventModel::collection.";
+//  qDebug() << "m_collection count: " << m_collections.count();
+//  qDebug() << "input collection_id:" << collection_id;
+
+//  for( int i = 0; i < m_collections.count(); ++i) {
+////    MyCollection* collection = m_collections[i];
+//    qDebug() << "m_collections, id:" << m_collections[i]->id();
+//    qDebug() << "m_collections, name:" << m_collections[i]->name();
 //  }
-//  return QVariant();
+
   foreach (MyCollection* collection, m_collections) {
     if (collection->id() == collection_id) {
-//      qDebug() << "MyEventModel::collection, return:" << collection;
+      qDebug() << "MyEventModel::collection, return.";
+      qDebug() << collection;
       return collection;
     }
   }
@@ -427,14 +428,6 @@ void MyEventModel::updateEvents()
           m_start_date, m_end_date);
     qDebug() << "event_items length: " << event_items.length();
 
-//    for (int i = m_events.count() - 1; i >= 0; --i) {
-//      qDebug() << "Remove Event: " <<
-//                  m_events.at(i)->displayLabel();
-//      m_events.removeAt(i);
-//    }
-
-//    m_events.clear();
-
     if (!m_events.isEmpty()) {
       foreach (MyEvent* my_event, m_events) {
         qDebug() << "Delete Event: " << my_event->displayLabel();
@@ -442,7 +435,6 @@ void MyEventModel::updateEvents()
       }
       m_events.clear();
     }
-
 
     for (int i = 0; i < event_items.length(); ++i) {
       if (event_items[i].type() == QOrganizerItemType::TypeEvent) {
@@ -458,7 +450,6 @@ void MyEventModel::updateEvents()
         }
 
         MyEvent* my_event = new MyEvent(event);
-  //      MyEvent* my_event = new MyEvent(description, display_label);
 
         qDebug() << "Find Event:" <<
                     my_event->displayLabel() <<
@@ -519,10 +510,14 @@ void MyEventModel::saveGoogleCalendars(QVariantList calendars)
 
 void MyEventModel::saveGoogleEvents(const QString &cal_id, QVariantList events)
 {
+  qDebug() << "MyEventModel::saveGoogleEvents";
   QString collection_id;
   foreach (MyCollection* my_collection, m_collections) {
+    qDebug() << "extendedId:" << my_collection->extendedId();
+    qDebug() << "cal_id" << cal_id;
     if (my_collection->extendedId() == cal_id) {
       collection_id = my_collection->id();
+      qDebug() << "collection_id" << collection_id;
     }
   }
 
