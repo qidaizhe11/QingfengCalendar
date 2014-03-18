@@ -91,7 +91,7 @@ Control {
         }
     }
 
-    style: Qt.createComponent("CalendarMonthViewStyle.qml", my_calendar)
+    style: Qt.createComponent("MyCalendarStype.qml", my_calendar)
 
     signal hovered(date date)
 

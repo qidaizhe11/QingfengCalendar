@@ -111,4 +111,7 @@ OTHER_FILES += \
     qml/QingfengCalendar/Content/MyButton.qml \
     qml/QingfengCalendar/EventEditView.qml \
     qml/QingfengCalendar/GoogleOAuth.js \
-    qml/QingfengCalendar/main.qml
+    qml/QingfengCalendar/main.qml \
+    qml/QingfengCalendar/CalendarPanelItem.qml \
+    qml/QingfengCalendar/MyCalendarStyle.qml \
+    qml/QingfengCalendar/FloatEditView.qml

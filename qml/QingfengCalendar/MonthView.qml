@@ -1,119 +1,63 @@
-import QtQuick 2.0
-import QtQml.Models 2.1
-import MyCalendar.Controls.Private 1.0
-import "Private"
-import "Private/CalendarUtils.js" as CalendarUtils
-import "EventJsUtils.js" as EventJsUtils
-import "CreateObject.js" as CreateObject
+import QtQuick 2.1
+import QtQuick.Controls 1.1
 
 Item {
-    id: panelItem
-    implicitHeight: 200
-    implicitWidth: 200
+    id: month_view
 
-    property alias navigationBarItem: navigationBarLoader.item
+    property Component dayDelegate: Rectangle {
+        //        color: styleData.date !== undefined &&
+        //               styleData.selected ? selectedDateColor : "orangle"
+        readonly property color base_color: "lightgray"
 
-    readonly property real dayOfWeekHeaderRowHeight: 30
+        readonly property color selectedDateColor: Qt.darker("darkgray", 1.4)
+        readonly property color sameMonthDateTextColor: Qt.darker("darkgray", 3.0)
+        readonly property color different_month_date_color:
+            Qt.darker("lightgray", 1.05)
 
-    readonly property int weeksToshow: CalendarUtils.weeksOnCalendarMonth
-    readonly property int rows: weeksToshow
-    readonly property int columns: CalendarUtils.daysInAWeek
+        readonly property color selectedDateTextColor: "white"
+        readonly property color differentMonthDateTextColor:
+            Qt.darker("darkgray", 1.4)
 
-    readonly property int total_cells: rows * columns
+        readonly property color invalidDateColor: "#dddddd"
 
-    readonly property int max_show_events_of_day: 2
-
-    readonly property real availableWidth:
-        (viewContainer.width - (control.gridVisible ? __gridLineWidth : 0))
-    readonly property real availableHeight:
-        (viewContainer.height - (control.gridVisible ? __gridLineWidth : 0))
-
-    property int hoveredCellIndex: -1
-    property int pressedCellIndex: -1
-
-    readonly property int max_month_list_count: 7
-    readonly property int middle_index_of_month_list: (max_month_list_count - 1) / 2
-
-    property int month_list_index: middle_index_of_month_list
-
-    ListModel {
-        id: label_list_model
-    }
-
-    Loader {
-        id: backgroundLoader
-        anchors.fill: parent
-        sourceComponent: background
-
-        MouseArea {
-            id: background_mouseArea
-            anchors.fill: parent
-        }
-    }
-
-    Loader {
-        id: navigationBarLoader
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.top: parent.top
-        sourceComponent: navigationBar
-
-        property QtObject styleData: QtObject {
-            property string title:
-//                control.__locale.standaloneMonthName(control.visibleMonth) +
-//                new Date(control.visibleYear, control.visibleMonth, 1). toLocaleDateString(control.__locale, " yyyy")
-//            Qt.locale().standaloneMonthName(control.visibleMonth) +
-//            new Date(control.visibleYear, control.visibleMonth, 1).
-//            toLocaleDateString(Qt.locale(), " yyyy")
-                (new Date(control.visible_date.getFullYear(),
-                          control.visible_date.getMonth(),
-                          1).toLocaleDateString(Qt.locale(), "yyyy  ")) +
-                Qt.locale().standaloneMonthName(control.visible_date.getMonth());
-        }
-
-        MouseArea {
-            id: navigationbar_mouseArea
-            anchors.fill: parent
-        }
-    }
-
-//    Loader {
-//        id: event_editor_loader
-//        sourceComponent: float_edit
-//    }
-
-    Row {
-        id: dayOfWeekHeaderRow
-        spacing: (control.gridVisible ? __gridLineWidth : 0)
-        anchors.top: navigationBarLoader.bottom
-        anchors.left: parent.left
-        anchors.leftMargin: (control.weekNumbersVisible ?
-                                 weekNumbersItem.width : 0) +
-                            (control.gridVisible ? __gridLineWidth : 0)
-        anchors.right: parent.right
-        height: dayOfWeekHeaderRowHeight
-
-        Repeater {
-            id: repeater
-            model: CalendarHeaderModel {
-//                locale: control.__locale
-            }
-            Loader {
-                id: dayOfWeekDelegateLoader
-                sourceComponent: dayOfWeekDelegate
-                width: __cellRectAt(index).width -
-                       (control.gridVisible ? __gridLineWidth : 0)
-                height: dayOfWeekHeaderRow.height
-
-                readonly property var __dayOfWeek: dayOfWeek
-
-                property QtObject styleData: QtObject {
-                    readonly property alias dayOfWeek:
-                        dayOfWeekDelegateLoader.__dayOfWeek
+        color: {
+            var the_color = invalidDateColor;
+            if (styleData.valid) {
+                the_color = styleData.visibleMonth ? base_color :
+                                                     different_month_date_color;
+                if (styleData.selected) {
+                    the_color = selectedDateColor;
+                }
+                if (styleData.hovered) {
+                    the_color = Qt.darker(the_color, 1.1);
                 }
             }
+
+            the_color;
         }
-    } // day_of_week_header_row
+
+        Label {
+            id: dayDelegateText
+            text: styleData.date.getDate()
+            font.pointSize: 12
+            anchors.top: parent.top
+            anchors.topMargin: dayDelegateText.width * 0.4
+            anchors.left: parent.left
+            anchors.leftMargin: dayDelegateText.height * 0.5
+            horizontalAlignment: Text.AlignRight
+            color: {
+                var theColor = invalidDateColor;
+                if (styleData.valid) {
+                    theColor = styleData.visibleMonth ? sameMonthDateTextColor :
+                                                        differentMonthDateTextColor;
+                    if (styleData.selected) {
+                        theColor = selectedDateTextColor;
+                    }
+                }
+                theColor;
+            }
+        }
+    } // dayDelegete
 
     ListModel {
         id: month_list_model
@@ -133,7 +77,7 @@ Item {
                 date.setMonth(date.getMonth() + 1);
             }
             month_list_view.currentIndex = middle_index_of_month_list;
-//            control.refreshEvents();
+            //            control.refreshEvents();
         }
 
         onInsertAtBeginning: {
@@ -150,7 +94,7 @@ Item {
 
             month_list_view.positionViewAtIndex(middle_index_of_month_list,
                                                 ListView.SnapPosition);
-//            control.refreshEvents();
+            //            control.refreshEvents();
         }
 
         onInsertAtEnd: {
@@ -166,8 +110,20 @@ Item {
 
             month_list_view.positionViewAtIndex(middle_index_of_month_list,
                                                 ListView.SnapPosition);
-//            control.refreshEvents();
+            //            control.refreshEvents();
         }
+    } // month_list_model
+
+    DayOfWeekHeaderRow {
+        id: dayOfWeekHeaderRow
+
+        anchors.top: navigationBarLoader.bottom
+        anchors.left: parent.left
+        anchors.leftMargin: (control.weekNumbersVisible ?
+                                 weekNumbersItem.width : 0) +
+                            (control.gridVisible ? __gridLineWidth : 0)
+        anchors.right: parent.right
+        height: panelItem.dayOfWeekHeaderRowHeight
     }
 
     Item {
@@ -190,27 +146,27 @@ Item {
             snapMode: ListView.SnapOneItem
             orientation: ListView.Vertical
             currentIndex: middle_index_of_month_list
-//            flickDeceleration: 0
+            //            flickDeceleration: 0
             highlightFollowsCurrentItem: true
             highlightMoveVelocity: 1600
-//            maximumFlickVelocity: 1000
+            //            maximumFlickVelocity: 1000
             highlightRangeMode: ListView.StrictlyEnforceRange
             boundsBehavior: Flickable.DragOverBounds
-//            preferredHighlightBegin: 0
-//            preferredHighlightEnd: 0
-//            keyNavigationWraps: true
+            //            preferredHighlightBegin: 0
+            //            preferredHighlightEnd: 0
+            //            keyNavigationWraps: true
 
             Component.onCompleted: {
                 console.log("List View onCompleted.")
-//                currentIndex = middle_index_of_month_list
+                //                currentIndex = middle_index_of_month_list
             }
 
-//            onDragStarted: hideEventLabels();
+            //            onDragStarted: hideEventLabels();
             onDragStarted: hideEventLabels();
-//            onFlickEnded: console.log("MovementEnded.");
-//            onDragEnded: showEventLabels();
-        }
-    }
+            //            onFlickEnded: console.log("MovementEnded.");
+            //            onDragEnded: showEventLabels();
+        } // month_list_view
+    } // view_container
 
     Timer {
         id: insert_at_begin_timer
@@ -218,7 +174,7 @@ Item {
         running: false
         repeat: false
         onTriggered: {
-//            console.log("Timer triggered.")
+            //            console.log("Timer triggered.")
             month_list_model.insertAtBeginning();
         }
     }
@@ -229,7 +185,7 @@ Item {
         running: false
         repeat: false
         onTriggered: {
-//            console.log("Timer triggered.")
+            //            console.log("Timer triggered.")
             month_list_model.insertAtEnd();
         }
     }
@@ -300,7 +256,7 @@ Item {
     }
 
     property Component month_delegate: Item {
-//        id: viewContainer
+        //        id: viewContainer
         width: panelItem.width
         height: panelItem.height - navigationBarLoader.height -
                 dayOfWeekHeaderRow.height
@@ -349,14 +305,14 @@ Item {
                 var viewContainerPos = parent.mapFromItem(
                             mouseArea, mouseX, mouseY);
                 var child = parent.childAt(viewContainerPos.x,
-                                                  viewContainerPos.y);
-//                console.log("X: " + mouseX + ", Y: " +
-//                            mouseY);
-//                console.log("viewcontainerPos, X: " + viewContainerPos.x
-//                            + ", Y: " + viewContainerPos.y);
-//                var parentPos = viewContainer.mapToItem(null, mouseX, mouseY);
-//                console.log("Parent pos, X: " + parentPos.x + ", Y: " + parentPos.y);
-//                console.log("Child: " + child);
+                                           viewContainerPos.y);
+                //                console.log("X: " + mouseX + ", Y: " +
+                //                            mouseY);
+                //                console.log("viewcontainerPos, X: " + viewContainerPos.x
+                //                            + ", Y: " + viewContainerPos.y);
+                //                var parentPos = viewContainer.mapToItem(null, mouseX, mouseY);
+                //                console.log("Parent pos, X: " + parentPos.x + ", Y: " + parentPos.y);
+                //                console.log("Child: " + child);
                 return child && child !== mouseArea ? child.__index : -1;
             }
 
@@ -364,7 +320,7 @@ Item {
                 var indexOfCell = cellIndexAt(mouseX, mouseY);
                 if (indexOfCell !== -1) {
                     var date = view.model.dateAt(indexOfCell);
-//                    pressedCellIndex = indexOfCell;
+                    //                    pressedCellIndex = indexOfCell;
                     if (__isValidDate(date)) {
                         //                            control.selectedDate = date;
                         //                            control.pressed(date);
@@ -414,11 +370,11 @@ Item {
                         float_edit.showAdd(date);
                     }
 
-//                    var properties = {is_empty_event: true, event_date: date};
-//                    var float_event = CreateObject.create(
-//                                "FloatEventEditWindow.qml", viewContainer,
-//                                properties);
-//                    console.log("Float_event_edit: ", float_event);
+                    //                    var properties = {is_empty_event: true, event_date: date};
+                    //                    var float_event = CreateObject.create(
+                    //                                "FloatEventEditWindow.qml", viewContainer,
+                    //                                properties);
+                    //                    console.log("Float_event_edit: ", float_event);
 
                 }
                 //                    console.log("OnClicked, indexOfCell: " + indexOfCell);
@@ -500,47 +456,9 @@ Item {
                     // TODO: pressed property here, clicked and
                     // doubleClicked in the control itself
                 }
-            }
-        } // view
-    } // view_container
-
-    FloatEventEditView {
-        id: float_edit
-        visible: false
-        z: 1
-    }
-
-    function hideEventLabels() {
-        for (var i = 0; i < label_list_model.count; ++i) {
-            label_list_model.get(i).object.opacity = 0;
-        }
-    }
-
-    function showEventLabels() {
-        for (var i = 0; i < label_list_model.count; ++i) {
-            label_list_model.get(i).object.opacity = 1;
-        }
-    }
-
-    function clearLabelListModel() {
-        while (label_list_model.count > 0) {
-            console.log("clearLabelListModel, destroy: ",
-                        label_list_model.get(0).object.eventItem.displayLabel);
-            label_list_model.get(0).object.destroy();
-            label_list_model.remove(0);
-        }
-    }
-
-    function updateEventModel() {
-        control.event_model.startDate = control.__model.firstVisibleDate;
-        control.event_model.endDate = control.__model.lastVisibleDate;
-        control.event_model.updateCollections();
-        control.event_model.updateEvents();
-    }
-
-    function labelListModelAddItem(object) {
-        label_list_model.append({"object": object});
-    }
+            } // delegate_loader
+        } // view Repeater
+    } // month_delegate
 
     Connections {
         target: control
@@ -561,7 +479,7 @@ Item {
 
             var component = Qt.createComponent("TileEventLabel.qml");
 
-//            console.log("Come to create object.");
+            //            console.log("Come to create object.");
 
             for (var i = 0; i < control.event_model.events.length; ++i) {
                 var event = control.event_model.events[i];
@@ -585,7 +503,7 @@ Item {
                     last_days = 1;
                 }
 
-//                console.log("Last days: ", last_days);
+                //                console.log("Last days: ", last_days);
 
                 if (index_of_cell + last_days > total_cells) {
                     last_days -= (index_of_cell + last_days - total_cells);
@@ -619,9 +537,9 @@ Item {
                     "grid_index": index_of_cell, "last_days": last_days};
                 CreateObject.createInComponent(
                             component, viewContainer, properties, labelListModelAddItem);
-            }
+            } // for
 
             component.destroy();
-        }
-    }
+        } // onRefreshEvents
+    } // connections
 }
