@@ -13,6 +13,8 @@
 #include "MyPlugins/MyCollection.h"
 #include "MyPlugins/MyTestEvent.h"
 
+#include "MyPlugins/MyWeekModel.h"
+
 #include "CalendarPlugin/Private/qquickabstractstyle_p.h"
 #include "CalendarPlugin/Private/qquickcalendarmodel_p.h"
 #include "CalendarPlugin/Private/qquickcontrolsettings_p.h"
@@ -42,6 +44,10 @@ int main(int argc, char *argv[])
     qRegisterMetaType< QList<QObject*> >();
     qRegisterMetaType< QList<MyEvent*> >();
     qRegisterMetaType< QList<MyCollection*> >();
+
+    uri = "MyCalendar.Weeks";
+    // @uri MyCalendar.Weeks
+    qmlRegisterType<MyWeekModel>(uri, 1, 0, "MyWeekModel");
 
     uri = "MyCalendar.Sync.Google";
     // @uri MyCalendar.Sync.Google

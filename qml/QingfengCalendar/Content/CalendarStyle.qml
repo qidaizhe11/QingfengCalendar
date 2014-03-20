@@ -143,10 +143,10 @@ Style {
     */
     property real __gridLineWidth: 1
 
-    function __cellRectAt(index) {
-        return CalendarUtils.cellRectAt(index, control.__panel.columns, control.__panel.rows,
-            control.__panel.availableWidth, control.__panel.availableHeight);
-    }
+//    function __cellRectAt(index) {
+//        return CalendarUtils.cellRectAt(index, control.__panel.columns, control.__panel.rows,
+//            control.__panel.availableWidth, control.__panel.availableHeight);
+//    }
 
     function __isValidDate(date) {
         return date !== undefined

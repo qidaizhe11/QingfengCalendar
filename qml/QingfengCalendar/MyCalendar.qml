@@ -18,11 +18,13 @@ Control {
 
     property alias maximumDate: rangedDate.maximumDate
 
-    property date visible_date: {
-        var temp = new Date();
-        var the_date = new Date(temp.getFullYear(), temp.getMonth(), 1);
-        the_date;
-    }
+//    property date visible_date: {
+//        var temp = new Date();
+//        var the_date = new Date(temp.getFullYear(), temp.getMonth(), 1);
+//        the_date;
+//    }
+
+    property date visible_date: new Date()
 
     property int visibleMonth: selectedDate.getMonth()
 

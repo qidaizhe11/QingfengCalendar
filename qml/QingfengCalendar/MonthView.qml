@@ -1,5 +1,5 @@
 import QtQuick 2.1
-import QtQuick.Controls 1.1
+import QtQuick.Controls 1.0
 import MyCalendar.Controls.Private 1.0
 import "Private"
 import "Private/CalendarUtils.js" as CalendarUtils
@@ -26,6 +26,19 @@ Item {
         (viewContainer.width - (control.gridVisible ? __gridLineWidth : 0))
     readonly property real availableHeight:
         (viewContainer.height - (control.gridVisible ? __gridLineWidth : 0))
+
+    property string calendar_title: {
+        (new Date(control.visible_date.getFullYear(),
+                  control.visible_date.getMonth(),
+                  1).toLocaleDateString(Qt.locale(), "yyyy  ")) +
+                Qt.locale().standaloneMonthName(control.visible_date.getMonth());
+    }
+
+    Component.onCompleted: {
+        navigationBarLoader.styleData.title = calendar_title;
+    }
+
+    onCalendar_titleChanged: navigationBarLoader.styleData.title = calendar_title;
 
     function __cellRectAt(index) {
         return CalendarUtils.cellRectAt(index,

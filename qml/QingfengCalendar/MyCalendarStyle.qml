@@ -1,5 +1,6 @@
 import QtQuick 2.1
 import QtQuick.Controls 1.0
+import QtQuick.Controls.Styles 1.0
 //import QtQuick.Window 2.1
 import MyCalendar.Controls.Private 1.0
 import MyCalendar2.Events 1.0
@@ -36,7 +37,7 @@ Style {
     }
 
     property Component navigationBar: Rectangle {
-        height: 100
+        height: 90
 
         color: base_color
 
@@ -49,7 +50,7 @@ Style {
 
         Button {
             id: previousMonth
-            width: parent.height * 0.4
+            width: 40
             height: width
             anchors.left: parent.left
             anchors.leftMargin: parent.height * 0.1
@@ -78,7 +79,7 @@ Style {
         }
         Button {
             id: nextMonth
-            width: parent.height * 0.4
+            width: 40
             height: width
             anchors.right: parent.right
             anchors.bottom: parent.bottom
@@ -149,16 +150,7 @@ Style {
             sourceComponent: navigationBar
 
             property QtObject styleData: QtObject {
-                property string title:
-//                    control.__locale.standaloneMonthName(control.visibleMonth) +
-//                    new Date(control.visibleYear, control.visibleMonth, 1). toLocaleDateString(control.__locale, " yyyy")
-//                Qt.locale().standaloneMonthName(control.visibleMonth) +
-//                new Date(control.visibleYear, control.visibleMonth, 1).
-//                toLocaleDateString(Qt.locale(), " yyyy")
-                    (new Date(control.visible_date.getFullYear(),
-                              control.visible_date.getMonth(),
-                              1).toLocaleDateString(Qt.locale(), "yyyy  ")) +
-                    Qt.locale().standaloneMonthName(control.visible_date.getMonth());
+                property string title
                 property var calendar_tab_view: tab_view
             }
 
@@ -177,6 +169,7 @@ Style {
 //            anchors.top: tab_bar.bottom
 
             tabsVisible: false
+//            tabsVisible: true
             frameVisible: false
 
             Tab {
@@ -197,6 +190,12 @@ Style {
                 }
             }
         }
+
+//        Binding {
+//            target: navigationBarLoader
+//            property: "styleData.title"
+//            value: tab_view.getTab(0).item.calendar_title
+//        }
 
         FloatEditView {
             id: float_edit

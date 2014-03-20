@@ -45,7 +45,8 @@ SOURCES += main.cpp \
     Google/GoogleSettings.cpp \
     MyPlugins/MyCollection.cpp \
     Google/GoogleManager.cpp \
-    MyPlugins/MyEventDetail.cpp
+    MyPlugins/MyEventDetail.cpp \
+    MyPlugins/MyWeekModel.cpp
 
 # Installation path
 # target.path =
@@ -95,7 +96,8 @@ HEADERS += \
     Google/GoogleSettings.h \
     MyPlugins/MyCollection.h \
     Google/GoogleManager.h \
-    MyPlugins/MyEventDetail.h
+    MyPlugins/MyEventDetail.h \
+    MyPlugins/MyWeekModel.h
 
 RESOURCES += \
     resources/Calendar.qrc

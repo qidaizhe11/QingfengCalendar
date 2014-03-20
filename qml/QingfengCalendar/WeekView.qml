@@ -1,7 +1,8 @@
 import QtQuick 2.1
-import QtQuick.Controls 1.1
+import QtQuick.Controls 1.0
 import "Private"
 import "Private/CalendarUtils.js" as CalendarUtils
+import MyCalendar.Weeks 1.0
 
 Item {
     id: week_view
@@ -17,30 +18,49 @@ Item {
 
     property int week_list_index: middle_index_of_week_list
 
+//    property string show: navigationBarLoader.styleData.title
+
+    property MyWeekModel week_model: MyWeekModel {
+        visibleDate: control.visible_date
+    }
+
+    property string calendar_title: {
+        var title = "";
+        var range_start_date = week_model.firstVisibleDate;
+        title += range_start_date.toLocaleDateString(Qt.locale(),"yyyy M d");
+        title += " - ";
+        var range_end_date = week_model.lastVisibleDate;
+        if (range_start_date.getMonth() === range_end_date.getMonth()) {
+            title += range_end_date.toLocaleDateString(Qt.locale(), "d");
+        } else if (range_start_date.getFullYear() ===
+                   range_end_date.getFullYear()) {
+            title += range_end_date.toLocaleDateString(Qt.locale(), "M d");
+        } else {
+            title += range_end_date.toLocaleDateString();
+        }
+        title;
+    }
+
+    Component.onCompleted: {
+        navigationBarLoader.styleData.title = calendar_title;
+    }
+
+    onCalendar_titleChanged: navigationBarLoader.styleData.title = calendar_title;
+
     property Component dayDelegate: Rectangle {
-        readonly property color base_color: "lightgray"
+        readonly property color base_color: "transparent"
+        readonly property color dateTextColor: Qt.darker("darkgray", 3.0)
 
         readonly property color selectedDateColor: Qt.darker("darkgray", 1.4)
-        readonly property color sameMonthDateTextColor: Qt.darker("darkgray", 3.0)
-        readonly property color different_month_date_color:
-            Qt.darker("lightgray", 1.05)
-
         readonly property color selectedDateTextColor: "white"
-        readonly property color differentMonthDateTextColor:
-            Qt.darker("darkgray", 1.4)
-
         readonly property color invalidDateColor: "#dddddd"
 
         color: {
             var the_color = invalidDateColor;
             if (styleData.valid) {
-                the_color = styleData.visibleMonth ? base_color :
-                                                     different_month_date_color;
-                if (styleData.selected) {
+                the_color = base_color
+                if (styleData.today) {
                     the_color = selectedDateColor;
-                }
-                if (styleData.hovered) {
-                    the_color = Qt.darker(the_color, 1.1);
                 }
             }
 
@@ -48,38 +68,21 @@ Item {
         }
 
         Label {
-            id: dayDelegateText
-            text: styleData.date.getDate()
-            font.pointSize: 12
-            anchors.top: parent.top
-            anchors.topMargin: parent.height * 0.05
+            text: styleData.date.toLocaleDateString(Qt.locale(), "M/d (ddd)")
             anchors.left: parent.left
             anchors.leftMargin: parent.width * 0.05
-            horizontalAlignment: Text.AlignRight
+            anchors.verticalCenter: parent.verticalCenter
+
             color: {
                 var theColor = invalidDateColor;
                 if (styleData.valid) {
-                    theColor = styleData.visibleMonth ? sameMonthDateTextColor :
-                                                        differentMonthDateTextColor;
-                    if (styleData.selected) {
+                    theColor = dateTextColor;
+                    if (styleData.today) {
                         theColor = selectedDateTextColor;
                     }
                 }
                 theColor;
             }
-        }
-    } // dayDelegete
-
-    property Component dayOfWeekDelegate: Rectangle {
-//        color: Qt.darker("darkgray", 1.5)
-        color: base_color
-        Label {
-            text: Qt.locale().dayName(styleData.dayOfWeek,
-                                           control.dayOfWeekFormat)
-//            text: styleData.dayOfWeek
-            anchors.left: parent.left
-            anchors.leftMargin: parent.width * 0.05
-            anchors.verticalCenter: parent.verticalCenter
         }
     }
 
@@ -105,59 +108,11 @@ Item {
     }
 
     Item {
-        id: dayOfWeekHeaderRow
-        width: panelItem.width - 60
-        height: panelItem.dayOfWeekHeaderRowHeight
-        anchors.left: parent.left
-        anchors.leftMargin: 60
-//        anchors.top: parent.top
-
-        Row {
-            spacing: (control.gridVisible ? __gridLineWidth : 0)
-
-            Repeater {
-                id: repeater
-                model: CalendarHeaderModel {
-        //                locale: control.__locale
-                }
-                Loader {
-                    id: dayOfWeekDelegateLoader
-                    sourceComponent: dayOfWeekDelegate
-//                    width: __cellRectAt(index).width -
-//                           (control.gridVisible ? __gridLineWidth : 0)
-                    width: dayOfWeekHeaderRow.width / 7
-                    height: dayOfWeekHeaderRow.height
-
-                    readonly property var __dayOfWeek: dayOfWeek
-
-                    property QtObject styleData: QtObject {
-                        readonly property alias dayOfWeek:
-                            dayOfWeekDelegateLoader.__dayOfWeek
-                    }
-                }
-            }
-        }
-
-//        Repeater {
-//            id: header_grid_line_repeater
-//            model: month_view.columns - 1
-//            delegate: Rectangle {
-//                x: __cellRectAt(index).x + __cellRectAt(index).width
-//                y: 10
-//                width: __gridLineWidth
-//                height: dayOfWeekHeaderRow.height
-//                color: gridColor
-//                visible: control.gridVisible
-//            }
-//        }
-    } // day_of_week_header_row
-
-    Item {
         id: week_central_view
-        width: panelItem.width
-        height: panelItem.height - navigationBarLoader.height -
-                dayOfWeekHeaderRow.height
-        anchors.top: dayOfWeekHeaderRow.bottom
+//        width: panelItem.width
+//        height: panelItem.height - navigationBarLoader.height
+//        anchors.top: dayHeaderRow.bottom
+        anchors.fill: parent
 
         ListModel {
             id: week_list_model
@@ -169,12 +124,12 @@ Item {
             Component.onCompleted: {
                 console.log("List Model onCompleted.")
                 var date = control.visible_date;
-                date.setMonth(date.getMonth() - middle_index_of_week_list);
+                date.setDate(date.getDate() - middle_index_of_week_list * 7);
 
                 for (var i = 0; i < max_week_list_count; ++i) {
-                    week_list_model.append({ "month_date": date} );
+                    week_list_model.append({ "week_date": date} );
                     console.log("week_list_model, append: ", date.toLocaleDateString());
-                    date.setMonth(date.getMonth() + 1);
+                    date.setDate(date.getDate() + 7);
                 }
                 week_list_view.currentIndex = middle_index_of_week_list;
                 //            control.refreshEvents();
@@ -184,7 +139,7 @@ Item {
                 var date = control.visible_date;
                 for (var i = 0; i < middle_index_of_month_list; ++i) {
                     date.setMonth(date.getMonth() - 1);
-                    week_list_model.insert(0, { "month_date": date});
+                    week_list_model.insert(0, { "week_date": date});
                     console.log("OnInsertAtBeingning Insert Month date: ",
                                 date.toLocaleDateString());
 
@@ -201,7 +156,7 @@ Item {
                 var date = control.visible_date;
                 for (var i = 0; i < middle_index_of_week_list; ++i) {
                     date.setMonth(date.getMonth() + 1);
-                    week_list_model.append({"month_date": date});
+                    week_list_model.append({"week_date": date});
                     console.log("onInsertAtEnd Insert Month date: ",
                                 date.toLocaleDateString());
                     week_list_model.remove(0);
@@ -212,7 +167,7 @@ Item {
                                                     ListView.SnapPosition);
                 //            control.refreshEvents();
             }
-        } // month_list_model
+        } // week_list_model
 
         ListView {
             id: week_list_view
@@ -253,8 +208,7 @@ Item {
 //    Item {
         id: week_delegate
         width: panelItem.width
-        height: panelItem.height - navigationBarLoader.height -
-                dayOfWeekHeaderRow.height
+        height: panelItem.height - navigationBarLoader.height
 
         readonly property real availableWidth:
             (week_container_item.width - (control.gridVisible ? __gridLineWidth : 0))
@@ -269,32 +223,73 @@ Item {
                                             week_delegate.availableHeight);
         }
 
+        Item {
+            id: day_header_row
+            width: panelItem.width - 60
+            height: panelItem.dayOfWeekHeaderRowHeight
+            anchors.left: parent.left
+            anchors.leftMargin: 60 + __gridLineWidth
+            anchors.top: parent.top
+
+            Row {
+                spacing: (control.gridVisible ? __gridLineWidth : 0)
+
+                Repeater {
+                    id: day_header_repeater
+                    model: MyWeekModel {
+                        visibleDate: week_date
+                    }
+                    Loader {
+                        id: dayDelegateLoader
+                        sourceComponent: dayDelegate
+                        width: __cellRectAt(index).width -
+                               (control.gridVisible ? __gridLineWidth : 0)
+//                        width: day_header_row.width / 7
+                        height: day_header_row.height
+
+                        readonly property int __index: index
+                        readonly property date __date: date
+                        readonly property bool valid: __isValidDate(date)
+
+                        property QtObject styleData: QtObject {
+                            readonly property alias index: dayDelegateLoader.__index
+                            readonly property alias date: dayDelegateLoader.__date
+                            readonly property bool valid: dayDelegateLoader.valid
+                            // TODO: this will not be correct if the app is
+                            // running when a new day begins.
+                            readonly property bool today:
+                                date.getTime() === new Date().setHours(0, 0, 0, 0)
+                        }
+                    }
+                }
+            } // row
+
+//            Repeater {
+//                id: header_grid_line_repeater
+//                model: month_view.columns - 1
+//                delegate: Rectangle {
+//                    x: __cellRectAt(index).x + __cellRectAt(index).width
+//                    y: 10
+//                    width: __gridLineWidth
+//                    height: dayOfWeekHeaderRow.height
+//                    color: gridColor
+//                    visible: control.gridVisible
+//                }
+//            }
+        } // day_of_week_header_row
+
         Flickable {
             id: week_flickable
-            anchors.centerIn: parent
+            anchors.top: day_header_row.bottom
+//            anchors.left: parent.left
+//            anchors.right: parent.right
+//            anchors.centerIn: parent
             width: parent.width
-            height: parent.height < week_grid_view.height ?
-                        parent.height : week_grid_view.height
+            height: (parent.height - day_header_row.height) < week_grid_view.height ?
+                        (parent.height - day_header_row.height) : week_grid_view.height
             flickableDirection: Flickable.VerticalFlick
             contentHeight: 1300
             clip: true
-
-//            Item {
-//                id: week_content_item
-//                anchors.fill: parent
-
-//                Rectangle {
-//                    id: week_item_rectangle
-//                    anchors.fill: parent
-//                    color: "lightsteelblue"
-//                }
-
-//                Text {
-//                    anchors.centerIn: parent
-//                    text: month_date.toLocaleDateString()
-//                }
-//            }
-
 
             Row {
                 id: week_grid_view
@@ -327,9 +322,9 @@ Item {
                             }
 
                             Component.onCompleted: {
-                                console.log("day_time_delegate_loader: ",
-                                            day_time_delegate_loader.width,
-                                            day_time_delegate_loader.height);
+//                                console.log("day_time_delegate_loader: ",
+//                                            day_time_delegate_loader.width,
+//                                            day_time_delegate_loader.height);
                             }
                         } // loader
                     } // repeater
@@ -342,8 +337,8 @@ Item {
                     height: parent.height
 
                     Component.onCompleted: {
-                        console.log("week_container_item, width:",
-                                    week_container_item.width);
+//                        console.log("week_container_item, width:",
+//                                    week_container_item.width);
                     }
 
                     Repeater {
@@ -384,7 +379,7 @@ Item {
                             color: is_hour ? gridColor : Qt.lighter("lightgrey", 1.03)
                             visible: control.gridVisible
                             Component.onCompleted: {
-                                console.log("y:", y);
+//                                console.log("y:", y);
                             }
                         }
                     }
@@ -467,71 +462,6 @@ Item {
 //                            }
 //                        }
 //                    }
-
-//                    Connections {
-//                        target: control
-//                        onSelectedDateChanged: view.selectedDateChanged()
-//                    }
-
-//                    Repeater {
-//                        id: view
-
-//                        property int currentIndex: -1
-
-//                        model: CalendarModel {
-//                            visibleDate: month_date
-//                        }
-
-//                        Component.onCompleted: selectedDateChanged()
-
-//                        function selectedDateChanged() {
-//                            if (model !== undefined && model.locale !== undefined) {
-//                                currentIndex = model.indexAt(control.selectedDate);
-//                            }
-//                        }
-
-//                        delegate: Loader {
-//                            id: delegateLoader
-
-//                            x: __cellRectAt(index).x +
-//                               (control.gridVisible ? __gridLineWidth : 0)
-//                            y: __cellRectAt(index).y +
-//                               (control.gridVisible ? __gridLineWidth : 0)
-//                            width: __cellRectAt(index).width -
-//                                   (control.gridVisible ? __gridLineWidth : 0)
-//                            height: __cellRectAt(index).height -
-//                                    (control.gridVisible ? __gridLineWidth : 0)
-
-//                            sourceComponent: dayDelegate
-
-//                            readonly property int __index: index
-//                            readonly property date __date: date
-
-//                            readonly property bool valid: __isValidDate(date)
-
-//                            property QtObject styleData: QtObject {
-//                                readonly property alias index:
-//                                    delegateLoader.__index
-//                                readonly property bool selected:
-//                                    control.selectedDate.getTime() ===
-//                                    date.getTime()
-//                                readonly property alias date: delegateLoader.__date
-//                                readonly property bool valid: delegateLoader.valid
-//                                // TODO: this will not be correct if the app is
-//                                // running when a new day begins.
-//                                readonly property bool today: date.getTime() ===
-//                                                              new Date().setHours(0, 0, 0, 0)
-//                                readonly property bool visibleMonth:
-//                                    date.getMonth() === month_date.getMonth()
-//                                readonly property bool hovered:
-//                                    panelItem.hoveredCellIndex == index
-//                                readonly property bool pressed:
-//                                    panelItem.pressedCellIndex == index
-//                                // TODO: pressed property here, clicked and
-//                                // doubleClicked in the control itself
-//                            }
-//                        } // delegate_loader
-//                    } // view Repeater
                 } // month_delegate
             } // row
         }

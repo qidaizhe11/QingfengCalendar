@@ -34,9 +34,9 @@ function setMonth(date, month) {
 }
 
 function cellRectAt(index, columns, rows, availableWidth, availableHeight) {
-    console.log("CalendarUtils::cellRectAt");
-    console.log("availableWidth:", availableWidth);
-    console.log("availableHeight:", availableHeight);
+//    console.log("CalendarUtils::cellRectAt");
+//    console.log("availableWidth:", availableWidth);
+//    console.log("availableHeight:", availableHeight);
     var col = Math.floor(index % columns);
     var row = Math.floor(index / columns);
 
@@ -44,7 +44,7 @@ function cellRectAt(index, columns, rows, availableWidth, availableHeight) {
     var remainingVerticalSpace = Math.floor(availableHeight % rows);
     var baseCellWidth = Math.floor(availableWidth / columns);
     var baseCellHeight = Math.floor(availableHeight / rows);
-    console.log("baseCellHeight:", baseCellHeight);
+//    console.log("baseCellHeight:", baseCellHeight);
 
     var rect = Qt.rect(0, 0, 0, 0);
 
