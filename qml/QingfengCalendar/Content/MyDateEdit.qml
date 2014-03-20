@@ -55,6 +55,7 @@ Item {
             id: calendar
             anchors.fill: parent
             selectedDate: item.date
+            weekNumbersVisible: true
 
             onClicked: {
                 selected_date = calendar.selectedDate
