@@ -181,9 +181,12 @@ Style {
 
             Tab {
                 title: "Week"
-                Rectangle {
-                    anchors.fill: parent
-                    color: "indigo"
+//                Rectangle {
+//                    anchors.fill: parent
+//                    color: "indigo"
+//                }
+                WeekView {
+                    id: week_tab
                 }
             }
 
