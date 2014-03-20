@@ -3,11 +3,11 @@ import QtQuick.Controls 1.0
 import QtOrganizer 5.0
 import MyCalendar2.Events 1.0
 import "Private/CalendarUtils.js" as CalendarUtils
-import "EventJsUtils.js" as EventJsUtils
+import "MonthViewUtils.js" as MonthViewUtils
 import "Content"
 
 Rectangle {
-    id: event_label
+    id: month_event_label
     color: base_color
     property var eventItem
 
@@ -113,7 +113,7 @@ Rectangle {
 //                            control.clicked(date);
             }
 
-            var global_pos = event_label.mapToItem(null, mouseX, mouseY);
+            var global_pos = month_event_label.mapToItem(null, mouseX, mouseY);
             console.log("Global position: " + global_pos.x + ", " + global_pos.y);
 
             var show_pos_x = EventJsUtils.getEditViewPosX(global_pos.x);
@@ -128,5 +128,5 @@ Rectangle {
 
     NumberAnimation on opacity { from: 0; to: 1; duration: 200; }
 
-//    Component.onCompleted: event_label.destroy();
+//    Component.onCompleted: month_event_label.destroy();
 }

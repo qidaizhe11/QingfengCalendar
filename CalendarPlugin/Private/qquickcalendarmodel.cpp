@@ -54,7 +54,7 @@ QVariant QQuickCalendarModel::data(const QModelIndex &index, int role) const
   return QVariant();
 }
 
-int QQuickCalendarModel::rowCount(const QModelIndex &parent) const
+int QQuickCalendarModel::rowCount(const QModelIndex &/*parent*/) const
 {
   return mVisibleDates.isEmpty() ? 0 : weeksOnACalendarMonth * daysInAWeek;
 }
@@ -111,8 +111,10 @@ void QQuickCalendarModel::populateFromVisibleDate(const QDate &previousDate,
 
   // The actual first day of month.
   QDate firstDayOfMonthDate(mVisibleDate.year(), mVisibleDate.month(), 1);
-  int difference = ((firstDayOfMonthDate.dayOfWeek() -
-                     mLocale.firstDayOfWeek()) + 7) % 7;
+//  int difference = ((firstDayOfMonthDate.dayOfWeek() -
+//                     mLocale.firstDayOfWeek()) + 7) % 7;
+  int difference = ((firstDayOfMonthDate.dayOfWeek() - 1 + 7) % 7);
+
   // The first day to display should never be the 1st of the month, as we want
   // some days from the previous month to be visible.
   if (difference == 0) {

@@ -6,7 +6,7 @@ import MyCalendar2.Events 1.0
 import QtOrganizer 5.0
 import "Private"
 import "Private/CalendarUtils.js" as CalendarUtils
-//import "EventJsUtils.js" as EventJsUtils
+import "Content"
 
 Style {
     id: my_calendar_style
@@ -19,18 +19,10 @@ Style {
 
     property real __gridLineWidth: 1
 
-    signal refreshEvents()
+//    signal refreshEvents()
 
     EventUtils {
         id: event_utils
-    }
-
-    function __cellRectAt(index) {
-        return CalendarUtils.cellRectAt(index,
-                                        control.__panel.columns,
-                                        control.__panel.rows,
-                                        control.__panel.availableWidth,
-                                        control.__panel.availableHeight);
     }
 
     function __isValidDate(date) {
@@ -48,8 +40,10 @@ Style {
 
         color: base_color
 
-        signal showPreviousMonth()
-        signal showNextMonth()
+//        signal showPreviousMonth()
+//        signal showNextMonth()
+        signal showPrevious()
+        signal showNext()
 
         readonly property real bottom_margin: 15
 
@@ -58,7 +52,7 @@ Style {
             width: parent.height * 0.4
             height: width
             anchors.left: parent.left
-            anchors.leftMargin: (parent.height - height) / 5
+            anchors.leftMargin: parent.height * 0.1
             anchors.bottom: parent.bottom
             anchors.bottomMargin: bottom_margin
 //            anchors.verticalCenter: parent.verticalCenter
@@ -68,7 +62,7 @@ Style {
 
             onClicked: {
 //                control.showPreviousMonth();
-                parent.showPreviousMonth();
+                parent.showPrevious();
             }
         }
         Label {
@@ -88,14 +82,25 @@ Style {
             height: width
             anchors.right: parent.right
             anchors.bottom: parent.bottom
-            anchors.rightMargin: (parent.height - height) / 5
+            anchors.rightMargin: parent.height * 0.1
             anchors.bottomMargin: bottom_margin
 //            iconSource: "qrc:///images/arrow-right.png"
             iconSource: "images/arrow-right-mine.png"
             opacity: 0.6
 
 //            onClicked: control.showNextMonth()
-            onClicked: parent.showNextMonth()
+            onClicked: parent.showNext()
+        }
+
+        MyTabBar {
+            id: tab_bar
+            tabView: styleData.calendar_tab_view
+
+            anchors.right: nextMonth.left
+            anchors.rightMargin: parent.height * 0.5
+            anchors.bottom: parent.bottom
+            height: parent.height * 0.3
+            width: parent.width * 0.1
         }
     }
 
@@ -107,9 +112,10 @@ Style {
         }
     }
 
-    Item {
-//    property Component panel: Item {
+//    Item {
+    property Component panel: Item {
         id: panelItem
+
         implicitHeight: 200
         implicitWidth: 200
 
@@ -117,26 +123,8 @@ Style {
 
         readonly property real dayOfWeekHeaderRowHeight: 30
 
-        readonly property int weeksToshow: CalendarUtils.weeksOnCalendarMonth
-        readonly property int rows: weeksToshow
-        readonly property int columns: CalendarUtils.daysInAWeek
-
-        readonly property int total_cells: rows * columns
-
-        readonly property int max_show_events_of_day: 2
-
-        readonly property real availableWidth:
-            (viewContainer.width - (control.gridVisible ? __gridLineWidth : 0))
-        readonly property real availableHeight:
-            (viewContainer.height - (control.gridVisible ? __gridLineWidth : 0))
-
         property int hoveredCellIndex: -1
         property int pressedCellIndex: -1
-
-        readonly property int max_month_list_count: 7
-        readonly property int middle_index_of_month_list: (max_month_list_count - 1) / 2
-
-        property int month_list_index: middle_index_of_month_list
 
         ListModel {
             id: label_list_model
@@ -162,15 +150,16 @@ Style {
 
             property QtObject styleData: QtObject {
                 property string title:
-                    //                control.__locale.standaloneMonthName(control.visibleMonth) +
-                    //                new Date(control.visibleYear, control.visibleMonth, 1). toLocaleDateString(control.__locale, " yyyy")
-                    //            Qt.locale().standaloneMonthName(control.visibleMonth) +
-                    //            new Date(control.visibleYear, control.visibleMonth, 1).
-                    //            toLocaleDateString(Qt.locale(), " yyyy")
+//                    control.__locale.standaloneMonthName(control.visibleMonth) +
+//                    new Date(control.visibleYear, control.visibleMonth, 1). toLocaleDateString(control.__locale, " yyyy")
+//                Qt.locale().standaloneMonthName(control.visibleMonth) +
+//                new Date(control.visibleYear, control.visibleMonth, 1).
+//                toLocaleDateString(Qt.locale(), " yyyy")
                     (new Date(control.visible_date.getFullYear(),
                               control.visible_date.getMonth(),
                               1).toLocaleDateString(Qt.locale(), "yyyy  ")) +
                     Qt.locale().standaloneMonthName(control.visible_date.getMonth());
+                property var calendar_tab_view: tab_view
             }
 
             MouseArea {
@@ -185,15 +174,28 @@ Style {
             width: panelItem.width
             height: panelItem.height - navigationBarLoader.height
             anchors.top: navigationBarLoader.bottom
+//            anchors.top: tab_bar.bottom
+
+            tabsVisible: false
+            frameVisible: false
 
             Tab {
+                title: "Week"
+                Rectangle {
+                    anchors.fill: parent
+                    color: "indigo"
+                }
+            }
+
+            Tab {
+                title: "Month"
                 MonthView {
                     id: month_tab
                 }
             }
         }
 
-        FloatEventEditView {
+        FloatEditView {
             id: float_edit
             visible: false
             z: 1

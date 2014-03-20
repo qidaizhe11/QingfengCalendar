@@ -9,7 +9,6 @@ QML_IMPORT_PATH =
 QT += core gui widgets organizer versit webkitwidgets
 
 #LIBS        += /usr/lib/libical.so.1
-#LIBS        += /usr/lib/x86_64-linux-gnu/
 
 # The .cpp file which was generated for your project. Feel free to hack it.
 SOURCES += main.cpp \
@@ -103,15 +102,4 @@ RESOURCES += \
 
 OTHER_FILES += \
     README.md \
-#    CalendarPlugin/qmldir
-    qml/QingfengCalendar/Content/MyTextLinkButton.qml \
-#    qml/QingfengCalendar/FloatEventEditWindow.qml \
-    qml/QingfengCalendar/Content/MyTextButton.qml \
-    qml/QingfengCalendar/MyCalendar.qml \
-    qml/QingfengCalendar/Content/MyButton.qml \
-    qml/QingfengCalendar/EventEditView.qml \
-    qml/QingfengCalendar/GoogleOAuth.js \
-    qml/QingfengCalendar/main.qml \
-    qml/QingfengCalendar/CalendarPanelItem.qml \
-    qml/QingfengCalendar/MyCalendarStyle.qml \
-    qml/QingfengCalendar/FloatEditView.qml
+    qml/QingfengCalendar/MonthEventLabel.qml

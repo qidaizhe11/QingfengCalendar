@@ -9,9 +9,11 @@ ListModel {
         var daysOfWeek = [Locale.Sunday, Locale.Monday, Locale.Tuesday,
                 Locale.Wednesday, Locale.Thursday, Locale.Friday,
                 Locale.Saturday];
-//        var daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday",
-//                "Thursday", "Friday", "Saturday"];
-        var firstDayOfWeek = Qt.locale().firstDayOfWeek;
+//        var daysOfWeek = [Locale.Monday, Locale.Tuesday,
+//                Locale.Wednesday, Locale.Thursday, Locale.Friday,
+//                Locale.Saturday, Locale.Sunday];
+//        var firstDayOfWeek = Qt.locale().firstDayOfWeek;
+        var firstDayOfWeek = 1;
 
         var shifted = daysOfWeek.splice(firstDayOfWeek,
                                         daysOfWeek.length - firstDayOfWeek);
