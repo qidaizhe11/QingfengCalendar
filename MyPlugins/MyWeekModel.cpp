@@ -84,7 +84,8 @@ void MyWeekModel::populateFromVisibleDate(const QDate &previousDate,
                                                   bool force)
 {
   if (!force && mVisibleDate.year() == previousDate.year() &&
-      mVisibleDate.month() == previousDate.month()) {
+      mVisibleDate.month() == previousDate.month() &&
+      mVisibleDate.weekNumber() == previousDate.weekNumber()) {
     return;
   }
 

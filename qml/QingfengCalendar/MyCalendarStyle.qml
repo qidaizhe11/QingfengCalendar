@@ -191,12 +191,6 @@ Style {
             }
         }
 
-//        Binding {
-//            target: navigationBarLoader
-//            property: "styleData.title"
-//            value: tab_view.getTab(0).item.calendar_title
-//        }
-
         FloatEditView {
             id: float_edit
             visible: false

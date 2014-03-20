@@ -3,6 +3,7 @@ import QtQuick.Controls 1.0
 import QtQuick.Controls.Styles 1.0
 import MyCalendar.Controls.Private 1.0
 import MyCalendar2.Events 1.0
+import MyCalendar.Weeks 1.0
 import QtOrganizer 5.0
 import "Private"
 import "Private/CalendarUtils.js" as CalendarUtils

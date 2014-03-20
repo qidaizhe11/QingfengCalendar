@@ -17,7 +17,7 @@ Item {
 
     readonly property int max_show_events_of_day: 2
 
-    readonly property int max_month_list_count: 7
+    readonly property int max_month_list_count: 3
     readonly property int middle_index_of_month_list: (max_month_list_count - 1) / 2
 
     property int month_list_index: middle_index_of_month_list
@@ -30,7 +30,7 @@ Item {
     property string calendar_title: {
         (new Date(control.visible_date.getFullYear(),
                   control.visible_date.getMonth(),
-                  1).toLocaleDateString(Qt.locale(), "yyyy  ")) +
+                  1).toLocaleDateString(Qt.locale(), "yyyy年")) +
                 Qt.locale().standaloneMonthName(control.visible_date.getMonth());
     }
 
@@ -38,7 +38,25 @@ Item {
         navigationBarLoader.styleData.title = calendar_title;
     }
 
-    onCalendar_titleChanged: navigationBarLoader.styleData.title = calendar_title;
+    Connections {
+        target: tab_view
+        onCurrentIndexChanged: {
+            if (month_view.visible) {
+                navigationBarLoader.styleData.title = calendar_title;
+                month_list_model.refresh()
+                console.log("MonthView, onCurrentIndexChanged.");
+            }
+        }
+    }
+
+    Connections {
+        target: control
+        onVisible_dateChanged: {
+            if (month_view.visible) {
+                navigationBarLoader.styleData.title = calendar_title;
+            }
+        }
+    }
 
     function __cellRectAt(index) {
         return CalendarUtils.cellRectAt(index,
@@ -171,20 +189,29 @@ Item {
         ListModel {
             id: month_list_model
 
-            signal refreshMonthList()
+            signal refresh()
             signal insertAtBeginning()
             signal insertAtEnd()
 
-            Component.onCompleted: {
-                console.log("List Model onCompleted.")
+            Component.onCompleted: refresh()
+
+            onRefresh: {
+                console.log("Month List Model refreshed.")
+
+                for (var i = 0; i < month_list_model.count; ++i) {
+                    month_list_model.remove(i);
+                }
+                month_list_model.clear();
+
                 var date = control.visible_date;
                 date.setMonth(date.getMonth() - middle_index_of_month_list);
 
-                for (var i = 0; i < max_month_list_count; ++i) {
+                for (i = 0; i < max_month_list_count; ++i) {
                     month_list_model.append({ "month_date": date} );
                     console.log("month_list_model, append: ", date.toLocaleDateString());
                     date.setMonth(date.getMonth() + 1);
                 }
+
                 month_list_view.currentIndex = middle_index_of_month_list;
                 //            control.refreshEvents();
             }
