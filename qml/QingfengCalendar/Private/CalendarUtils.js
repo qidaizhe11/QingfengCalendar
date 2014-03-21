@@ -3,6 +3,7 @@
 
 var daysInAWeek = 7;
 var monthsInYear = 12;
+var hoursInADay = 24;
 
 var weeksOnCalendarMonth = 6;
 

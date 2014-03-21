@@ -116,8 +116,8 @@ Rectangle {
             var global_pos = month_event_label.mapToItem(null, mouseX, mouseY);
             console.log("Global position: " + global_pos.x + ", " + global_pos.y);
 
-            var show_pos_x = EventJsUtils.getEditViewPosX(global_pos.x);
-            var show_pos_y = EventJsUtils.getEditViewPosY(
+            var show_pos_x = MonthViewUtils.getEditViewPosX(global_pos.x);
+            var show_pos_y = MonthViewUtils.getEditViewPosY(
                         global_pos.y, grid_index);
             console.log("Shown Pos: " + show_pos_x + ", " + show_pos_y);
             float_edit.x = show_pos_x;

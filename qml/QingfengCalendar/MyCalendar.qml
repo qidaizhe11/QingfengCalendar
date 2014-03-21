@@ -13,30 +13,27 @@ Control {
     width: 960
     height: 600
 
-    property alias selectedDate: rangedDate.date
+//    property alias selectedDate: rangedDate.date
 
     property alias minimumDate: rangedDate.minimumDate
 
     property alias maximumDate: rangedDate.maximumDate
 
-//    property date visible_date: {
-//        var temp = new Date();
-//        var the_date = new Date(temp.getFullYear(), temp.getMonth(), 1);
-//        the_date;
-//    }
-
+    // Determines which month or week or day will be shown currently.
+    // It's the main connection among different calendar views.
     property date visible_date: new Date()
 
-    property int visibleMonth: selectedDate.getMonth()
+//    property int visibleMonth: selectedDate.getMonth()
+//    property int visibleYear: selectedDate.getFullYear()
 
-    property int visibleYear: selectedDate.getFullYear()
-
+    // Refresh event models and event views when visible_date changed
+    // or event edit (add, edit, or delete) finished.
     signal refreshEvents()
 
-    onSelectedDateChanged: {
-        visibleMonth = selectedDate.getMonth();
-        visibleYear = selectedDate.getFullYear();
-    }
+//    onSelectedDateChanged: {
+//        visibleMonth = selectedDate.getMonth();
+//        visibleYear = selectedDate.getFullYear();
+//    }
 
     RangedDate {
         id: rangedDate
@@ -44,20 +41,6 @@ Control {
         minimumDate: CalendarUtils.minimumCalendarDate
         maximumDate: CalendarUtils.maximumCalendarDate
     }
-
-//    property OrganizerModel __organizer_model: OrganizerModel {
-//        id: organizer
-//        startPeriod: __model.firstVisibleDate
-//        endPeriod: __model.lastVisibleDate
-//        manager: "memory"
-
-//        Component.onCompleted: {
-//            organizer.importItems(Qt.resolvedUrl("qidaizhe11@gmail.com-2.ics"));
-//            console.log("Ics.");
-
-//            console.log(organizer.itemCount);
-//        }
-//    }
 
     property bool gridVisible: true
     property bool weekNumbersVisible: false
@@ -76,15 +59,18 @@ Control {
 
 //    property var __locale: Qt.locale()
 
+    // Copied from QtQuick.Controls.Calenadr, serviced as MonthModel here.
+    // holes the model that will be used by the Calendar to populate month date
+    // that available to the user.
     property CalendarModel __model: CalendarModel {
 //        locale: my_calendar.__locale
         visibleDate: visible_date
     }
 
+    // Provides list model of MyEvents, MyCollections that ranged in the given
+    // start date and end date, the core center between c++ and qml.
+    // The items could be accessed by direct list.
     property MyEventModel event_model: MyEventModel {
-//        id: my_event_list
-//        startDate: __model.firstVisibleDate
-//        endDate: __model.lastVisibleDate
         startDate: new Date()
         endDate: new Date()
 
@@ -106,10 +92,6 @@ Control {
 
     signal doubleClicked(date date)
 
-    onClicked: {
-//        my_calendar.selectedDate = date
-    }
-
     function showPreviousMonth() {
         if (visibleMonth === 0) {
             visibleMonth = CalendarUtils.monthsInYear - 1;
@@ -117,8 +99,6 @@ Control {
         } else {
             --visibleMonth;
         }
-
-        refreshEvents();
     }
 
     function showNextMonth() {
@@ -128,8 +108,6 @@ Control {
         } else {
             ++visibleMonth;
         }
-
-        refreshEvents();
     }
 
     function showPreviousYear() {
@@ -221,6 +199,4 @@ Control {
             event.accepted = true;
         }
     }
-
-//    Component.onCompleted: refreshEvents()
 }

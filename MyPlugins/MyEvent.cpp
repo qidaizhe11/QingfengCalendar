@@ -24,17 +24,17 @@ MyEvent::MyEvent(const QOrganizerEvent &event, QObject* parent)
   m_description = event.description();
   m_location = event.location();
 
-  foreach (MyEventDetail* detail, m_details) {
-    delete detail;
-  }
-  m_details.clear();
-  QList<QOrganizerItemDetail> details(event.details());
-  foreach (const QOrganizerItemDetail& detail, details) {
-    MyEventDetail* item_detail = MyEventDetailFactory::createItemDetail(
-          static_cast<MyEventDetail::DetailType>(detail.type()));
-    item_detail->setDetail(detail);
-    m_details.append(item_detail);
-  }
+//  foreach (MyEventDetail* detail, m_details) {
+//    delete detail;
+//  }
+//  m_details.clear();
+//  QList<QOrganizerItemDetail> details(event.details());
+//  foreach (const QOrganizerItemDetail& detail, details) {
+//    MyEventDetail* item_detail = MyEventDetailFactory::createItemDetail(
+//          static_cast<MyEventDetail::DetailType>(detail.type()));
+//    item_detail->setDetail(detail);
+//    m_details.append(item_detail);
+//  }
 }
 
 MyEvent::~MyEvent()
@@ -100,10 +100,10 @@ QOrganizerEvent MyEvent::toQOrganizerEvent() const
   event.setDescription(m_description);
   event.setLocation(m_location);
 
-  foreach (MyEventDetail* detail, m_details) {
-    QOrganizerItemDetail item_detail = detail->detail();
-    event.saveDetail(&item_detail);
-  }
+//  foreach (MyEventDetail* detail, m_details) {
+//    QOrganizerItemDetail item_detail = detail->detail();
+//    event.saveDetail(&item_detail);
+//  }
 
   return event;
 }

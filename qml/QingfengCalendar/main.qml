@@ -33,7 +33,7 @@ Window {
             //            width: parent.width * 0.6 - row.spacing / 2
             width: parent.width
             height: parent.height
-            selectedDate: new Date()
+//            selectedDate: new Date()
             focus: true
         }
     }

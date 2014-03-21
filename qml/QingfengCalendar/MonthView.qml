@@ -42,20 +42,17 @@ Item {
         target: tab_view
         onCurrentIndexChanged: {
             if (month_view.visible) {
-                navigationBarLoader.styleData.title = calendar_title;
                 month_list_model.refresh()
                 console.log("MonthView, onCurrentIndexChanged.");
             }
         }
     }
 
-    Connections {
-        target: control
-        onVisible_dateChanged: {
-            if (month_view.visible) {
-                navigationBarLoader.styleData.title = calendar_title;
-            }
-        }
+    Binding {
+        when: month_view.visible
+        target: navigationBarLoader
+        property: "styleData.title"
+        value: calendar_title
     }
 
     function __cellRectAt(index) {
@@ -87,7 +84,7 @@ Item {
             if (styleData.valid) {
                 the_color = styleData.visibleMonth ? base_color :
                                                      different_month_date_color;
-                if (styleData.selected) {
+                if (styleData.today) {
                     the_color = selectedDateColor;
                 }
                 if (styleData.hovered) {
@@ -112,7 +109,7 @@ Item {
                 if (styleData.valid) {
                     theColor = styleData.visibleMonth ? sameMonthDateTextColor :
                                                         differentMonthDateTextColor;
-                    if (styleData.selected) {
+                    if (styleData.today) {
                         theColor = selectedDateTextColor;
                     }
                 }
@@ -363,14 +360,22 @@ Item {
         }
     }
 
-//    Connections {
-//        target: navigationBarLoader.item
-//        onShowPrevious: showPreviousMonth();
-//    }
-//    Connections {
-//        target: navigationBarLoader.item
-//        onShowNext: showNextMonth();
-//    }
+    Connections {
+        target: navigationBarLoader.item
+        onShowPrevious: {
+            if (month_view.visible) {
+                showPreviousMonth();
+            }
+        }
+    }
+    Connections {
+        target: navigationBarLoader.item
+        onShowNext: {
+            if (month_view.visible) {
+                showNextMonth();
+            }
+        }
+    }
 
     property Component month_delegate: Item {
 //    Item {
@@ -504,11 +509,6 @@ Item {
             }
         }
 
-        Connections {
-            target: control
-            onSelectedDateChanged: view.selectedDateChanged()
-        }
-
         Repeater {
             id: view
 
@@ -548,9 +548,9 @@ Item {
                 property QtObject styleData: QtObject {
                     readonly property alias index:
                         delegateLoader.__index
-                    readonly property bool selected:
-                        control.selectedDate.getTime() ===
-                        date.getTime()
+//                    readonly property bool selected:
+//                        control.selectedDate.getTime() ===
+//                        date.getTime()
                     readonly property alias date: delegateLoader.__date
                     readonly property bool valid: delegateLoader.valid
                     // TODO: this will not be correct if the app is
@@ -570,6 +570,13 @@ Item {
         } // view Repeater
     } // month_delegate
 
+    function updateEventModel() {
+        control.event_model.startDate = control.__model.firstVisibleDate;
+        control.event_model.endDate = control.__model.lastVisibleDate;
+        control.event_model.updateCollections();
+        control.event_model.updateEvents();
+    }
+
     Connections {
         target: control
         onRefreshEvents: {
@@ -580,7 +587,7 @@ Item {
 
             // TODO: 这里的重复事件未经扩展，
             // 一旦有天天重复之类的，这个逻辑立马崩掉
-            panelItem.updateEventModel();
+            updateEventModel();
 
             var event_counts_of_day = [];
             var show_flags_of_day = [];

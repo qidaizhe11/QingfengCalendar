@@ -1,5 +1,6 @@
 import QtQuick 2.1
 import QtQuick.Controls 1.0
+import MyCalendar.Controls.Private 1.0
 import "Private"
 import "Private/CalendarUtils.js" as CalendarUtils
 import MyCalendar.Weeks 1.0
@@ -7,23 +8,22 @@ import MyCalendar.Weeks 1.0
 Item {
     id: week_view
 
-//    readonly property int weeksToshow: CalendarUtils.weeksOnCalendarMonth
-    readonly property int rows: 24 * 2
+    readonly property int rows: CalendarUtils.hoursInADay * 2
     readonly property int columns: CalendarUtils.daysInAWeek
 
-    readonly property int total_cells: rows * columns
+//    readonly property int total_cells: rows * columns
 
     readonly property int max_week_list_count: 3
     readonly property int middle_index_of_week_list: (max_week_list_count - 1) / 2
 
-    property int week_list_index: middle_index_of_week_list
-
-//    property string show: navigationBarLoader.styleData.title
-
+    // holes the model that will be used by the Calendar to populate week date
+    // that available to the user.
     property MyWeekModel week_model: MyWeekModel {
         visibleDate: control.visible_date
     }
 
+    // The title shown in the navigation bar, it's format various from view
+    // to view.
     property string calendar_title: {
         var title = "";
         var range_start_date = week_model.firstVisibleDate;
@@ -44,31 +44,25 @@ Item {
         title;
     }
 
-    Component.onCompleted: {
-        navigationBarLoader.styleData.title = calendar_title;
-    }
-
+    // Once the tab_view index changed, the model should be refreshed,
+    // since the visible date may be changed already.
     Connections {
         target: tab_view
         onCurrentIndexChanged: {
             if (week_view.visible) {
-                navigationBarLoader.styleData.title = calendar_title;
                 week_list_model.refresh();
                 console.log("WeekView, onCurrentIndexChanged.");
             }
         }
     }
 
-    Connections {
-        target: control
-        onVisible_dateChanged: {
-            if (week_view.visible) {
-                console.log("WeekView, onVisible_dateChanged.")
-                navigationBarLoader.styleData.title = calendar_title;
-            }
-            console.log("control, visible_dateChanged:",
-                        control.visible_date);
-        }
+    // Bind the title to navigationbar, only take over the title
+    // when this tab in tab_view is active.
+    Binding {
+        when: week_view.visible
+        target: navigationBarLoader
+        property: "styleData.title"
+        value: calendar_title
     }
 
     property Component dayDelegate: Rectangle {
@@ -110,10 +104,9 @@ Item {
         }
     }
 
-    property Component dayTimeDelegate: Rectangle {
+    property Component dayHourDelegate: Rectangle {
 //    Rectangle {
-//        color: "white"
-        color: base_color
+        color: my_calendar_style.base_color
         Label {
             text: {
                 var the_text;
@@ -132,10 +125,7 @@ Item {
     }
 
     Item {
-        id: week_central_view
-//        width: panelItem.width
-//        height: panelItem.height - navigationBarLoader.height
-//        anchors.top: dayHeaderRow.bottom
+        id: week_panel_item
         anchors.fill: parent
 
         ListModel {
@@ -156,25 +146,24 @@ Item {
                 week_list_model.clear();
 
                 var date = control.visible_date;
-                date.setDate(date.getDate() - middle_index_of_week_list * 7);
+                date.setDate(date.getDate() - middle_index_of_week_list * columns);
 
                 for (i = 0; i < max_week_list_count; ++i) {
                     week_list_model.insert(i, { "week_date": date} );
                     console.log("week_list_model, append: ", date.toLocaleDateString());
-                    date.setDate(date.getDate() + 7);
+                    date.setDate(date.getDate() + columns);
                 }
                 console.log("week_list_model, count:", week_list_model.count);
 
                 week_list_view.currentIndex = middle_index_of_week_list;
 //                week_list_view.positionViewAtIndex(middle_index_of_week_list,
 //                                                    ListView.SnapPosition);
-                //            control.refreshEvents();
             }
 
             onInsertAtBeginning: {
                 var date = control.visible_date;
                 for (var i = 0; i < middle_index_of_week_list; ++i) {
-                    date.setDate(date.getDate() - 7);
+                    date.setDate(date.getDate() - columns);
                     week_list_model.insert(0, { "week_date": date});
                     console.log("OnInsertAtBeingning Insert Month date: ",
                                 date.toLocaleDateString());
@@ -185,7 +174,6 @@ Item {
 
                 week_list_view.positionViewAtIndex(middle_index_of_week_list,
                                                     ListView.SnapPosition);
-                //            control.refreshEvents();
             }
 
             onInsertAtEnd: {
@@ -193,7 +181,7 @@ Item {
                 console.log("control.visible_date:", control.visible_date);
                 var date = control.visible_date;
                 for (var i = 0; i < middle_index_of_week_list; ++i) {
-                    date.setDate(date.getDate() + 7);
+                    date.setDate(date.getDate() + columns);
                     week_list_model.append({"week_date": date});
                     console.log("onInsertAtEnd Insert Month date: ",
                                 date.toLocaleDateString());
@@ -203,7 +191,6 @@ Item {
 
                 week_list_view.positionViewAtIndex(middle_index_of_week_list,
                                                     ListView.SnapPosition);
-                //            control.refreshEvents();
             }
         } // week_list_model
 
@@ -220,35 +207,19 @@ Item {
             snapMode: ListView.SnapOneItem
             orientation: ListView.Horizontal
             currentIndex: middle_index_of_week_list
-            //            flickDeceleration: 0
             highlightFollowsCurrentItem: true
             highlightMoveVelocity: 5000
-            //            maximumFlickVelocity: 1000
             highlightRangeMode: ListView.StrictlyEnforceRange
             boundsBehavior: Flickable.DragOverBounds
-            //            preferredHighlightBegin: 0
-            //            preferredHighlightEnd: 0
-            //            keyNavigationWraps: true
 
-            Component.onCompleted: {
-                console.log("List View onCompleted.")
-                //                currentIndex = middle_index_of_month_list
-            }
-
-            //            onDragStarted: hideEventLabels();
-//            onDragStarted: hideEventLabels();
-            //            onFlickEnded: console.log("MovementEnded.");
-            //            onDragEnded: showEventLabels();
+            onDragStarted: panelItem.hideEventLabels();
         } // month_list_view
-    } // view_container
+    } // week_panel_item
 
     Timer {
         id: insert_at_begin_timer
         interval: 500
-        running: false
-        repeat: false
         onTriggered: {
-            //            console.log("Timer triggered.")
             week_list_model.insertAtBeginning();
         }
     }
@@ -256,10 +227,7 @@ Item {
     Timer {
         id: insert_at_end_timer
         interval: 500
-        running: false
-        repeat: false
         onTriggered: {
-            //            console.log("Timer triggered.")
             week_list_model.insertAtEnd();
         }
     }
@@ -295,43 +263,63 @@ Item {
     }
 
     function showPreviousWeek() {
-        hideEventLabels();
+        panelItem.hideEventLabels();
         week_list_view.decrementCurrentIndex();
         var index = week_list_view.currentIndex;
-        control.visible_date = week_list_view.get(index).week_date;
+        console.log("showPreviousWeek, index:", index);
+        control.visible_date = week_list_model.get(index).week_date;
 
         if (index === 0) {
             insert_at_begin_timer.start();
-            refresh_events_timer.start();
+//            refresh_events_timer.start();
         } else {
-            control.refreshEvents();
+//            control.refreshEvents();
         }
     }
 
     function showNextWeek() {
-        hideEventLabels();
+        panelItem.hideEventLabels();
         week_list_view.incrementCurrentIndex();
         var index = week_list_view.currentIndex;
-        control.visible_date = week_list_view.get(index).week_date;
+        control.visible_date = week_list_model.get(index).week_date;
 
         if (index === max_week_list_count - 1) {
             insert_at_end_timer.start();
-            refresh_events_timer.start();
+//            refresh_events_timer.start();
         } else {
-            control.refreshEvents();
+//            control.refreshEvents();
+        }
+    }
+
+    Connections {
+        target: navigationBarLoader.item
+        onShowPrevious: {
+            if (week_view.visible) {
+                showPreviousWeek();
+            }
+        }
+    }
+    Connections {
+        target: navigationBarLoader.item
+        onShowNext: {
+            if (week_view.visible) {
+                showNextWeek();
+            }
         }
     }
 
     property Component week_delegate: Item {
 //    Item {
         id: week_delegate
-        width: panelItem.width
-        height: panelItem.height - navigationBarLoader.height
+        width: week_panel_item.width
+        height: week_panel_item.height
 
         readonly property real availableWidth:
-            (week_container_item.width - (control.gridVisible ? __gridLineWidth : 0))
+            (week_view_inner_container.width - (control.gridVisible ? __gridLineWidth : 0))
         readonly property real availableHeight:
-            (week_grid_view.height - (control.gridVisible ? __gridLineWidth : 0))
+            (week_inner_row.height - (control.gridVisible ? __gridLineWidth : 0))
+
+        readonly property real hour_column_width: 60
 
         function __cellRectAt(index) {
             return CalendarUtils.cellRectAt(index,
@@ -343,10 +331,10 @@ Item {
 
         Item {
             id: day_header_row
-            width: panelItem.width - 60
+            width: parent.width - week_delegate.hour_column_width
             height: panelItem.dayOfWeekHeaderRowHeight
             anchors.left: parent.left
-            anchors.leftMargin: 60 + __gridLineWidth
+            anchors.leftMargin: week_delegate.hour_column_width + __gridLineWidth
             anchors.top: parent.top
 
             Row {
@@ -362,7 +350,6 @@ Item {
                         sourceComponent: dayDelegate
                         width: __cellRectAt(index).width -
                                (control.gridVisible ? __gridLineWidth : 0)
-//                        width: day_header_row.width / 7
                         height: day_header_row.height
 
                         readonly property int __index: index
@@ -381,41 +368,24 @@ Item {
                     }
                 }
             } // row
-
-//            Repeater {
-//                id: header_grid_line_repeater
-//                model: month_view.columns - 1
-//                delegate: Rectangle {
-//                    x: __cellRectAt(index).x + __cellRectAt(index).width
-//                    y: 10
-//                    width: __gridLineWidth
-//                    height: dayOfWeekHeaderRow.height
-//                    color: gridColor
-//                    visible: control.gridVisible
-//                }
-//            }
-        } // day_of_week_header_row
+        } // day_header_row
 
         Flickable {
             id: week_flickable
             anchors.top: day_header_row.bottom
-//            anchors.left: parent.left
-//            anchors.right: parent.right
-//            anchors.centerIn: parent
             width: parent.width
-            height: (parent.height - day_header_row.height) < week_grid_view.height ?
-                        (parent.height - day_header_row.height) : week_grid_view.height
+            height: (parent.height - day_header_row.height) < week_inner_row.height ?
+                        (parent.height - day_header_row.height) : week_inner_row.height
             flickableDirection: Flickable.VerticalFlick
             contentHeight: 1300
             clip: true
 
             Row {
-                id: week_grid_view
-//                height: 1300
+                id: week_inner_row
                 anchors.fill: parent
 
                 Item {
-                    id: day_time_item
+                    id: day_hours_column
                     width: 60
                     height: parent.height
 
@@ -427,10 +397,10 @@ Item {
                             id: day_time_delegate_loader
                             y: __cellRectAt(index * week_view.columns * 2).y +
                                (control.gridVisible ? __gridLineWidth : 0)
-                            width: day_time_item.width
+                            width: day_hours_column.width
                             height: __cellRectAt(index * week_view.columns).height -
                                     (control.gridVisible ? __gridLineWidth : 0)
-                            sourceComponent: dayTimeDelegate
+                            sourceComponent: dayHourDelegate
 
                             readonly property int __index: index
 
@@ -438,26 +408,15 @@ Item {
                                 readonly property alias index:
                                     day_time_delegate_loader.__index
                             }
-
-                            Component.onCompleted: {
-//                                console.log("day_time_delegate_loader: ",
-//                                            day_time_delegate_loader.width,
-//                                            day_time_delegate_loader.height);
-                            }
-                        } // loader
-                    } // repeater
-                } // day_time_item
+                        }
+                    }
+                } // day_hours_column
 
                 Item {
-                    id: week_container_item
+                    id: week_view_inner_container
 
-                    width: parent.width - day_time_item.width
+                    width: parent.width - day_hours_column.width
                     height: parent.height
-
-                    Component.onCompleted: {
-//                        console.log("week_container_item, width:",
-//                                    week_container_item.width);
-                    }
 
                     Repeater {
                         id: verticalGridLineRepeater
@@ -469,8 +428,8 @@ Item {
                                    __cellRectAt(week_view.columns - 1).width
                             y: 0
                             width: __gridLineWidth
-                            height: week_container_item.height
-                            color: gridColor
+                            height: week_view_inner_container.height
+                            color: my_calendar_style.gridColor
                             visible: control.gridVisible
                         }
                     }
@@ -482,23 +441,21 @@ Item {
                         delegate: Rectangle {
                             property bool is_hour: index % 2 === 0
 
-                            x: is_hour ? -day_time_item.width : 0
+                            x: is_hour ? -day_hours_column.width : 0
                             y: index < week_view.rows ?
                                    __cellRectAt(index * week_view.columns).y :
                                    __cellRectAt((week_view.rows - 1) *
                                                 week_view.columns).y +
                                    __cellRectAt((week_view.rows - 1) *
                                                 week_view.columns).height
-//                            width: week_container_item.width + day_time_item.width
                             width: is_hour ?
-                                       (week_container_item.width + day_time_item.width) :
-                                       week_container_item.width
+                                       (week_view_inner_container.width +
+                                        day_hours_column.width) :
+                                       week_view_inner_container.width
                             height: __gridLineWidth
-                            color: is_hour ? gridColor : Qt.lighter("lightgrey", 1.03)
+                            color: is_hour ? my_calendar_style.gridColor :
+                                             Qt.lighter("lightgrey", 1.03)
                             visible: control.gridVisible
-                            Component.onCompleted: {
-//                                console.log("y:", y);
-                            }
                         }
                     }
 
@@ -580,8 +537,19 @@ Item {
 //                            }
 //                        }
 //                    }
-                } // month_delegate
-            } // row
-        }
+                } // week_container_view
+            } // week_grid_view
+        } // week_flickable
+    } // week_delegate
+
+    function updateEventModel() {
+        control.event_model.startDate = week_model.firstVisibleDate;
+        control.event_model.endDate = week_model.lastVisibleDate;
+        control.event_model.updateCollections();
+        control.event_model.updateEvents();
+    }
+
+    function createEventLabels() {
+        console.log("WeekView::createEventLabels");
     }
 }
