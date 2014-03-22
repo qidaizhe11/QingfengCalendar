@@ -2,8 +2,8 @@ import QtQuick 2.1
 import QtQuick.Controls 1.1
 import "Private/CalendarUtils.js" as CalendarUtils
 
-Rectangle {
-    id: root
+Item {
+    id: week_event_label
 
 //    color: "transparent"
 
@@ -13,9 +13,6 @@ Rectangle {
     property int max_stack
     property int start_cell_index
     property int end_cell_index
-
-//    property rect base_rect: Qt.rect()
-//    property int ranged_cells
 
     readonly property int hours_in_day: CalendarUtils.hoursInADay
     readonly property int days_in_week: CalendarUtils.daysInAWeek
@@ -27,90 +24,127 @@ Rectangle {
 
     width: (stack_index === max_stack) ? base_width : (base_width * 2)
     height: cell_height * (end_cell_index - start_cell_index + 1)
-//    x: base_rect.x + (stack_index - 1) * base_width
-//    y: base_rect.y
     x: (date_index * cell_width) + (stack_index - 1) * base_width
     y: (start_cell_index * cell_height)
 
     z: stack_index
 
-    border.color: "lightgrey"
-    border.width: 2
+    property color base_color: {
+        var the_color = Qt.darker("lightblue", 1.3);
+        for( var i = 0; i < control.event_model.collections.length; ++i) {
+            var collection = control.event_model.collections[i];
+            if (eventItem &&
+                    collection.collectionId === eventItem.collectionId) {
+                the_color = collection.color;
+            }
+        }
+        the_color;
+    }
+
+//    border.color: "lightgrey"
+//    border.width: 2
 
     Rectangle {
-        id: week_event_label
-        anchors.fill: parent
-        anchors.margins: 2
+        id: panel
+        width: parent.width
+        anchors.top: parent.top
+        anchors.bottom: resize_rectangle.top
+//        anchors.fill: parent
 
-        //    width: (stack_index === max_stack) ? base_width : (base_width * 2)
-        //    height: cell_height * (end_cell_index - start_cell_index + 1)
-        //    x: (date_index * cell_width) + stack_index * base_width
-        //    y: (start_cell_index * cell_height)
+//        anchors.margins: 2
+        anchors.leftMargin: 2
 
-        //    opacity: 0
 
-        Component.onCompleted: {
-            console.log("WeekEventLabel, onCompleted.");
-            console.log("width:", width, "height", height, "x:", x, "y:", y);
-        }
-
-        property color base_color: {
-            var the_color = Qt.darker("lightblue", 1.3);
-            for( var i = 0; i < control.event_model.collections.length; ++i) {
-                var collection = control.event_model.collections[i];
-                if (eventItem &&
-                        collection.collectionId === eventItem.collectionId) {
-                    the_color = collection.color;
-                }
-            }
-            the_color;
-        }
-        color: base_color
+//        color: base_color
+        color: panel_mouse_area.pressed ? "orange" : base_color
         border.color: Qt.darker(base_color, 1.2)
         border.width: 1
 
-        //    property color font_color: "black"
+        Label {
+            id: time_label
+            anchors.left: parent.left
+            anchors.leftMargin: 3
+            anchors.top: parent.top
+            width: parent.width * 0.8
+            clip: true
 
-        Item {
-            id: panel
-            anchors.fill: parent
-            anchors.margins: 2
-
-            Label {
-                id: time_label
-                anchors.left: parent.left
-                anchors.leftMargin: 3
-                anchors.top: parent.top
-                width: parent.width * 0.8
-                //            height: 20
-                clip: true
-
-                text: {
-                    var the_text = "";
-                    the_text += eventItem.startDateTime.toLocaleTimeString(
-                                Qt.locale(), "hh:mm");
-                    the_text += " - ";
-                    the_text += eventItem.endDateTime.toLocaleTimeString(
-                                Qt.locale(), "hh:mm");
-                    the_text;
-                }
+            text: {
+                var the_text = "";
+                the_text += eventItem.startDateTime.toLocaleTimeString(
+                            Qt.locale(), "hh:mm");
+                the_text += " - ";
+                the_text += eventItem.endDateTime.toLocaleTimeString(
+                            Qt.locale(), "hh:mm");
+                the_text;
             }
+        }
 
-            Label {
-                id: title_label
-                text: eventItem.displayLabel
-                //            font.pointSize: 12
-                //            clip: true
-                wrapMode: Text.Wrap
-                width: parent.width * 0.9
-                //            color: font_color
-                anchors.left: parent.left
-                anchors.leftMargin: 3
-                anchors.top: time_label.bottom
-                anchors.bottom: parent.bottom
+        Label {
+            id: title_label
+            anchors.left: parent.left
+            anchors.leftMargin: 3
+            anchors.top: time_label.bottom
+            anchors.bottom: parent.bottom
+
+            text: eventItem.displayLabel
+            wrapMode: Text.Wrap
+            width: parent.width * 0.9
+        }
+
+        property real old_x: 0
+        property real old_y: 0
+
+        MouseArea {
+            id: panel_mouse_area
+            anchors.fill: parent
+            drag.target: week_event_label
+
+            onPressed: {
+//                old_x = week_event_label.x
+//                old_y = week_event_label.y
+            }
+            onReleased: {
+
             }
         }
     }
 
-    //    NumberAnimation on opacity { from: 0; to: 1; duration: 200; }
+    Rectangle {
+        id: resize_rectangle
+        width: parent.width
+        height: 13
+//        anchors.bottom: parent.bottom
+        y: parent.height - 13
+        anchors.leftMargin: 2
+
+        color: resize_mouse_area.pressed ? Qt.darker(base_color, 1.3) :
+                                           Qt.darker(base_color, 1.1)
+
+        property real old_height: 0
+
+        MouseArea {
+            id: resize_mouse_area
+            anchors.fill: parent
+//            cursorShape: Qt.SizeVerCursor
+
+            drag.target: resize_rectangle
+            drag.axis: Drag.YAxis
+
+            onPressed: {
+                console.log("onPressed, panel.height:",
+                            panel.height)
+                parent.old_height = panel.height
+            }
+            onReleased: {
+                console.log("resize_mouse_area, onReleased, panel.height",
+                            panel.height)
+                if (panel.height !== parent.old_height) {
+                    parent.old_height = panel.height
+                    resize_rectangle.y +=
+                            (cell_height -
+                             (parent.old_height + resize_mouse_area.height) % cell_height)
+                }
+            }
+        }
+    }
 }

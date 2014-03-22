@@ -9,10 +9,10 @@ import "CreateObject.js" as CreateObject
 Item {
     id: month_view
 
-    readonly property int weeksToshow: CalendarUtils.weeksOnCalendarMonth
-    readonly property int rows: weeksToshow
-    readonly property int columns: CalendarUtils.daysInAWeek
+//    readonly property int weeksToshow: CalendarUtils.weeksOnCalendarMonth
 
+    readonly property int rows: CalendarUtils.weeksOnCalendarMonth
+    readonly property int columns: CalendarUtils.daysInAWeek
     readonly property int total_cells: rows * columns
 
     readonly property int max_show_events_of_day: 2
@@ -20,7 +20,7 @@ Item {
     readonly property int max_month_list_count: 5
     readonly property int middle_index_of_month_list: (max_month_list_count - 1) / 2
 
-    property int month_list_index: middle_index_of_month_list
+//    property int month_list_index: middle_index_of_month_list
 
     readonly property real availableWidth:
         (viewContainer.width - (control.gridVisible ? __gridLineWidth : 0))
@@ -34,16 +34,11 @@ Item {
                 Qt.locale().standaloneMonthName(control.visible_date.getMonth());
     }
 
-    Component.onCompleted: {
-        navigationBarLoader.styleData.title = calendar_title;
-    }
-
     Connections {
         target: tab_view
         onCurrentIndexChanged: {
             if (month_view.visible) {
                 month_list_model.refresh()
-                console.log("MonthView, onCurrentIndexChanged.");
             }
         }
     }
@@ -64,15 +59,12 @@ Item {
     }
 
     property Component dayDelegate: Rectangle {
-        //        color: styleData.date !== undefined &&
-        //               styleData.selected ? selectedDateColor : "orangle"
         readonly property color base_color: "lightgray"
 
         readonly property color selectedDateColor: Qt.darker("darkgray", 1.4)
         readonly property color sameMonthDateTextColor: Qt.darker("darkgray", 3.0)
         readonly property color different_month_date_color:
             Qt.darker("lightgray", 1.05)
-
         readonly property color selectedDateTextColor: "white"
         readonly property color differentMonthDateTextColor:
             Qt.darker("darkgray", 1.4)
@@ -119,12 +111,10 @@ Item {
     } // dayDelegete
 
     property Component dayOfWeekDelegate: Rectangle {
-//        color: Qt.darker("darkgray", 1.5)
-        color: base_color
+        color: my_calendar_style.base_color
         Label {
             text: Qt.locale().dayName(styleData.dayOfWeek,
                                            control.dayOfWeekFormat)
-//            text: styleData.dayOfWeek
             anchors.left: parent.left
             anchors.leftMargin: parent.width * 0.05
             anchors.verticalCenter: parent.verticalCenter
@@ -135,16 +125,13 @@ Item {
         id: dayOfWeekHeaderRow
         width: panelItem.width
         height: panelItem.dayOfWeekHeaderRowHeight
-//        anchors.top: parent.top
 
         Row {
             spacing: (control.gridVisible ? __gridLineWidth : 0)
 
             Repeater {
                 id: repeater
-                model: CalendarHeaderModel {
-        //                locale: control.__locale
-                }
+                model: CalendarHeaderModel {}
                 Loader {
                     id: dayOfWeekDelegateLoader
                     sourceComponent: dayOfWeekDelegate
@@ -161,19 +148,6 @@ Item {
                 }
             }
         }
-
-//        Repeater {
-//            id: header_grid_line_repeater
-//            model: month_view.columns - 1
-//            delegate: Rectangle {
-//                x: __cellRectAt(index).x + __cellRectAt(index).width
-//                y: 10
-//                width: __gridLineWidth
-//                height: dayOfWeekHeaderRow.height
-//                color: gridColor
-//                visible: control.gridVisible
-//            }
-//        }
     } // day_of_week_header_row
 
     Item {
@@ -210,7 +184,6 @@ Item {
                 }
 
                 month_list_view.currentIndex = middle_index_of_month_list;
-                //            control.refreshEvents();
             }
 
             onInsertAtBeginning: {
@@ -227,7 +200,6 @@ Item {
 
                 month_list_view.positionViewAtIndex(middle_index_of_month_list,
                                                     ListView.SnapPosition);
-                //            control.refreshEvents();
             }
 
             onInsertAtEnd: {
@@ -243,7 +215,6 @@ Item {
 
                 month_list_view.positionViewAtIndex(middle_index_of_month_list,
                                                     ListView.SnapPosition);
-                //            control.refreshEvents();
             }
         } // month_list_model
 
@@ -260,35 +231,19 @@ Item {
             snapMode: ListView.SnapOneItem
             orientation: ListView.Vertical
             currentIndex: middle_index_of_month_list
-            //            flickDeceleration: 0
             highlightFollowsCurrentItem: true
             highlightMoveVelocity: 1600
-            //            maximumFlickVelocity: 1000
             highlightRangeMode: ListView.StrictlyEnforceRange
             boundsBehavior: Flickable.DragOverBounds
-            //            preferredHighlightBegin: 0
-            //            preferredHighlightEnd: 0
-            //            keyNavigationWraps: true
 
-            Component.onCompleted: {
-                console.log("List View onCompleted.")
-                //                currentIndex = middle_index_of_month_list
-            }
-
-            //            onDragStarted: hideEventLabels();
-            onDragStarted: hideEventLabels();
-            //            onFlickEnded: console.log("MovementEnded.");
-            //            onDragEnded: showEventLabels();
+            onDragStarted: panelItem.hideEventLabels();
         } // month_list_view
     } // view_container
 
     Timer {
         id: insert_at_begin_timer
         interval: 500
-        running: false
-        repeat: false
         onTriggered: {
-            //            console.log("Timer triggered.")
             month_list_model.insertAtBeginning();
         }
     }
@@ -296,10 +251,7 @@ Item {
     Timer {
         id: insert_at_end_timer
         interval: 500
-        running: false
-        repeat: false
         onTriggered: {
-            //            console.log("Timer triggered.")
             month_list_model.insertAtEnd();
         }
     }
@@ -333,7 +285,7 @@ Item {
     }
 
     function showPreviousMonth() {
-        hideEventLabels();
+        panelItem.hideEventLabels();
         month_list_view.decrementCurrentIndex();
         var index = month_list_view.currentIndex;
         control.visible_date = month_list_model.get(index).month_date;
@@ -347,7 +299,7 @@ Item {
     }
 
     function showNextMonth() {
-        hideEventLabels();
+        panelItem.hideEventLabels();
         month_list_view.incrementCurrentIndex();
         var index = month_list_view.currentIndex;
         control.visible_date = month_list_model.get(index).month_date;
@@ -393,10 +345,8 @@ Item {
                        __cellRectAt(index).x + __cellRectAt(index).width :
                        __cellRectAt(month_view.columns - 1).x +
                        __cellRectAt(month_view.columns - 1).width
-//                y: -dayOfWeekHeaderRow.height + 5
                 y: 0
                 width: __gridLineWidth
-//                height: viewContainer.height + dayOfWeekHeaderRow.height
                 height: viewContainer.height
                 color: gridColor
                 visible: control.gridVisible
@@ -432,13 +382,6 @@ Item {
                             mouseArea, mouseX, mouseY);
                 var child = parent.childAt(viewContainerPos.x,
                                            viewContainerPos.y);
-//                console.log("X: " + mouseX + ", Y: " +
-//                            mouseY);
-//                console.log("viewcontainerPos, X: " + viewContainerPos.x
-//                            + ", Y: " + viewContainerPos.y);
-//                var parentPos = viewContainer.mapToItem(null, mouseX, mouseY);
-//                console.log("Parent pos, X: " + parentPos.x + ", Y: " + parentPos.y);
-//                console.log("Child: " + child);
                 return child && child !== mouseArea ? child.__index : -1;
             }
 
@@ -446,7 +389,6 @@ Item {
                 var indexOfCell = cellIndexAt(mouseX, mouseY);
                 if (indexOfCell !== -1) {
                     var date = view.model.dateAt(indexOfCell);
-//                    pressedCellIndex = indexOfCell;
                     if (__isValidDate(date)) {
 //                        control.selectedDate = date;
 //                        control.pressed(date);
@@ -548,9 +490,6 @@ Item {
                 property QtObject styleData: QtObject {
                     readonly property alias index:
                         delegateLoader.__index
-//                    readonly property bool selected:
-//                        control.selectedDate.getTime() ===
-//                        date.getTime()
                     readonly property alias date: delegateLoader.__date
                     readonly property bool valid: delegateLoader.valid
                     // TODO: this will not be correct if the app is
@@ -587,9 +526,6 @@ Item {
                         label_list_model.count);
 
             panelItem.clearLabelListModel();
-
-            // TODO: 这里的重复事件未经扩展，
-            // 一旦有天天重复之类的，这个逻辑立马崩掉
             updateEventModel();
 
             var event_counts_of_day = [];
@@ -598,8 +534,6 @@ Item {
             MonthViewUtils.initShowFlagsArray(show_flags_of_day);
 
             var component = Qt.createComponent("MonthEventLabel.qml");
-
-            //            console.log("Come to create object.");
 
             for (var i = 0; i < control.event_model.events.length; ++i) {
                 var event = control.event_model.events[i];
@@ -622,8 +556,6 @@ Item {
                 if (last_days === 0 && event.allDay) {
                     last_days = 1;
                 }
-
-                //                console.log("Last days: ", last_days);
 
                 if (index_of_cell + last_days > total_cells) {
                     last_days -= (index_of_cell + last_days - total_cells);
