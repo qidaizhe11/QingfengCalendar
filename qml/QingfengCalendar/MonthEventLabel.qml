@@ -1,6 +1,5 @@
 import QtQuick 2.1
 import QtQuick.Controls 1.0
-import QtOrganizer 5.0
 import MyCalendar2.Events 1.0
 import "Private/CalendarUtils.js" as CalendarUtils
 import "MonthViewUtils.js" as MonthViewUtils
@@ -18,17 +17,13 @@ Rectangle {
     property int __index: -1
 
     property bool is_all_day: eventItem.allDay
-//    property int last_days: event_utils.lastDays(eventItem.startDateTime,
-//                                                 eventItem.endDateTime)
     property bool is_multi_days: (last_days === 1) ? true : false
 
-//    property color base_color: Qt.darker("lightblue", 1.3)
     property color left_block_color: "yellow"
     property color font_color: "white"
 
     readonly property int display_weeks: CalendarUtils.weeksOnCalendarMonth
     readonly property int days_in_week: CalendarUtils.daysInAWeek
-//    property int grid_index: event_utils.gridIndex(eventItem.startDateTime)
     property int horizontal_index: grid_index % days_in_week
     property int vertical_index: Math.floor(grid_index / days_in_week)
 
@@ -36,14 +31,6 @@ Rectangle {
     height: parent.height / ( 3 * display_weeks)
     x: parent.width / days_in_week * horizontal_index
     y: parent.height / display_weeks * vertical_index + height * (show_flag_of_day + 1)
-
-//    Component.onCompleted: {
-//        console.log("In TileEventlabel.")
-//        console.log(eventItem.startDateTime, ", ", eventItem.displayLabel);
-//        console.log("Index: ", grid_index)
-//        console.log("h_index: ", horizontal_index);
-//        console.log("v_index: ", vertical_index);
-//    }
 
     opacity: 0
 
@@ -60,7 +47,7 @@ Rectangle {
     }
 
     Item {
-        id: view
+        id: panel
         height: parent.height
         width: parent.width
 
@@ -90,7 +77,6 @@ Rectangle {
             anchors.right: parent.right
             gradient: Gradient {
                 GradientStop { position: 0.0; color: "transparent" }
-//                GradientStop { position: 0.0; color: "white" }
                 GradientStop { position: 1.0; color: base_color }
             }
             rotation: -90
@@ -127,6 +113,4 @@ Rectangle {
     }
 
     NumberAnimation on opacity { from: 0; to: 1; duration: 200; }
-
-//    Component.onCompleted: month_event_label.destroy();
 }

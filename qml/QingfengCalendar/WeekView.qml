@@ -4,6 +4,7 @@ import MyCalendar.Controls.Private 1.0
 import "Private"
 import "Private/CalendarUtils.js" as CalendarUtils
 import MyCalendar.Weeks 1.0
+import "CreateObject.js" as CreateObject
 
 Item {
     id: week_view
@@ -139,6 +140,7 @@ Item {
 
             onRefresh: {
                 console.log("Week List Model refreshed.")
+                panelItem.clearLabelListModel();
 
                 for (var i = 0; i < week_list_model.count; ++i) {
                     week_list_model.remove(i);
@@ -258,7 +260,7 @@ Item {
                 week_list_model.insertAtEnd();
             }
 
-            control.refreshEvents();
+//            control.refreshEvents();
         }
     }
 
@@ -271,9 +273,9 @@ Item {
 
         if (index === 0) {
             insert_at_begin_timer.start();
-            refresh_events_timer.start();
+//            refresh_events_timer.start();
         } else {
-            control.refreshEvents();
+//            control.refreshEvents();
         }
     }
 
@@ -285,9 +287,9 @@ Item {
 
         if (index === max_week_list_count - 1) {
             insert_at_end_timer.start();
-            refresh_events_timer.start();
+//            refresh_events_timer.start();
         } else {
-            control.refreshEvents();
+//            control.refreshEvents();
         }
     }
 
@@ -324,9 +326,14 @@ Item {
         function __cellRectAt(index) {
             return CalendarUtils.cellRectAt(index,
                                             week_view.columns,
-                                            (week_view.rows),
+                                            week_view.rows,
                                             week_delegate.availableWidth,
                                             week_delegate.availableHeight);
+        }
+
+        MyWeekModel {
+            id: my_week_model_in_delegate
+            visibleDate: week_date
         }
 
         Item {
@@ -342,9 +349,10 @@ Item {
 
                 Repeater {
                     id: day_header_repeater
-                    model: MyWeekModel {
-                        visibleDate: week_date
-                    }
+//                    model: MyWeekModel {
+//                        visibleDate: week_date
+//                    }
+                    model: my_week_model_in_delegate
                     Loader {
                         id: dayDelegateLoader
                         sourceComponent: dayDelegate
@@ -459,216 +467,156 @@ Item {
                         }
                     }
 
-//                    MouseArea {
-//                        id: mouseArea
-//                        anchors.fill: parent
-
-//                        hoverEnabled: true
-
-//                        function cellIndexAt(mouseX, mouseY) {
-//                            var viewContainerPos = parent.mapFromItem(
-//                                        mouseArea, mouseX, mouseY);
-//                            var child = parent.childAt(viewContainerPos.x,
-//                                                       viewContainerPos.y);
-//                            return child && child !== mouseArea ? child.__index : -1;
-//                        }
-
-//                        onPressed: {
-//                            var indexOfCell = cellIndexAt(mouseX, mouseY);
-//                            if (indexOfCell !== -1) {
-//                                var date = view.model.dateAt(indexOfCell);
-//                                //                    pressedCellIndex = indexOfCell;
-//                                if (__isValidDate(date)) {
-//                                    //                        control.selectedDate = date;
-//                                    //                        control.pressed(date);
-//                                }
-//                            }
-//                        }
-
-//                        onReleased: {
-//                            var indexOfCell = cellIndexAt(mouseX, mouseY);
-//                            if (indexOfCell !== -1) {
-//                                var date = view.model.dateAt(indexOfCell);
-//                                if (__isValidDate(date)) {
-//                                    //                        control.released(date);
-//                                }
-//                            }
-//                            pressedCellIndex = -1;
-//                        }
-
-//                        onWheel: {
-//                            if (wheel.angleDelta.y > 0) {
-//                                showPreviousMonth();
-//                            } else if (wheel.angleDelta.y < 0) {
-//                                showNextMonth();
-//                            }
-//                        }
-
-//                        onClicked: {
-//                            console.log("Mouse position: " + mouse.x + ", " + mouse.y);
-//                            var indexOfCell = cellIndexAt(mouseX, mouseY);
-//                            console.log("IndexOfCell: ", indexOfCell);
-//                            if (indexOfCell !== -1) {
-//                                var date = view.model.dateAt(indexOfCell);
-//                                console.log("Date at this point: ", date.toLocaleDateString());
-//                                panelItem.hoveredCellIndex = indexOfCell;
-//                                if (__isValidDate(date)) {
-//                                    //                        control.clicked(date);
-//                                    var global_pos = week_central_view.mapToItem(null, mouseX, mouseY);
-
-//                                    var show_pos_x = MonthViewUtils.getEditViewPosX(global_pos.x);
-//                                    var show_pos_y = MonthViewUtils.getEditViewPosY(
-//                                                global_pos.y, indexOfCell);
-//                                    console.log("Shown Pos: " + show_pos_x + ", " + show_pos_y);
-//                                    float_edit.x = show_pos_x;
-//                                    float_edit.y = show_pos_y;
-//                                    float_edit.showAdd(date);
-//                                }
-//                            }
-//                        }
-
-//                        onDoubleClicked: {
-//                            var indexOfCell = cellIndexAt(mouseX, mouseY);
-//                            if (indexOfCell !== -1) {
-//                                var date = view.model.dateAt(indexOfCell);
-//                                if (__isValidDate(date)) {
-//                                    //                        control.doubleClicked(date);
-//                                }
-//                            }
-//                        }
-//                    }
+                    Component.onCompleted: {
+                        updateEventModel();
+                        createEventLabels();
+                    }
                 } // week_container_view
+
+
             } // week_grid_view
         } // week_flickable
-    } // week_delegate
 
-    Connections {
-        target: control
-        onRefreshEvents: {
-            if (week_view.visible) {
-                panelItem.clearLabelListModel();
-                updateEventModel();
-                createEventLabels();
-            }
-        }
-    }
+//        Connections {
+//            target: control
+//            onRefreshEvents: {
+//                if (week_view.visible) {
+//                    panelItem.clearLabelListModel();
+//                    updateEventModel();
+//                    createEventLabels();
+//                }
+//            }
+//        }
 
-    function updateEventModel() {
-        control.event_model.startDate = week_model.firstVisibleDate;
-        control.event_model.endDate = week_model.lastVisibleDate;
-        control.event_model.updateCollections();
-        control.event_model.updateEvents();
-    }
-
-    function createEventLabels() {
-        console.log("WeekView::createEventLabels");
-        var events_of_day = [];
-        var events_cross_day = [];
-        var current_date = control.event_model.startDate;
-        var date_index = 0;
-        var events_in_a_day = [];
-
-        if (control.event_model.events.length === 0) {
-            return;
+        function updateEventModel() {
+            control.event_model.startDate = my_week_model_in_delegate.firstVisibleDate;
+            control.event_model.endDate = my_week_model_in_delegate.lastVisibleDate;
+            control.event_model.updateCollections();
+            control.event_model.updateEvents();
         }
 
-        for (var i = 0; i < week_view.columns; ++i) {
-            events_of_day.push(0);
-        }
+        function createEventLabels() {
+            console.log("WeekView::createEventLabels");
+            var events_of_day = [];
+            var events_cross_day = [];
+            var current_date = control.event_model.startDate;
+            var date_index = 0;
+            var events_in_a_day = [];
 
-        console.log("Events length:", control.event_model.events.length);
-        console.log("Range start date:", current_date.toLocaleString());
-        for (i = 0; i < control.event_model.events.length; ++i) {
-            var event = control.event_model.events[i];
-
-//            console.log("for loop, events:", event.displayLabel,
-//                        "current_date:", current_date.toLocaleString());
-
-            var last_days = event_utils.lastDays(
-                        event.startDateTime, event.endDateTime);
-            if (last_days > 1 || event.allDay) {
-                events_cross_day.push(event);
-            } else {
-//                console.log("in a day events:", event.displayLabel,
-//                            "current_date:", current_date.toLocaleString());
-
-                console.log("event.startDateTime:", event.startDateTime.getDate(),
-                            "current_date:", current_date.getDate());
-
-                if (event.startDateTime.getDate() !== current_date.getDate()) {
-                    events_of_day[date_index] = events_in_a_day;
-
-                    var days = event_utils.lastDays(current_date, event.startDateTime) - 1;
-                    console.log("days: ", days);
-                    date_index += days;
-                    current_date.setDate(current_date.getDate() + days);
-                    events_in_a_day = [];
-                }
-
-                events_in_a_day.push(event);
-                console.log("events_in_a_day, push:", event.displayLabel);
-            }
-        }
-        events_of_day[date_index] = events_in_a_day;
-
-        for (i = 0; i < week_view.columns; ++i) {
-            var array = events_of_day[i];
-            if (array === 0) {
-                continue;
+            if (control.event_model.events.length === 0) {
+                return;
             }
 
-            var events_count_of_cell = [];
-            for (var j = 0; j < 24 * 2; ++j) {
-                events_count_of_cell.push(0);
-            }
-            var events_exists_of_cell = [];
-            for (j = 0; j < 24 * 2; ++j) {
-                events_exists_of_cell.push(0);
+            for (var i = 0; i < week_view.columns; ++i) {
+                events_of_day.push(0);
             }
 
-            console.log("week: ", i, "events count:", array.length);
-            for (var event_index = 0; event_index < array.length; ++event_index) {
+            console.log("Events length:", control.event_model.events.length);
+            console.log("Range start date:", current_date.toLocaleString());
+            for (i = 0; i < control.event_model.events.length; ++i) {
+                var event = control.event_model.events[i];
 
-                var start_cell_index =
-                        array[event_index].startDateTime.getHours() * 2 +
-                        array[event_index].startDateTime.getMinutes() / 30;
-                var end_cell_index =
-                        array[event_index].endDateTime.getHours() * 2 +
-                        (array[event_index].endDateTime.getMinutes() - 1) / 30;
-//                        array[event_index].endDateTime.getMinutes() / 30;
+    //            console.log("for loop, events:", event.displayLabel,
+    //                        "current_date:", current_date.toLocaleString());
 
-                for (j = start_cell_index; j <= end_cell_index; ++j) {
-                    ++events_count_of_cell[j];
+                var last_days = event_utils.lastDays(
+                            event.startDateTime, event.endDateTime);
+                if (last_days > 1 || event.allDay) {
+                    events_cross_day.push(event);
+                } else {
+    //                console.log("in a day events:", event.displayLabel,
+    //                            "current_date:", current_date.toLocaleString());
+
+                    console.log("event.startDateTime:", event.startDateTime.getDate(),
+                                "current_date:", current_date.getDate());
+
+                    if (event.startDateTime.getDate() !== current_date.getDate()) {
+                        events_of_day[date_index] = events_in_a_day;
+
+                        var days = event_utils.lastDays(current_date, event.startDateTime) - 1;
+                        console.log("days: ", days);
+                        date_index += days;
+                        current_date.setDate(current_date.getDate() + days);
+                        events_in_a_day = [];
+                    }
+
+                    events_in_a_day.push(event);
+                    console.log("events_in_a_day, push:", event.displayLabel);
                 }
             }
+            events_of_day[date_index] = events_in_a_day;
 
-            for (event_index = 0; event_index < array.length; ++event_index) {
-                start_cell_index =
-                        array[event_index].startDateTime.getHours() * 2 +
-                        array[event_index].startDateTime.getMinutes() / 30;
-                end_cell_index =
-                        array[event_index].endDateTime.getHours() * 2 +
-                        (array[event_index].endDateTime.getMinutes() - 1) / 30;
-//                        array[event_index].endDateTime.getMinutes() / 30;
+            for (i = 0; i < week_view.columns; ++i) {
+                var array = events_of_day[i];
+                if (array === 0) {
+                    continue;
+                }
 
-                var max_stack = 0;
-                for (j = start_cell_index; j <= end_cell_index; ++j) {
-                    if (events_count_of_cell[j] > max_stack) {
-                        max_stack = events_count_of_cell[j];
+                var events_count_of_cell = [];
+                for (var j = 0; j < 24 * 2; ++j) {
+                    events_count_of_cell.push(0);
+                }
+                var events_exists_of_cell = [];
+                for (j = 0; j < 24 * 2; ++j) {
+                    events_exists_of_cell.push(0);
+                }
+
+                console.log("week: ", i, "events count:", array.length);
+                for (var event_index = 0; event_index < array.length; ++event_index) {
+
+                    var start_cell_index =
+                            array[event_index].startDateTime.getHours() * 2 +
+                            array[event_index].startDateTime.getMinutes() / 30;
+                    var end_cell_index =
+                            array[event_index].endDateTime.getHours() * 2 +
+                            (array[event_index].endDateTime.getMinutes() - 1) / 30;
+    //                        array[event_index].endDateTime.getMinutes() / 30;
+
+                    for (j = start_cell_index; j <= end_cell_index; ++j) {
+                        ++events_count_of_cell[j];
                     }
                 }
 
-                var stack = events_exists_of_cell[start_cell_index] + 1;
+                var component = Qt.createComponent("WeekEventLabel.qml");
+                for (event_index = 0; event_index < array.length; ++event_index) {
+                    start_cell_index =
+                            array[event_index].startDateTime.getHours() * 2 +
+                            array[event_index].startDateTime.getMinutes() / 30;
+                    end_cell_index =
+                            array[event_index].endDateTime.getHours() * 2 +
+                            (array[event_index].endDateTime.getMinutes() - 1) / 30;
+    //                        array[event_index].endDateTime.getMinutes() / 30;
 
-                // create label object
-                console.log("Event:", array[event_index].displayLabel,
-                            array[event_index].startDateTime.toLocaleString(),
-                            "stack_index:", stack, max_stack);
+                    var max_stack = 0;
+                    for (j = start_cell_index; j <= end_cell_index; ++j) {
+                        if (events_count_of_cell[j] > max_stack) {
+                            max_stack = events_count_of_cell[j];
+                        }
+                    }
 
-                for (j = start_cell_index; j <= end_cell_index; ++j) {
-                    ++events_exists_of_cell[j];
+                    var stack = events_exists_of_cell[start_cell_index] + 1;
+
+                    // create label object
+                    console.log("Event:", array[event_index].displayLabel,
+                                array[event_index].startDateTime.toLocaleString(),
+                                "stack_index:", stack, max_stack);
+
+                    var properties = {
+                        "eventItem": array[event_index],
+                        "date_index": i,
+                        "stack_index": stack,
+                        "max_stack": max_stack,
+                        "start_cell_index": start_cell_index,
+                        "end_cell_index": end_cell_index};
+                    CreateObject.createInComponent(
+                                component, week_view_inner_container, properties,
+                                labelListModelAddItem);
+
+                    for (j = start_cell_index; j <= end_cell_index; ++j) {
+                        ++events_exists_of_cell[j];
+                    }
                 }
             }
         }
-    }
+    } // week_delegate
 }

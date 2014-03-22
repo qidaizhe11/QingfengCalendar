@@ -7,6 +7,7 @@ import MyCalendar2.Events 1.0
 import "Private"
 import "Private/CalendarUtils.js" as CalendarUtils
 import "Content"
+import "Test"
 
 Style {
     id: my_calendar_style
@@ -159,7 +160,7 @@ Style {
 
             Tab {
                 title: "Week"
-                WeekView {
+                TestWeekView {
                     id: week_tab
                 }
             }
