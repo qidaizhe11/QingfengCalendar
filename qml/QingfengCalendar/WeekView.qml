@@ -258,7 +258,7 @@ Item {
                 week_list_model.insertAtEnd();
             }
 
-//            control.refreshEvents();
+            control.refreshEvents();
         }
     }
 
@@ -271,9 +271,9 @@ Item {
 
         if (index === 0) {
             insert_at_begin_timer.start();
-//            refresh_events_timer.start();
+            refresh_events_timer.start();
         } else {
-//            control.refreshEvents();
+            control.refreshEvents();
         }
     }
 
@@ -285,9 +285,9 @@ Item {
 
         if (index === max_week_list_count - 1) {
             insert_at_end_timer.start();
-//            refresh_events_timer.start();
+            refresh_events_timer.start();
         } else {
-//            control.refreshEvents();
+            control.refreshEvents();
         }
     }
 
@@ -542,6 +542,17 @@ Item {
         } // week_flickable
     } // week_delegate
 
+    Connections {
+        target: control
+        onRefreshEvents: {
+            if (week_view.visible) {
+                panelItem.clearLabelListModel();
+                updateEventModel();
+                createEventLabels();
+            }
+        }
+    }
+
     function updateEventModel() {
         control.event_model.startDate = week_model.firstVisibleDate;
         control.event_model.endDate = week_model.lastVisibleDate;
@@ -551,5 +562,113 @@ Item {
 
     function createEventLabels() {
         console.log("WeekView::createEventLabels");
+        var events_of_day = [];
+        var events_cross_day = [];
+        var current_date = control.event_model.startDate;
+        var date_index = 0;
+        var events_in_a_day = [];
+
+        if (control.event_model.events.length === 0) {
+            return;
+        }
+
+        for (var i = 0; i < week_view.columns; ++i) {
+            events_of_day.push(0);
+        }
+
+        console.log("Events length:", control.event_model.events.length);
+        console.log("Range start date:", current_date.toLocaleString());
+        for (i = 0; i < control.event_model.events.length; ++i) {
+            var event = control.event_model.events[i];
+
+//            console.log("for loop, events:", event.displayLabel,
+//                        "current_date:", current_date.toLocaleString());
+
+            var last_days = event_utils.lastDays(
+                        event.startDateTime, event.endDateTime);
+            if (last_days > 1 || event.allDay) {
+                events_cross_day.push(event);
+            } else {
+//                console.log("in a day events:", event.displayLabel,
+//                            "current_date:", current_date.toLocaleString());
+
+                console.log("event.startDateTime:", event.startDateTime.getDate(),
+                            "current_date:", current_date.getDate());
+
+                if (event.startDateTime.getDate() !== current_date.getDate()) {
+                    events_of_day[date_index] = events_in_a_day;
+
+                    var days = event_utils.lastDays(current_date, event.startDateTime) - 1;
+                    console.log("days: ", days);
+                    date_index += days;
+                    current_date.setDate(current_date.getDate() + days);
+                    events_in_a_day = [];
+                }
+
+                events_in_a_day.push(event);
+                console.log("events_in_a_day, push:", event.displayLabel);
+            }
+        }
+        events_of_day[date_index] = events_in_a_day;
+
+        for (i = 0; i < week_view.columns; ++i) {
+            var array = events_of_day[i];
+            if (array === 0) {
+                continue;
+            }
+
+            var events_count_of_cell = [];
+            for (var j = 0; j < 24 * 2; ++j) {
+                events_count_of_cell.push(0);
+            }
+            var events_exists_of_cell = [];
+            for (j = 0; j < 24 * 2; ++j) {
+                events_exists_of_cell.push(0);
+            }
+
+            console.log("week: ", i, "events count:", array.length);
+            for (var event_index = 0; event_index < array.length; ++event_index) {
+
+                var start_cell_index =
+                        array[event_index].startDateTime.getHours() * 2 +
+                        array[event_index].startDateTime.getMinutes() / 30;
+                var end_cell_index =
+                        array[event_index].endDateTime.getHours() * 2 +
+                        (array[event_index].endDateTime.getMinutes() - 1) / 30;
+//                        array[event_index].endDateTime.getMinutes() / 30;
+
+                for (j = start_cell_index; j <= end_cell_index; ++j) {
+                    ++events_count_of_cell[j];
+                }
+            }
+
+            for (event_index = 0; event_index < array.length; ++event_index) {
+                start_cell_index =
+                        array[event_index].startDateTime.getHours() * 2 +
+                        array[event_index].startDateTime.getMinutes() / 30;
+                end_cell_index =
+                        array[event_index].endDateTime.getHours() * 2 +
+                        (array[event_index].endDateTime.getMinutes() - 1) / 30;
+//                        array[event_index].endDateTime.getMinutes() / 30;
+
+                var max_stack = 0;
+                for (j = start_cell_index; j <= end_cell_index; ++j) {
+                    if (events_count_of_cell[j] > max_stack) {
+                        max_stack = events_count_of_cell[j];
+                    }
+                }
+
+                var stack = events_exists_of_cell[start_cell_index] + 1;
+
+                // create label object
+                console.log("Event:", array[event_index].displayLabel,
+                            array[event_index].startDateTime.toLocaleString(),
+                            "stack_index:", stack, max_stack);
+
+                for (j = start_cell_index; j <= end_cell_index; ++j) {
+                    ++events_exists_of_cell[j];
+                }
+            }
+        }
     }
 }

@@ -17,7 +17,7 @@ Item {
 
     readonly property int max_show_events_of_day: 2
 
-    readonly property int max_month_list_count: 3
+    readonly property int max_month_list_count: 5
     readonly property int middle_index_of_month_list: (max_month_list_count - 1) / 2
 
     property int month_list_index: middle_index_of_month_list
@@ -580,6 +580,9 @@ Item {
     Connections {
         target: control
         onRefreshEvents: {
+            if (!month_view.visible)
+                return;
+
             console.log("OnRefreshEvents, label_list_model count: ",
                         label_list_model.count);
 
