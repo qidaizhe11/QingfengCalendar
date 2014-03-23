@@ -140,7 +140,6 @@ Item {
 
             onRefresh: {
                 console.log("Week List Model refreshed.")
-                panelItem.clearLabelListModel();
 
                 for (var i = 0; i < week_list_model.count; ++i) {
                     week_list_model.remove(i);
@@ -167,11 +166,11 @@ Item {
                 for (var i = 0; i < middle_index_of_week_list; ++i) {
                     date.setDate(date.getDate() - columns);
                     week_list_model.insert(0, { "week_date": date});
-                    console.log("OnInsertAtBeingning Insert Month date: ",
+                    console.log("OnInsertAtBeingning Insert Week date: ",
                                 date.toLocaleDateString());
 
                     week_list_model.remove(max_week_list_count);
-                    console.log("Delete Month date of index: ", max_week_list_count);
+                    console.log("Delete Week date of index: ", max_week_list_count);
                 }
 
                 week_list_view.positionViewAtIndex(middle_index_of_week_list,
@@ -185,10 +184,10 @@ Item {
                 for (var i = 0; i < middle_index_of_week_list; ++i) {
                     date.setDate(date.getDate() + columns);
                     week_list_model.append({"week_date": date});
-                    console.log("onInsertAtEnd Insert Month date: ",
+                    console.log("onInsertAtEnd Insert Week date: ",
                                 date.toLocaleDateString());
                     week_list_model.remove(0);
-                    console.log("Delete Month date of index: 0");
+                    console.log("Delete Week date of index: 0");
                 }
 
                 week_list_view.positionViewAtIndex(middle_index_of_week_list,
@@ -256,11 +255,13 @@ Item {
 
             if (index === 0) {
                 week_list_model.insertAtBeginning();
+//                control.refreshEvents();
             } else if (index === max_week_list_count - 1) {
                 week_list_model.insertAtEnd();
+//                control.refreshEvents();
             }
 
-//            control.refreshEvents();
+            control.refreshEvents();
         }
     }
 
@@ -273,9 +274,9 @@ Item {
 
         if (index === 0) {
             insert_at_begin_timer.start();
-//            refresh_events_timer.start();
+            refresh_events_timer.start();
         } else {
-//            control.refreshEvents();
+            control.refreshEvents();
         }
     }
 
@@ -287,9 +288,9 @@ Item {
 
         if (index === max_week_list_count - 1) {
             insert_at_end_timer.start();
-//            refresh_events_timer.start();
+            refresh_events_timer.start();
         } else {
-//            control.refreshEvents();
+            control.refreshEvents();
         }
     }
 
@@ -466,30 +467,29 @@ Item {
                             visible: control.gridVisible
                         }
                     }
-
-                    Component.onCompleted: {
-                        updateEventModel();
-                        createEventLabels();
-                    }
                 } // week_container_view
 
 
             } // week_grid_view
         } // week_flickable
 
-//        Connections {
-//            target: control
-//            onRefreshEvents: {
-//                if (week_view.visible) {
-//                    panelItem.clearLabelListModel();
-//                    updateEventModel();
-//                    createEventLabels();
-//                }
-//            }
-//        }
+        Connections {
+            target: control
+            onRefreshEvents: {
+                if (week_view.visible && week_delegate.ListView.isCurrentItem) {
+                    console.log("WeekView, onRefreshEvents.")
+                    panelItem.clearLabelListModel();
+                    updateEventModel();
+                    createEventLabels();
+                }
+            }
+        }
 
         function updateEventModel() {
             control.event_model.startDate = my_week_model_in_delegate.firstVisibleDate;
+            console.log("WeekView::updateEventModel.");
+            console.log("startDateTime:", my_week_model_in_delegate.firstVisibleDate);
+            console.log("EndDateTime:", my_week_model_in_delegate.lastVisibleDate);
             control.event_model.endDate = my_week_model_in_delegate.lastVisibleDate;
             control.event_model.updateCollections();
             control.event_model.updateEvents();
@@ -516,16 +516,16 @@ Item {
             for (i = 0; i < control.event_model.events.length; ++i) {
                 var event = control.event_model.events[i];
 
-    //            console.log("for loop, events:", event.displayLabel,
-    //                        "current_date:", current_date.toLocaleString());
+                //            console.log("for loop, events:", event.displayLabel,
+                //                        "current_date:", current_date.toLocaleString());
 
                 var last_days = event_utils.lastDays(
                             event.startDateTime, event.endDateTime);
                 if (last_days > 1 || event.allDay) {
                     events_cross_day.push(event);
                 } else {
-    //                console.log("in a day events:", event.displayLabel,
-    //                            "current_date:", current_date.toLocaleString());
+                    //                console.log("in a day events:", event.displayLabel,
+                    //                            "current_date:", current_date.toLocaleString());
 
                     console.log("event.startDateTime:", event.startDateTime.getDate(),
                                 "current_date:", current_date.getDate());
@@ -570,7 +570,7 @@ Item {
                     var end_cell_index =
                             array[event_index].endDateTime.getHours() * 2 +
                             (array[event_index].endDateTime.getMinutes() - 1) / 30;
-    //                        array[event_index].endDateTime.getMinutes() / 30;
+                    //                        array[event_index].endDateTime.getMinutes() / 30;
 
                     for (j = start_cell_index; j <= end_cell_index; ++j) {
                         ++events_count_of_cell[j];
@@ -585,7 +585,7 @@ Item {
                     end_cell_index =
                             array[event_index].endDateTime.getHours() * 2 +
                             (array[event_index].endDateTime.getMinutes() - 1) / 30;
-    //                        array[event_index].endDateTime.getMinutes() / 30;
+                    //                        array[event_index].endDateTime.getMinutes() / 30;
 
                     var max_stack = 0;
                     for (j = start_cell_index; j <= end_cell_index; ++j) {
@@ -601,21 +601,26 @@ Item {
                                 array[event_index].startDateTime.toLocaleString(),
                                 "stack_index:", stack, max_stack);
 
+    //                var rect = week_panel_item.__cellRectAt(
+    //                            start_cell_index * week_view.columns + i);
+
                     var properties = {
                         "eventItem": array[event_index],
                         "date_index": i,
                         "stack_index": stack,
                         "max_stack": max_stack,
                         "start_cell_index": start_cell_index,
-                        "end_cell_index": end_cell_index};
+                        "end_cell_index": end_cell_index };
                     CreateObject.createInComponent(
                                 component, week_view_inner_container, properties,
-                                labelListModelAddItem);
+                                panelItem.labelListModelAddItem);
 
                     for (j = start_cell_index; j <= end_cell_index; ++j) {
                         ++events_exists_of_cell[j];
                     }
                 }
+
+                component.destroy();
             }
         }
     } // week_delegate

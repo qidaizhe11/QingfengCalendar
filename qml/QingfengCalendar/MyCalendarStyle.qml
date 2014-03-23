@@ -160,7 +160,7 @@ Style {
 
             Tab {
                 title: "Week"
-                TestWeekView {
+                WeekView {
                     id: week_tab
                 }
             }
