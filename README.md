@@ -4,8 +4,8 @@
 
 一个基于 C++/Qt 的日历客户端。
 
-当前主界面效果：
-![ScreenShot](/resources/screenshot-main.jpg)
+当前主界面（月视图）效果：
+![ScreenShot](/resources/screenshot-monthview.jpg)
 
 UI界面采用 Qt Quick/ Qml 绘制
 
@@ -49,11 +49,16 @@ git clone 后 qmake, make, make install
 
 ####Qingfeng Calendar
 
-修改文件 [main.qml](https://github.com/qidaizhe11/QingfengCalendar/blob/master/qml/QingfengCalendar/main.qml) 中 FileDialog 下代码：
+注释掉文件 [main.qml](https://github.com/qidaizhe11/QingfengCalendar/blob/master/qml/QingfengCalendar/main.qml) 中 FileDialog 下代码：
 ```
 visible: false
 ```
-注释掉此行，并将其上面一行反注释。
+并将其上面一行反注释。
+
+注释掉文件 [MyEventModel.cpp](https://github.com/qidaizhe11/QingfengCalendar/blob/master/MyPlugins/MyEventModel.cpp) 中代码：
+```
+importEvents(QUrl("file:///home/daizhe/qidaizhe11@gmail.com-2.ics"));
+```
 
 另外，出于个人开发需要，程序 qml 中引用的模块与 [main.cpp](https://github.com/qidaizhe11/QingfengCalendar/blob/master/main.cpp) 中注册的名称可能略有不同，类似 **MyCalendar2.Events** 与 **MyCalendar.Events** 的区别，需自行调整一致。
 
@@ -62,6 +67,10 @@ qmake, make，应该可以看到当前程序运行效果了。
 
 ##其它
 ------------
+
+当前周视图界面效果：
+![ScreenShot](/resources/screenshot-weekview.jpg)
+
 当前编辑界面效果：
 ![ScreenShot](/resources/screenshot-edit-view.jpg)
 

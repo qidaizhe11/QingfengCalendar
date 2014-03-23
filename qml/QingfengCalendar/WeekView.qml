@@ -17,6 +17,8 @@ Item {
     readonly property int max_week_list_count: 3
     readonly property int middle_index_of_week_list: (max_week_list_count - 1) / 2
 
+    property int max_shown_all_day_events: 3
+
     // holes the model that will be used by the Calendar to populate week date
     // that available to the user.
     property MyWeekModel week_model: MyWeekModel {
@@ -87,6 +89,7 @@ Item {
         }
 
         Label {
+//            id: day_label
             text: styleData.date.toLocaleDateString(Qt.locale(), "M/d (ddd)")
             anchors.left: parent.left
             anchors.leftMargin: parent.width * 0.05
@@ -337,51 +340,110 @@ Item {
             visibleDate: week_date
         }
 
-        Item {
+        Row {
             id: day_header_row
             width: parent.width - week_delegate.hour_column_width
-            height: panelItem.dayOfWeekHeaderRowHeight
+            height: 25
             anchors.left: parent.left
             anchors.leftMargin: week_delegate.hour_column_width + __gridLineWidth
             anchors.top: parent.top
 
-            Row {
-                spacing: (control.gridVisible ? __gridLineWidth : 0)
+            spacing: (control.gridVisible ? __gridLineWidth : 0)
 
-                Repeater {
-                    id: day_header_repeater
-//                    model: MyWeekModel {
-//                        visibleDate: week_date
-//                    }
-                    model: my_week_model_in_delegate
-                    Loader {
-                        id: dayDelegateLoader
-                        sourceComponent: dayDelegate
-                        width: __cellRectAt(index).width -
-                               (control.gridVisible ? __gridLineWidth : 0)
-                        height: day_header_row.height
+            Repeater {
+                id: day_header_repeater
+                model: my_week_model_in_delegate
+                Loader {
+                    id: dayDelegateLoader
+                    sourceComponent: dayDelegate
+                    width: __cellRectAt(index).width -
+                           (control.gridVisible ? __gridLineWidth : 0)
+                    height: day_header_row.height
 
-                        readonly property int __index: index
-                        readonly property date __date: date
-                        readonly property bool valid: __isValidDate(date)
+                    readonly property int __index: index
+                    readonly property date __date: date
+                    readonly property bool valid: __isValidDate(date)
 
-                        property QtObject styleData: QtObject {
-                            readonly property alias index: dayDelegateLoader.__index
-                            readonly property alias date: dayDelegateLoader.__date
-                            readonly property bool valid: dayDelegateLoader.valid
-                            // TODO: this will not be correct if the app is
-                            // running when a new day begins.
-                            readonly property bool today:
-                                date.getTime() === new Date().setHours(0, 0, 0, 0)
-                        }
+                    property QtObject styleData: QtObject {
+                        readonly property alias index: dayDelegateLoader.__index
+                        readonly property alias date: dayDelegateLoader.__date
+                        readonly property bool valid: dayDelegateLoader.valid
+                        // TODO: this will not be correct if the app is
+                        // running when a new day begins.
+                        readonly property bool today:
+                            date.getTime() === new Date().setHours(0, 0, 0, 0)
                     }
                 }
-            } // row
+            }
         } // day_header_row
+
+        Rectangle {
+            id: cross_day_events_panel
+            width: parent.width - week_delegate.hour_column_width
+            height: 18
+            anchors.left: parent.left
+            anchors.leftMargin: week_delegate.hour_column_width
+            anchors.top: day_header_row.bottom
+
+            border.color: my_calendar_style.gridColor
+            border.width: 1
+            color: "transparent"
+
+            Repeater {
+                id: line_repeater
+                model: week_view.columns - 1
+                delegate: Rectangle {
+                    x: __cellRectAt(index + 1).x
+                    y: 0
+                    width: __gridLineWidth
+                    height: parent.height
+                    color: my_calendar_style.gridColor
+                }
+            }
+
+            Repeater {
+                id: cross_day_events_repeater
+                model: my_week_model_in_delegate
+                delegate: Rectangle {
+                    x: __cellRectAt(index).x +
+                       (control.gridVisible ? __gridLineWidth : 0)
+                    y: __gridLineWidth
+                    width: __cellRectAt(index).width -
+                           (control.gridVisible ? __gridLineWidth : 0)
+                    height: parent.height - __gridLineWidth * 2
+
+                    property bool is_today:
+                        date.getTime() === new Date().setHours(0, 0, 0, 0)
+                    property color today_color: Qt.darker("darkgray", 1.4)
+
+                    color: {
+                        var the_color = "transparent";
+                            if (is_today) {
+                                the_color = today_color;
+                            }
+                        the_color;
+                    }
+                }
+            }
+        }
+
+        Rectangle {
+            id: line
+
+            anchors.top: cross_day_events_panel.bottom
+            anchors.topMargin: 8
+            width: parent.width
+            height: 1
+            z: 1
+
+            color: my_calendar_style.gridColor
+        }
 
         Flickable {
             id: week_flickable
-            anchors.top: day_header_row.bottom
+            anchors.top: cross_day_events_panel.bottom
+            anchors.topMargin: 8
+
             width: parent.width
             height: (parent.height - day_header_row.height) < week_inner_row.height ?
                         (parent.height - day_header_row.height) : week_inner_row.height
@@ -446,7 +508,7 @@ Item {
                     Repeater {
                         id: horizontalGridLineRepeater
 
-                        model: week_view.rows * 2 + 1
+                        model: week_view.rows * 2
                         delegate: Rectangle {
                             property bool is_hour: index % 2 === 0
 
@@ -464,7 +526,6 @@ Item {
                             height: __gridLineWidth
                             color: is_hour ? my_calendar_style.gridColor :
                                              Qt.lighter("lightgrey", 1.03)
-                            visible: control.gridVisible
                         }
                     }
                 } // week_container_view
@@ -487,9 +548,11 @@ Item {
 
         function updateEventModel() {
             control.event_model.startDate = my_week_model_in_delegate.firstVisibleDate;
+
             console.log("WeekView::updateEventModel.");
             console.log("startDateTime:", my_week_model_in_delegate.firstVisibleDate);
             console.log("EndDateTime:", my_week_model_in_delegate.lastVisibleDate);
+
             control.event_model.endDate = my_week_model_in_delegate.lastVisibleDate;
             control.event_model.updateCollections();
             control.event_model.updateEvents();
@@ -622,6 +685,75 @@ Item {
 
                 component.destroy();
             }
+
+            var events_count_array = [];
+            var show_orders_array = [];
+            for (i = 0; i < week_view.columns; ++i) {
+                events_count_array.push(0);
+            }
+            for (i = 0; i < week_view.columns; ++i) {
+                show_orders_array[i] = [];
+                for (var order = 0; order < max_shown_all_day_events; ++order) {
+                    show_orders_array[i][order] = 0;
+                }
+            }
+
+            component = Qt.createComponent("WeekAllDayEventLabel.qml")
+            for (i = 0; i < events_cross_day.length; ++i) {
+                var cross_day_event = events_cross_day[i];
+
+                date_index = event_utils.daysTo(
+                            my_week_model_in_delegate.firstVisibleDate,
+                            cross_day_event.startDateTime);
+
+                var day_event_count = events_count_array[date_index];
+
+                if (day_event_count >= week_view.max_shown_all_day_events) {
+                    events_count_array[date_index] += 1;
+                    continue;
+                }
+
+                var show_order = 0;
+                for (j = 0; j < max_shown_all_day_events; ++j) {
+                    if (show_orders_array[date_index][j] === 0) {
+                        show_order = j;
+                        break;
+                    }
+                }
+
+                var range_days = event_utils.lastDays(
+                            cross_day_event.startDateTime, cross_day_event.endDateTime);
+                if (range_days === 0 && event.allDay) {
+                    range_days = 1;
+                }
+
+                if (date_index + range_days > week_view.columns) {
+                    range_days -= (date_index + range_days - week_view.columns);
+                }
+
+                for (j = 0; j < range_days; ++j) {
+                    ++events_count_array[date_index + j];
+                    show_orders_array[date_index + j][show_order] = 1;
+                }
+
+                properties = {
+                    "eventItem": cross_day_event,
+                    "show_order_in_a_day": show_order,
+                    "date_index": date_index,
+                    "range_days": range_days};
+                CreateObject.createInComponent(component, cross_day_events_panel,
+                                               properties, labelListModelAddItem);
+            }
+            component.destroy();
+
+            var max_events_count = 0;
+            for (i = 0; i < week_view.columns; ++i) {
+                if (events_count_array[i] > max_events_count) {
+                    max_events_count = events_count_array[i];
+                }
+            }
+            max_events_count = Math.min(max_events_count, max_shown_all_day_events);
+            cross_day_events_panel.height = 16 + 20 * max_events_count;
         }
     } // week_delegate
 }

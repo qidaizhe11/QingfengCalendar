@@ -80,12 +80,12 @@ Window {
     Component.onCompleted: {
         calendar.refreshEvents();
 
-        if (google_settings.refreshToken === "") {
-            console.log("onCompleted!!")
-            google_oauth.visible = true;
-            google_oauth.login();
-        } else {
-            google_oauth.refreshAccessToken(google_settings.refreshToken);
-        }
+//        if (google_settings.refreshToken === "") {
+//            console.log("onCompleted!!")
+//            google_oauth.visible = true;
+//            google_oauth.login();
+//        } else {
+//            google_oauth.refreshAccessToken(google_settings.refreshToken);
+//        }
     }
 }

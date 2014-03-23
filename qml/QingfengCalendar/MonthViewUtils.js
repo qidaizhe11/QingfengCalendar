@@ -14,7 +14,7 @@ function initEventCountArray(array) {
     }
 }
 
-function initShowFlagsArray(array) {
+function initShowOrdersArray(array) {
     for( var i = 0; i < month_view.total_cells; ++i) {
         array[i] = [];
         for (var flag = 0; flag < month_view.max_show_events_of_day; ++flag) {
@@ -23,9 +23,9 @@ function initShowFlagsArray(array) {
     }
 }
 
-function calculateShowFlag(flag_array, index_of_cell) {
+function calculateShowOrder(flag_array, index_of_cell) {
     var flag = 0;
-//    console.log("In calculateShowFlag function, flag_array: ",
+//    console.log("In calculateShowOrder function, flag_array: ",
 //                flag_array);
     for (var i = 0; i < month_view.max_show_events_of_day; ++i) {
         if (flag_array[index_of_cell][i] === 0) {

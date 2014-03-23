@@ -529,9 +529,9 @@ Item {
             updateEventModel();
 
             var event_counts_of_day = [];
-            var show_flags_of_day = [];
+            var show_orders_of_day = [];
             MonthViewUtils.initEventCountArray(event_counts_of_day);
-            MonthViewUtils.initShowFlagsArray(show_flags_of_day);
+            MonthViewUtils.initShowOrdersArray(show_orders_of_day);
 
             var component = Qt.createComponent("MonthEventLabel.qml");
 
@@ -548,8 +548,8 @@ Item {
                     continue;
                 }
 
-                var show_flag_of_day = MonthViewUtils.calculateShowFlag(
-                            show_flags_of_day, index_of_cell);
+                var show_order_in_a_day = MonthViewUtils.calculateShowOrder(
+                            show_orders_of_day, index_of_cell);
 
                 var last_days = event_utils.lastDays(
                             event.startDateTime, event.endDateTime);
@@ -562,8 +562,8 @@ Item {
                 }
 
                 MonthViewUtils.increaseEventCount(event_counts_of_day, index_of_cell, last_days);
-                MonthViewUtils.increaseShowFlag(show_flags_of_day,
-                                              show_flag_of_day,
+                MonthViewUtils.increaseShowFlag(show_orders_of_day,
+                                              show_order_in_a_day,
                                               index_of_cell,
                                               last_days);
 
@@ -574,7 +574,7 @@ Item {
 
                     properties = {
                         "eventItem": event,
-                        "show_flag_of_day": show_flag_of_day,
+                        "show_order_in_a_day": show_order_in_a_day,
                         "grid_index": index_of_cell,
                         "last_days": clipped_days};
                     CreateObject.createInComponent(
@@ -585,7 +585,7 @@ Item {
                     last_days -= clipped_days;
                 }
 
-                properties = {"eventItem": event, "show_flag_of_day": show_flag_of_day,
+                properties = {"eventItem": event, "show_order_in_a_day": show_order_in_a_day,
                     "grid_index": index_of_cell, "last_days": last_days};
                 CreateObject.createInComponent(
                             component, viewContainer, properties, labelListModelAddItem);
