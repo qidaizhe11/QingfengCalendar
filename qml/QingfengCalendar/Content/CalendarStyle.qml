@@ -234,12 +234,12 @@ Style {
         \endtable
     */
     property Component dayDelegate: Rectangle {
-        color: styleData.date !== undefined && styleData.selected ? selectedDateColor : "white"/*"transparent"*/
+        color: styleData.date !== undefined && styleData.selected ? selected_base_color : "white"/*"transparent"*/
         readonly property color sameMonthDateTextColor: "black"
-        readonly property color selectedDateColor: __syspal.highlight
-        readonly property color selectedDateTextColor: "white"
+        readonly property color selected_base_color: __syspal.highlight
+        readonly property color selected_text_color: "white"
         readonly property color differentMonthDateTextColor: Qt.darker("darkgrey", 1.4);
-        readonly property color invalidDateColor: "#dddddd"
+        readonly property color invalid_color: "#dddddd"
 
         Label {
             id: dayDelegateText
@@ -247,12 +247,12 @@ Style {
             anchors.centerIn: parent
             horizontalAlignment: Text.AlignRight
             color: {
-                var theColor = invalidDateColor;
+                var theColor = invalid_color;
                 if (styleData.valid) {
                     // Date is within the valid range.
                     theColor = styleData.visibleMonth ? sameMonthDateTextColor : differentMonthDateTextColor;
                     if (styleData.selected)
-                        theColor = selectedDateTextColor;
+                        theColor = selected_text_color;
                 }
                 theColor;
             }

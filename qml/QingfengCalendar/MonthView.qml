@@ -9,8 +9,6 @@ import "CreateObject.js" as CreateObject
 Item {
     id: month_view
 
-//    readonly property int weeksToshow: CalendarUtils.weeksOnCalendarMonth
-
     readonly property int rows: CalendarUtils.weeksOnCalendarMonth
     readonly property int columns: CalendarUtils.daysInAWeek
     readonly property int total_cells: rows * columns
@@ -19,8 +17,6 @@ Item {
 
     readonly property int max_month_list_count: 5
     readonly property int middle_index_of_month_list: (max_month_list_count - 1) / 2
-
-//    property int month_list_index: middle_index_of_month_list
 
     readonly property real availableWidth:
         (viewContainer.width - (control.gridVisible ? __gridLineWidth : 0))
@@ -39,6 +35,7 @@ Item {
         onCurrentIndexChanged: {
             if (month_view.visible) {
                 month_list_model.refresh()
+                control.refreshEvents()
             }
         }
     }
@@ -61,23 +58,23 @@ Item {
     property Component dayDelegate: Rectangle {
         readonly property color base_color: "lightgray"
 
-        readonly property color selectedDateColor: Qt.darker("darkgray", 1.4)
+        readonly property color selected_base_color: Qt.darker("darkgray", 1.4)
         readonly property color sameMonthDateTextColor: Qt.darker("darkgray", 3.0)
         readonly property color different_month_date_color:
             Qt.darker("lightgray", 1.05)
-        readonly property color selectedDateTextColor: "white"
+        readonly property color selected_text_color: "white"
         readonly property color differentMonthDateTextColor:
             Qt.darker("darkgray", 1.4)
 
-        readonly property color invalidDateColor: "#dddddd"
+        readonly property color invalid_color: "#dddddd"
 
         color: {
-            var the_color = invalidDateColor;
+            var the_color = invalid_color;
             if (styleData.valid) {
                 the_color = styleData.visibleMonth ? base_color :
                                                      different_month_date_color;
                 if (styleData.today) {
-                    the_color = selectedDateColor;
+                    the_color = selected_base_color;
                 }
                 if (styleData.hovered) {
                     the_color = Qt.darker(the_color, 1.1);
@@ -97,12 +94,12 @@ Item {
             anchors.leftMargin: parent.width * 0.05
             horizontalAlignment: Text.AlignRight
             color: {
-                var theColor = invalidDateColor;
+                var theColor = invalid_color;
                 if (styleData.valid) {
                     theColor = styleData.visibleMonth ? sameMonthDateTextColor :
                                                         differentMonthDateTextColor;
                     if (styleData.today) {
-                        theColor = selectedDateTextColor;
+                        theColor = selected_text_color;
                     }
                 }
                 theColor;
@@ -179,8 +176,9 @@ Item {
 
                 for (i = 0; i < max_month_list_count; ++i) {
                     month_list_model.append({ "month_date": date} );
-                    console.log("month_list_model, append: ", date.toLocaleDateString());
                     date.setMonth(date.getMonth() + 1);
+
+                    console.log("month_list_model, append: ", date.toLocaleDateString());
                 }
 
                 month_list_view.currentIndex = middle_index_of_month_list;
@@ -191,10 +189,10 @@ Item {
                 for (var i = 0; i < middle_index_of_month_list; ++i) {
                     date.setMonth(date.getMonth() - 1);
                     month_list_model.insert(0, { "month_date": date});
+                    month_list_model.remove(max_month_list_count);
+
                     console.log("OnInsertAtBeingning Insert Month date: ",
                                 date.toLocaleDateString());
-
-                    month_list_model.remove(max_month_list_count);
                     console.log("Delete Month date of index: ", max_month_list_count);
                 }
 
@@ -207,9 +205,10 @@ Item {
                 for (var i = 0; i < middle_index_of_month_list; ++i) {
                     date.setMonth(date.getMonth() + 1);
                     month_list_model.append({"month_date": date});
+                    month_list_model.remove(0);
+
                     console.log("onInsertAtEnd Insert Month date: ",
                                 date.toLocaleDateString());
-                    month_list_model.remove(0);
                     console.log("Delete Month date of index: 0");
                 }
 
@@ -271,9 +270,6 @@ Item {
             var index = month_list_view.currentIndex;
             control.visible_date = month_list_model.get(index).month_date;
 
-            console.log("Month_list_view, onFlickEnded.");
-            console.log("Index: ", index);
-
             if (index === 0) {
                 month_list_model.insertAtBeginning();
             } else if (index === max_month_list_count - 1) {
@@ -330,7 +326,6 @@ Item {
     }
 
     property Component month_delegate: Item {
-//    Item {
 //        id: month_delegate
 
         width: panelItem.width
@@ -390,8 +385,7 @@ Item {
                 if (indexOfCell !== -1) {
                     var date = view.model.dateAt(indexOfCell);
                     if (__isValidDate(date)) {
-//                        control.selectedDate = date;
-//                        control.pressed(date);
+                        //control.pressed(date);
                     }
                 }
             }
@@ -401,7 +395,7 @@ Item {
                 if (indexOfCell !== -1) {
                     var date = view.model.dateAt(indexOfCell);
                     if (__isValidDate(date)) {
-//                        control.released(date);
+                        //control.released(date);
                     }
                 }
                 pressedCellIndex = -1;
@@ -424,15 +418,13 @@ Item {
                     console.log("Date at this point: ", date.toLocaleDateString());
                     panelItem.hoveredCellIndex = indexOfCell;
                     if (__isValidDate(date)) {
-//                        control.clicked(date);
+                        //control.clicked(date);
                         var global_pos = viewContainer.mapToItem(null, mouseX, mouseY);
-
-//                        console.log("Global position: " + global_pos.x + ", " + global_pos.y);
 
                         var show_pos_x = MonthViewUtils.getEditViewPosX(global_pos.x);
                         var show_pos_y = MonthViewUtils.getEditViewPosY(
                                     global_pos.y, indexOfCell);
-                        console.log("Shown Pos: " + show_pos_x + ", " + show_pos_y);
+
                         float_edit.x = show_pos_x;
                         float_edit.y = show_pos_y;
                         float_edit.showAdd(date);
@@ -445,7 +437,7 @@ Item {
                 if (indexOfCell !== -1) {
                     var date = view.model.dateAt(indexOfCell);
                     if (__isValidDate(date)) {
-//                        control.doubleClicked(date);
+                        //control.doubleClicked(date);
                     }
                 }
             }

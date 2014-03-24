@@ -197,7 +197,6 @@ void GoogleManager::parseEvent(QVariant event_var, MyEvent *out_event)
   }
 
   if (dt_start.isValid()) {
-    out_event->setStartDateTime(dt_start);
     out_event->setAllDay(all_day);
 
     QVariantMap end_var = event.value("end").toMap();
@@ -208,9 +207,9 @@ void GoogleManager::parseEvent(QVariant event_var, MyEvent *out_event)
       dt_end = QDateTime::fromString(
             end_var.value("date").toString(), Qt::ISODate);
     }
-    //    dt_start = dt_start.toLocalTime();
-    //    dt_end = dt_end.toLocalTime();
-//    my_event.setStartDateTime(dt_start);
+    dt_start = dt_start.toLocalTime();
+    dt_end = dt_end.toLocalTime();
+    out_event->setStartDateTime(dt_start);
     out_event->setEndDateTime(dt_end);
 
     out_event->setDisplayLabel(event.value("summary").toString());

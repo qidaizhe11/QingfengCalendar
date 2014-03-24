@@ -1,10 +1,7 @@
 import QtQuick 2.1
 import QtQuick.Controls 1.0
-//import QtQuick.Controls.Styles 1.0
 import QtQuick.Window 2.1
 import QtQuick.Dialogs 1.0
-//import QtOrganizer 5.0
-//import MyCalendar2.Events 1.0
 import MyCalendar.Sync.Google 1.0
 import "Content"
 
@@ -30,17 +27,13 @@ Window {
         initialItem: MyCalendar {
             id: calendar
             objectName: "calendar"
-            //            width: parent.width * 0.6 - row.spacing / 2
             width: parent.width
             height: parent.height
-//            selectedDate: new Date()
             focus: true
         }
     }
 
     property Component edit_view: EventEditView {
-//        id: event_edit_view
-//        visible: false
     }
 
     FileDialog {
@@ -80,12 +73,12 @@ Window {
     Component.onCompleted: {
         calendar.refreshEvents();
 
-//        if (google_settings.refreshToken === "") {
-//            console.log("onCompleted!!")
-//            google_oauth.visible = true;
-//            google_oauth.login();
-//        } else {
-//            google_oauth.refreshAccessToken(google_settings.refreshToken);
-//        }
+        if (google_settings.refreshToken === "") {
+            console.log("onCompleted!!")
+            google_oauth.visible = true;
+            google_oauth.login();
+        } else {
+            google_oauth.refreshAccessToken(google_settings.refreshToken);
+        }
     }
 }

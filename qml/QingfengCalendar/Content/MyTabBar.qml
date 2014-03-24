@@ -38,7 +38,7 @@ FocusScope {
 
     function tab(index) {
         for (var i = 0; i < tabrow.children.length; ++i) {
-            if (tabrow.children[i].tabindex == index) {
+            if (tabrow.children[i].tabindex === index) {
                 return tabrow.children[i]
             }
         }
@@ -46,18 +46,18 @@ FocusScope {
     }
 
     /*! \internal */
-//    function __isAncestorOf(item, child) {
-//        //TODO: maybe removed from 5.2 if the function was merged in qtdeclarative
-//        if (child === item)
-//            return false;
+    function __isAncestorOf(item, child) {
+        //TODO: maybe removed from 5.2 if the function was merged in qtdeclarative
+        if (child === item)
+            return false;
 
-//        while (child) {
-//            child = child.parent;
-//            if (child === item)
-//                return true;
-//        }
-//        return false;
-//    }
+        while (child) {
+            child = child.parent;
+            if (child === item)
+                return true;
+        }
+        return false;
+    }
 
     property Component tab_item: Item {
         scale: control.tabPosition === Qt.TopEdge ? 1 : -1
@@ -192,7 +192,7 @@ FocusScope {
             function changeTab() {
                 tabView.currentIndex = index;
                 var next = tabbar.nextItemInFocusChain(true);
-//                if (__isAncestorOf(tabView.getTab(currentIndex), next))
+                if (__isAncestorOf(tabView.getTab(index), next))
                     next.forceActiveFocus();
             }
 

@@ -5,8 +5,6 @@ import "Private/CalendarUtils.js" as CalendarUtils
 Item {
     id: week_event_label
 
-//    color: "transparent"
-
     property var eventItem
     property int date_index
     property int stack_index
@@ -23,9 +21,9 @@ Item {
     property real base_width: (cell_width * 0.9) / max_stack
 
     width: (stack_index === max_stack) ? base_width : (base_width * 2)
-    height: cell_height * (end_cell_index - start_cell_index + 1)
-    x: (date_index * cell_width) + (stack_index - 1) * base_width
-    y: (start_cell_index * cell_height)
+    height: cell_height * (end_cell_index - start_cell_index + 1) - 2
+    x: (date_index * cell_width) + (stack_index - 1) * base_width + 2
+    y: (start_cell_index * cell_height) + 2
 
     z: stack_index
 

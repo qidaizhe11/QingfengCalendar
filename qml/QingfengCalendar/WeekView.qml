@@ -12,8 +12,6 @@ Item {
     readonly property int rows: CalendarUtils.hoursInADay * 2
     readonly property int columns: CalendarUtils.daysInAWeek
 
-//    readonly property int total_cells: rows * columns
-
     readonly property int max_week_list_count: 3
     readonly property int middle_index_of_week_list: (max_week_list_count - 1) / 2
 
@@ -54,6 +52,7 @@ Item {
         onCurrentIndexChanged: {
             if (week_view.visible) {
                 week_list_model.refresh();
+                control.refreshEvents();
                 console.log("WeekView, onCurrentIndexChanged.");
             }
         }
@@ -70,18 +69,18 @@ Item {
 
     property Component dayDelegate: Rectangle {
         readonly property color base_color: "transparent"
-        readonly property color dateTextColor: Qt.darker("darkgray", 3.0)
+        readonly property color text_color: Qt.darker("darkgray", 3.0)
 
-        readonly property color selectedDateColor: Qt.darker("darkgray", 1.4)
-        readonly property color selectedDateTextColor: "white"
-        readonly property color invalidDateColor: "#dddddd"
+        readonly property color selected_base_color: Qt.darker("darkgray", 1.4)
+        readonly property color selected_text_color: "white"
+        readonly property color invalid_color: "#dddddd"
 
         color: {
-            var the_color = invalidDateColor;
+            var the_color = invalid_color;
             if (styleData.valid) {
                 the_color = base_color
                 if (styleData.today) {
-                    the_color = selectedDateColor;
+                    the_color = selected_base_color;
                 }
             }
 
@@ -89,18 +88,17 @@ Item {
         }
 
         Label {
-//            id: day_label
             text: styleData.date.toLocaleDateString(Qt.locale(), "M/d (ddd)")
             anchors.left: parent.left
             anchors.leftMargin: parent.width * 0.05
             anchors.verticalCenter: parent.verticalCenter
 
             color: {
-                var theColor = invalidDateColor;
+                var theColor = invalid_color;
                 if (styleData.valid) {
-                    theColor = dateTextColor;
+                    theColor = text_color;
                     if (styleData.today) {
-                        theColor = selectedDateTextColor;
+                        theColor = selected_text_color;
                     }
                 }
                 theColor;
@@ -109,7 +107,6 @@ Item {
     }
 
     property Component dayHourDelegate: Rectangle {
-//    Rectangle {
         color: my_calendar_style.base_color
         Label {
             text: {
@@ -153,11 +150,11 @@ Item {
                 date.setDate(date.getDate() - middle_index_of_week_list * columns);
 
                 for (i = 0; i < max_week_list_count; ++i) {
-                    week_list_model.insert(i, { "week_date": date} );
                     console.log("week_list_model, append: ", date.toLocaleDateString());
+
+                    week_list_model.insert(i, { "week_date": date} );
                     date.setDate(date.getDate() + columns);
                 }
-                console.log("week_list_model, count:", week_list_model.count);
 
                 week_list_view.currentIndex = middle_index_of_week_list;
 //                week_list_view.positionViewAtIndex(middle_index_of_week_list,
@@ -169,10 +166,10 @@ Item {
                 for (var i = 0; i < middle_index_of_week_list; ++i) {
                     date.setDate(date.getDate() - columns);
                     week_list_model.insert(0, { "week_date": date});
+                    week_list_model.remove(max_week_list_count);
+
                     console.log("OnInsertAtBeingning Insert Week date: ",
                                 date.toLocaleDateString());
-
-                    week_list_model.remove(max_week_list_count);
                     console.log("Delete Week date of index: ", max_week_list_count);
                 }
 
@@ -181,15 +178,14 @@ Item {
             }
 
             onInsertAtEnd: {
-                console.log("WeekView, onInsertAtEnd");
-                console.log("control.visible_date:", control.visible_date);
                 var date = control.visible_date;
                 for (var i = 0; i < middle_index_of_week_list; ++i) {
                     date.setDate(date.getDate() + columns);
                     week_list_model.append({"week_date": date});
+                    week_list_model.remove(0);
+
                     console.log("onInsertAtEnd Insert Week date: ",
                                 date.toLocaleDateString());
-                    week_list_model.remove(0);
                     console.log("Delete Week date of index: 0");
                 }
 
@@ -258,10 +254,8 @@ Item {
 
             if (index === 0) {
                 week_list_model.insertAtBeginning();
-//                control.refreshEvents();
             } else if (index === max_week_list_count - 1) {
                 week_list_model.insertAtEnd();
-//                control.refreshEvents();
             }
 
             control.refreshEvents();
@@ -272,7 +266,6 @@ Item {
         panelItem.hideEventLabels();
         week_list_view.decrementCurrentIndex();
         var index = week_list_view.currentIndex;
-        console.log("showPreviousWeek, index:", index);
         control.visible_date = week_list_model.get(index).week_date;
 
         if (index === 0) {
@@ -315,7 +308,6 @@ Item {
     }
 
     property Component week_delegate: Item {
-//    Item {
         id: week_delegate
         width: week_panel_item.width
         height: week_panel_item.height
@@ -547,12 +539,11 @@ Item {
         }
 
         function updateEventModel() {
-            control.event_model.startDate = my_week_model_in_delegate.firstVisibleDate;
-
             console.log("WeekView::updateEventModel.");
             console.log("startDateTime:", my_week_model_in_delegate.firstVisibleDate);
             console.log("EndDateTime:", my_week_model_in_delegate.lastVisibleDate);
 
+            control.event_model.startDate = my_week_model_in_delegate.firstVisibleDate;
             control.event_model.endDate = my_week_model_in_delegate.lastVisibleDate;
             control.event_model.updateCollections();
             control.event_model.updateEvents();
@@ -574,37 +565,24 @@ Item {
                 events_of_day.push(0);
             }
 
-            console.log("Events length:", control.event_model.events.length);
-            console.log("Range start date:", current_date.toLocaleString());
             for (i = 0; i < control.event_model.events.length; ++i) {
                 var event = control.event_model.events[i];
-
-                //            console.log("for loop, events:", event.displayLabel,
-                //                        "current_date:", current_date.toLocaleString());
 
                 var last_days = event_utils.lastDays(
                             event.startDateTime, event.endDateTime);
                 if (last_days > 1 || event.allDay) {
                     events_cross_day.push(event);
                 } else {
-                    //                console.log("in a day events:", event.displayLabel,
-                    //                            "current_date:", current_date.toLocaleString());
-
-                    console.log("event.startDateTime:", event.startDateTime.getDate(),
-                                "current_date:", current_date.getDate());
-
                     if (event.startDateTime.getDate() !== current_date.getDate()) {
                         events_of_day[date_index] = events_in_a_day;
 
                         var days = event_utils.lastDays(current_date, event.startDateTime) - 1;
-                        console.log("days: ", days);
                         date_index += days;
                         current_date.setDate(current_date.getDate() + days);
                         events_in_a_day = [];
                     }
 
                     events_in_a_day.push(event);
-                    console.log("events_in_a_day, push:", event.displayLabel);
                 }
             }
             events_of_day[date_index] = events_in_a_day;
@@ -624,7 +602,6 @@ Item {
                     events_exists_of_cell.push(0);
                 }
 
-                console.log("week: ", i, "events count:", array.length);
                 for (var event_index = 0; event_index < array.length; ++event_index) {
 
                     var start_cell_index =
@@ -633,7 +610,7 @@ Item {
                     var end_cell_index =
                             array[event_index].endDateTime.getHours() * 2 +
                             (array[event_index].endDateTime.getMinutes() - 1) / 30;
-                    //                        array[event_index].endDateTime.getMinutes() / 30;
+                    //array[event_index].endDateTime.getMinutes() / 30;
 
                     for (j = start_cell_index; j <= end_cell_index; ++j) {
                         ++events_count_of_cell[j];
@@ -648,7 +625,7 @@ Item {
                     end_cell_index =
                             array[event_index].endDateTime.getHours() * 2 +
                             (array[event_index].endDateTime.getMinutes() - 1) / 30;
-                    //                        array[event_index].endDateTime.getMinutes() / 30;
+                    //array[event_index].endDateTime.getMinutes() / 30;
 
                     var max_stack = 0;
                     for (j = start_cell_index; j <= end_cell_index; ++j) {
@@ -660,12 +637,9 @@ Item {
                     var stack = events_exists_of_cell[start_cell_index] + 1;
 
                     // create label object
-                    console.log("Event:", array[event_index].displayLabel,
+                    console.log("In day Event:", array[event_index].displayLabel,
                                 array[event_index].startDateTime.toLocaleString(),
                                 "stack_index:", stack, max_stack);
-
-    //                var rect = week_panel_item.__cellRectAt(
-    //                            start_cell_index * week_view.columns + i);
 
                     var properties = {
                         "eventItem": array[event_index],
@@ -705,6 +679,13 @@ Item {
                 date_index = event_utils.daysTo(
                             my_week_model_in_delegate.firstVisibleDate,
                             cross_day_event.startDateTime);
+                console.log("date_index", date_index);
+
+                // TODO: I set the firstVisibleDate to 2013-12-02, and it gave me
+                // all day events that start at 2013-12-01, end at 2013-12-02, it
+                // confused me.
+                if (date_index < 0)
+                    continue;
 
                 var day_event_count = events_count_array[date_index];
 
@@ -723,7 +704,7 @@ Item {
 
                 var range_days = event_utils.lastDays(
                             cross_day_event.startDateTime, cross_day_event.endDateTime);
-                if (range_days === 0 && event.allDay) {
+                if (range_days === 0 && cross_day_event.allDay) {
                     range_days = 1;
                 }
 
@@ -735,6 +716,10 @@ Item {
                     ++events_count_array[date_index + j];
                     show_orders_array[date_index + j][show_order] = 1;
                 }
+
+                console.log("Cross day Event:", cross_day_event.displayLabel,
+                            cross_day_event.startDateTime.toLocaleString(),
+                            "stack_index:", date_index, range_days);
 
                 properties = {
                     "eventItem": cross_day_event,

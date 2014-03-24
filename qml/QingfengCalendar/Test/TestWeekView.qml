@@ -86,18 +86,18 @@ Item {
 
     property Component dayDelegate: Rectangle {
         readonly property color base_color: "transparent"
-        readonly property color dateTextColor: Qt.darker("darkgray", 3.0)
+        readonly property color text_color: Qt.darker("darkgray", 3.0)
 
-        readonly property color selectedDateColor: Qt.darker("darkgray", 1.4)
-        readonly property color selectedDateTextColor: "white"
-        readonly property color invalidDateColor: "#dddddd"
+        readonly property color selected_base_color: Qt.darker("darkgray", 1.4)
+        readonly property color selected_text_color: "white"
+        readonly property color invalid_color: "#dddddd"
 
         color: {
-            var the_color = invalidDateColor;
+            var the_color = invalid_color;
             if (styleData.valid) {
                 the_color = base_color
                 if (styleData.today) {
-                    the_color = selectedDateColor;
+                    the_color = selected_base_color;
                 }
             }
 
@@ -111,11 +111,11 @@ Item {
             anchors.verticalCenter: parent.verticalCenter
 
             color: {
-                var theColor = invalidDateColor;
+                var theColor = invalid_color;
                 if (styleData.valid) {
-                    theColor = dateTextColor;
+                    theColor = text_color;
                     if (styleData.today) {
-                        theColor = selectedDateTextColor;
+                        theColor = selected_text_color;
                     }
                 }
                 theColor;
