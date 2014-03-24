@@ -12,8 +12,12 @@ public:
   EventUtils(QQuickItem *parent = 0);
   ~EventUtils();
 
-//  Q_INVOKABLE int gridIndex(const QDate& date, const QDate& visible_date);
+  // QDateTime function, daysTo.
+  // (Javascript Date has lack of this useful function,so put it here.)
   Q_INVOKABLE int daysTo(const QDateTime& start, const QDateTime& end);
+
+  // return the lasted days from @start_date to @end_date.
+  // both the start_date and the end_date, they are all counted.
   Q_INVOKABLE int lastDays(const QDateTime& start_date, const QDateTime& end_date);
 };
 

@@ -1,58 +1,17 @@
 //.pragma library
 
-//function lastDays(begin_date, end_date) {
-////    console.log("In javascript, start_date: ", begin_date);
-//    var days = Math.floor(
-//                (end_date.getTime() - begin_date.getTime()) /
-//                (24 * 3600 * 1000));
-//    return days;
+//function calculateShowOrder(flag_array, index_of_cell) {
+//    var flag = 0;
+////    console.log("In calculateShowOrder function, flag_array: ",
+////                flag_array);
+//    for (var i = 0; i < month_view.max_show_events_of_day; ++i) {
+//        if (flag_array[index_of_cell][i] === 0) {
+//            flag = i;
+//            break;
+//        }
+//    }
+//    return flag;
 //}
-
-function initEventCountArray(array) {
-    for( var i = 0; i < month_view.total_cells; ++i) {
-        array.push(0);
-    }
-}
-
-function initShowOrdersArray(array) {
-    for( var i = 0; i < month_view.total_cells; ++i) {
-        array[i] = [];
-        for (var flag = 0; flag < month_view.max_show_events_of_day; ++flag) {
-            array[i][flag] = 0;
-        }
-    }
-}
-
-function calculateShowOrder(flag_array, index_of_cell) {
-    var flag = 0;
-//    console.log("In calculateShowOrder function, flag_array: ",
-//                flag_array);
-    for (var i = 0; i < month_view.max_show_events_of_day; ++i) {
-        if (flag_array[index_of_cell][i] === 0) {
-            flag = i;
-            break;
-        }
-    }
-    return flag;
-}
-
-function increaseEventCount(count_array, begin, last_days) {
-    var max_size = month_view.total_cells;
-    for (var i = 0; i < last_days; ++i) {
-        if (begin + i < max_size) {
-            count_array[begin + i] += 1;
-        }
-    }
-}
-
-function increaseShowFlag(show_flag_array, flag, start_day, last_days) {
-    var max_grid_cells = month_view.total_cells;
-    for (var i = 0; i < last_days; ++i) {
-        if (start_day + last_days < max_grid_cells) {
-            show_flag_array[start_day + i][flag] = 1;
-        }
-    }
-}
 
 function getEditViewPosX(mouse_x) {
     var show_pos_x = mouse_x;

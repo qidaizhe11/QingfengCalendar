@@ -117,7 +117,6 @@ MyEventDetail* MyEvent::detail(int type)
     if (type == detail->type()) {
       MyEventDetail* event_detail =
           MyEventDetailFactory::createItemDetail(detail->type());
-//      QQmlEngine::setObjectOwnerShip
       event_detail->setDetail(detail->detail());
       return event_detail;
     }

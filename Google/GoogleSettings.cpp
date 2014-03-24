@@ -11,7 +11,7 @@ GoogleSettings::GoogleSettings(QObject *parent) :
                      "qml/QingfengCalendar");
 
   m_company_name = "Daizhe";
-  m_app_name = "Qingfeng Calendar";
+  m_app_name = "QingfengCalendar";
   QSettings settings(QSettings::UserScope, m_company_name, m_app_name);
   m_access_token = settings.value("access_token", "").toString();
   m_refresh_token = settings.value("refresh_token", "").toString();

@@ -66,7 +66,7 @@ public:
   Q_INVOKABLE QVariant extendedMetaData(const QString& key) const;
 
   // used by model
-  QOrganizerCollection collection() const;
+  QOrganizerCollection toOrganizerCollection() const;
   void setCollection(const QOrganizerCollection& collection);
 
 Q_SIGNALS:

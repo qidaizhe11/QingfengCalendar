@@ -20,27 +20,11 @@ namespace {
 EventUtils::EventUtils(QQuickItem *parent):
   QQuickItem(parent)
 {
-  // setFlag(ItemHasContents, true);
 }
 
 EventUtils::~EventUtils()
 {
 }
-
-//int EventUtils::gridIndex(const QDate &date, const QDate& visible_date)
-//{
-//  QDate first_day_of_month_date(visible_date.year(), visible_date.month(), 1);
-//  int difference = ((first_day_of_month_date.dayOfWeek() -
-//                     QLocale::system().firstDayOfWeek()) + 7) % 7;
-//  if (difference == 0) {
-//    difference += daysInAWeek;
-//  }
-
-//  QDate first_day_to_display = first_day_of_month_date.addDays(-difference);
-
-//  int index = first_day_to_display.daysTo(date);
-//  return index;
-//}
 
 int EventUtils::daysTo(const QDateTime &start, const QDateTime &end)
 {
@@ -49,16 +33,9 @@ int EventUtils::daysTo(const QDateTime &start, const QDateTime &end)
 
 int EventUtils::lastDays(const QDateTime &start_date, const QDateTime &end_date)
 {
-//  qDebug() << "Calculate last days: " + start_date.toString() + ", " + end_date.toString();
-  int days = start_date.daysTo(end_date);
+  // when the time of end_date is 00:00, QDateTime judge it as a new day, but
+  // here it shouldn't.
+  QDateTime end = end_date.addSecs(-60);
 
-  if ( !(end_date.time() == QTime(0, 0, 0) &&
-         start_date.time() == QTime(0, 0, 0)) ) {
-    days += 1;
-  }
-
-//  qDebug() << "Days: " + QString::number(days);
-  return days;
-
-//  return start_date.daysTo(end_date) + 1;
+  return start_date.daysTo(end) + 1;
 }

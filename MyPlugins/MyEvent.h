@@ -6,7 +6,6 @@
 #include <QDateTime>
 #include <QString>
 #include <QDebug>
-//#include <QtOrganizer/qorganizeritem.h>
 #include <QtOrganizer/QOrganizerEvent>
 #include <QtOrganizer/qorganizerglobal.h>
 #include "MyEventDetail.h"

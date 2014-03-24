@@ -13,8 +13,7 @@
 
 GoogleManager::GoogleManager(QObject *parent) :
   QObject(parent),
-  m_network_access_manager(0),
-  m_organizer_manager(0)
+  m_network_access_manager(0)
 {
   GoogleSettings settings;
   m_access_token = settings.accessToken().toString();
@@ -31,11 +30,6 @@ GoogleManager::~GoogleManager()
 
 //-------------------------------------------------------------------------
 // public
-
-void GoogleManager::setOrganizerManager(QOrganizerManager *organizer_manager)
-{
-  m_organizer_manager = organizer_manager;
-}
 
 //
 // replyFinished
@@ -253,8 +247,6 @@ void GoogleManager::freshStartSync()
                         "calendarList?access_token=%1").arg(m_access_token);
   QNetworkReply* reply = m_network_access_manager->get(QNetworkRequest(QUrl(str)));
   reply_map.insert(reply, FreshStartGetCalendars);
-
-//  getEventsOfCalendar("qidaizhe11@gmail.com");
 }
 
 //-------------------------------------------------------------------------

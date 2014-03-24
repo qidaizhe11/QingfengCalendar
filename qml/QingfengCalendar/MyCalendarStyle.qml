@@ -213,6 +213,7 @@ Style {
                 label_list_model.get(0).object.destroy();
                 label_list_model.remove(0);
             }
+            label_list_model.clear();
         }
 
         function labelListModelAddItem(object) {

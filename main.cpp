@@ -1,8 +1,6 @@
 
 #include <QApplication>
 #include <QQmlEngine>
-//#include <QQuickWindow>
-//#include <QQuickView>
 #include <QVariant>
 
 #include "qtquick2controlsapplicationviewer.h"
@@ -55,16 +53,8 @@ int main(int argc, char *argv[])
 
     QtQuick2ControlsApplicationViewer viewer;
     viewer.setMainQmlFile(QStringLiteral("qml/QingfengCalendar/main.qml"));
-//    viewer.setMainQmlFile(QStringLiteral("qml/QingfengCalendar/GoogleOAuth.qml"));
 
     viewer.show();
-
-//    GoogleManager google_manager;
-//    google_manager.getCalendars();
-//    google_manager.getEventsForCalendar("");
-
-//    MainWindow window;
-//    window.show();
 
     return app.exec();
 }

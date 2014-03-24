@@ -13,7 +13,6 @@
 #include <versitorganizer/qversitorganizerglobal.h>
 #include "MyEvent.h"
 #include "MyCollection.h"
-//#include "Google/GoogleManager.h"
 
 QTORGANIZER_USE_NAMESPACE
 QTVERSIT_USE_NAMESPACE
@@ -68,7 +67,6 @@ public:
 
   QString error() const;
 
-//  Q_INVOKABLE void importEvents();
   Q_INVOKABLE void importEvents(const QUrl& url,
                                 const QStringList& profiles = QStringList());
   Q_INVOKABLE void exportEvents(const QUrl& url,
@@ -81,8 +79,6 @@ public:
   Q_INVOKABLE void saveCollection(MyCollection* my_collection);
   Q_INVOKABLE void removeCollection(const QString& collectionId);
 
-//  Q_INVOKABLE QVariant defaultCollection();
-//  Q_INVOKABLE QVariant collection(const QString& collection_id);
   Q_INVOKABLE MyCollection* defaultCollection();
   Q_INVOKABLE MyCollection* collection(const QString& collection_id);
 
@@ -119,8 +115,6 @@ private:
 
   QDateTime m_start_date;
   QDateTime m_end_date;
-//  QVariantList m_events;
-//  QVariantList m_collections;
   QList<MyEvent*> m_events;
   QList<MyCollection*> m_collections;
   QString m_default_collection_id;

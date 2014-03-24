@@ -444,6 +444,8 @@ Item {
             contentHeight: 1300
             clip: true
 
+            contentY: contentHeight / 24 * new Date().getHours() - height / 2
+
             Row {
                 id: week_inner_row
                 anchors.fill: parent
@@ -596,7 +598,7 @@ Item {
                         var days = event_utils.lastDays(current_date, event.startDateTime) - 1;
                         date_index += days;
                         current_date.setDate(current_date.getDate() + days);
-                        events_in_a_day = [];
+                        events_in_a_day.splice(0, events_in_a_day.length);
                     }
 
                     events_in_a_day.push(event);
@@ -606,6 +608,9 @@ Item {
 
             createCrossDayEvents(events_cross_day);
             createInDayEvents(events_of_day);
+
+            events_of_day.splice(0, events_of_day.length);
+            events_cross_day.splice(0, events_cross_day.length);
         }
 
         function createCrossDayEvents(events_cross_day) {
@@ -696,6 +701,8 @@ Item {
             }
             max_events_count = Math.min(max_events_count, max_shown_all_day_events);
             cross_day_events_panel.height = 16 + 20 * max_events_count;
+
+            events_info_array.splice(0, events_info_array.length);
         }
 
         function getStartCellIndex(date_time) {
@@ -780,6 +787,7 @@ Item {
                 }
 
                 component.destroy();
+                array.splice(0, array.length);
             }
         }
     } // week_delegate

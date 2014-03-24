@@ -29,7 +29,7 @@ function urlChanged(url) {
     console.log("Found code = ", code);
 
     if (access_token !== "") {
-        google_oauth.access_token = access_token;
+        google_oauth_rectangle.access_token = access_token;
     }
     if (code !== "") {
         requestPermanentToken(code);
@@ -52,7 +52,7 @@ function requestPermanentToken(code) {
         if (req.readyState == 4 && req.status == 200) {
             console.log("responseText", req.responseText);
             var result = eval("(" + req.responseText + ")");
-            google_oauth.access_token = result["access_token"];
+            google_oauth_rectangle.access_token = result["access_token"];
             google_settings.refreshToken = result["refresh_token"];
         } else if (req.readyState == 4) {
             console.log("Status, headers: ", req.status,
@@ -80,7 +80,7 @@ function refreshAccessToken(refresh_token) {
         if (req.readyState == 4 && req.status == 200) {
             console.log("responseText", req.responseText);
             var result = eval("(" + req.responseText + ")");
-            google_oauth.access_token = result["access_token"];
+            google_oauth_rectangle.access_token = result["access_token"];
         } else if (req.readyState == 4) {
             console.log("Status: ", req.status);
             console.log("Status Text: ", req.statusText);

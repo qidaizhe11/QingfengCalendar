@@ -52,10 +52,6 @@ Window {
 //        Component.onCompleted: visible = true
     }
 
-    GoogleSettings {
-        id: google_settings
-    }
-
     GoogleOAuth {
         id: google_oauth
         anchors.fill: parent
@@ -70,11 +66,14 @@ Window {
         }
     }
 
+    GoogleSettings {
+        id: google_settings
+    }
+
     Component.onCompleted: {
         calendar.refreshEvents();
 
         if (google_settings.refreshToken === "") {
-            console.log("onCompleted!!")
             google_oauth.visible = true;
             google_oauth.login();
         } else {

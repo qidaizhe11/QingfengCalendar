@@ -2,16 +2,15 @@ import QtQuick 2.1
 import QtQuick.Controls 1.0
 import QtWebKit 3.0
 import "GoogleOAuth.js" as OAuth
+import "Content"
 
 Rectangle {
-    id: google_oauth
+    id: google_oauth_rectangle
 
-//    width: parent.width
-//    height: parent.height
-    width: 960
-    height: 600
+    implicitHeight: 600
+    implicitWidth: 960
 
-    color: "#343434"
+//    color: "white"
 
     property string oauth_link:
         "https://accounts.google.com/o/oauth2/auth?" +
@@ -46,13 +45,20 @@ Rectangle {
 
         anchors.left: parent.left
         anchors.top: parent.top
-        height: 60
+        height: 50
 
-        Button {
-            id: close_button
-            text: "Close"
+        MyRoundButton {
+            id: back_button
+
             anchors.left: parent.left
-            anchors.verticalCenter: parent.verticalCenter
+            anchors.leftMargin: 20
+            anchors.bottom: parent.bottom
+            width: 35
+            height: 35
+
+            button_color: "indigo"
+            icon_source: "images/back.png"
+
             onClicked: google_oauth.visible = false
         }
     }
@@ -60,7 +66,9 @@ Rectangle {
     WebView {
         id: login_view
 
-        anchors.fill: parent
+        anchors.top: top_tool_bar.bottom
+        anchors.bottom: parent.bottom
+        width: parent.width
 
         url: ""
         onUrlChanged: OAuth.urlChanged(url)

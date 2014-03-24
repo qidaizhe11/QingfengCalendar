@@ -46,7 +46,7 @@ Rectangle {
 
         Rectangle {
             id: color_block
-            width: 8
+            width: 6
             height: parent.height
             anchors.left: parent.left
             color: left_block_color
@@ -54,11 +54,11 @@ Rectangle {
         Label {
             id: title_label
             text: eventItem.displayLabel
-            font.pointSize: 12
+            font.pointSize: 10
             clip: true
             color: font_color
             anchors.left: color_block.right
-            anchors.leftMargin: 6
+            anchors.leftMargin: 3
             anchors.right: parent.right
             anchors.verticalCenter: parent.verticalCenter
         }

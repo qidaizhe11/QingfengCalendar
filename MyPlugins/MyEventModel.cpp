@@ -61,21 +61,12 @@ MyEventModel::MyEventModel(QQuickItem* parent) :
 
   MyCollection* my_collection = new MyCollection();
   my_collection->setCollection(collection);
-//  m_collections.append(QVariant::fromValue<QObject*>(my_collection));
   m_collections.append(my_collection);
   m_default_collection_id = my_collection->id();
-
-//  qDebug() << "m_default_collection_id:" << m_default_collection_id;
-
-//  foreach (MyCollection* collection, m_collections) {
-//    qDebug() << "MyCollection:" << collection->id();
-//    qDebug() << "MyCollection name:" << collection->name();
-//  }
 
   importEvents(QUrl("file:///home/daizhe/qidaizhe11@gmail.com-2.ics"));
 
   m_google_manager = new GoogleManager(this);
-  m_google_manager->setOrganizerManager(m_manager);
 
   connect(this, SIGNAL(initGoogleSync()),
           m_google_manager,SLOT(freshStartSync()));
@@ -295,8 +286,6 @@ void MyEventModel::saveEvent(MyEvent* my_event)
 
     req->start();
   }
-
-//  my_event->deleteLater();
 }
 
 //
@@ -342,7 +331,7 @@ void MyEventModel::deleteEvent(MyEvent *my_event)
 void MyEventModel::saveCollection(MyCollection *my_collection)
 {
   if (my_collection) {
-    QOrganizerCollection collection = my_collection->collection();
+    QOrganizerCollection collection = my_collection->toOrganizerCollection();
     QOrganizerCollectionSaveRequest* req =
         new QOrganizerCollectionSaveRequest(this);
     req->setManager(m_manager);
@@ -419,11 +408,6 @@ void MyEventModel::updateEvents()
 
   if (m_end_date >= m_start_date) {
 
-//    QList<QOrganizerItem> event_items = m_manager->items(
-//          QDateTime(m_start_date, QTime(0, 0, 0)),
-//          QDateTime(m_end_date, QTime(23, 59, 59)),
-//          QOrganizerItemFilter(), -1, sort_order_list);
-
     QList<QOrganizerItem> event_items = m_manager->items(
           m_start_date, m_end_date);
     qDebug() << "event_items length: " << event_items.length();
@@ -460,10 +444,7 @@ void MyEventModel::updateEvents()
                     my_event->allDay() <<
                     my_event->location();
 
-  //      QObject* item_object = static_cast<QObject*>(&my_event);
-//        m_events.append(QVariant::fromValue<QObject*>(my_event));
         m_events.append(my_event);
-  //      m_events.append(QVariant::fromValue(str));
       } else if (event_items[i].type() ==
                  QOrganizerItemType::TypeEventOccurrence) {
 //        QOrganizerEventOccurrence event_occurrence =
@@ -488,7 +469,6 @@ void MyEventModel::updateCollections()
 
   qDebug() << "MyEventModel::updateCollections.";
   foreach (QOrganizerCollection collection, m_manager->collections()) {
-//    qDebug() << collection;
     MyCollection* my_collection = new MyCollection();
     my_collection->setCollection(collection);
     m_collections.append(my_collection);

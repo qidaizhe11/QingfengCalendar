@@ -26,8 +26,6 @@ public:
   explicit GoogleManager(QObject *parent = 0);
   ~GoogleManager();
 
-  void setOrganizerManager(QOrganizerManager* organizer_manager);
-
   void getCalendarList();
   void getEventsOfCalendar(const QString& cal_id);
 //  void newCalendar(const QString& cal_id);
@@ -54,13 +52,7 @@ private:
 
   QNetworkAccessManager* m_network_access_manager;
 
-  QOrganizerManager* m_organizer_manager;
-
   QMap<QNetworkReply*, RequestType> reply_map;
-
-//  QVariantList m_calendars;
-//  QStringList m_cal_ids;
-//  QVariantList m_events;
 
   QString m_access_token;
 };

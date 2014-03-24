@@ -41,7 +41,6 @@ public:
 
   Q_INVOKABLE QDate dateAt(int index) const;
   Q_INVOKABLE int indexAt(const QDate& date);
-//  Q_INVOKABLE int weekNumberAt(int row) const;
 
 Q_SIGNALS:
   void visibleDateChanged(const QDate& visibleDate);

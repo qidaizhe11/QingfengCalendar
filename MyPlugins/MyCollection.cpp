@@ -107,7 +107,7 @@ QVariant MyCollection::extendedMetaData(const QString &key) const
   return m_collection.extendedMetaData(key);
 }
 
-QOrganizerCollection MyCollection::collection() const
+QOrganizerCollection MyCollection::toOrganizerCollection() const
 {
   return m_collection;
 }
