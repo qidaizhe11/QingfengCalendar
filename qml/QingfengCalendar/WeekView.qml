@@ -248,9 +248,9 @@ Item {
 
             console.log("Week_list_view, onFlickEnded.");
             console.log("Index: ", index);
+            console.log("Control.visible_date:", control.visible_date);
 
             control.visible_date = week_list_model.get(index).week_date;
-            console.log("Control.visible_date:", control.visible_date);
 
             if (index === 0) {
                 week_list_model.insertAtBeginning();
@@ -435,6 +435,7 @@ Item {
             id: week_flickable
             anchors.top: cross_day_events_panel.bottom
             anchors.topMargin: 8
+            anchors.bottom: parent.bottom
 
             width: parent.width
             height: (parent.height - day_header_row.height) < week_inner_row.height ?
@@ -500,7 +501,7 @@ Item {
                     Repeater {
                         id: horizontalGridLineRepeater
 
-                        model: week_view.rows * 2
+                        model: week_view.rows + 1
                         delegate: Rectangle {
                             property bool is_hour: index % 2 === 0
 
@@ -518,6 +519,12 @@ Item {
                             height: __gridLineWidth
                             color: is_hour ? my_calendar_style.gridColor :
                                              Qt.lighter("lightgrey", 1.03)
+
+                            Component.onCompleted: {
+                                console.log("horizontalGridLineRepeater,",
+                                            "index:", index, "y:", parent.y);
+                            }
+
                         }
                     }
                 } // week_container_view
@@ -552,31 +559,37 @@ Item {
         function createEventLabels() {
             console.log("WeekView::createEventLabels");
 
-            //
-            // in day events
-            //
+            // two-dimensional array of lenght 7, stores in day events.
             var events_of_day = [];
+            for (var i = 0; i < week_view.columns; ++i) {
+                events_of_day.push(0);
+            }
+
+            // stores all day or mutli days events.
             var events_cross_day = [];
-            var current_date = control.event_model.startDate;
-            var date_index = 0;
-            var events_in_a_day = [];
 
             if (control.event_model.events.length === 0) {
                 return;
             }
 
-            for (var i = 0; i < week_view.columns; ++i) {
-                events_of_day.push(0);
-            }
+            // date flag
+            var current_date = control.event_model.startDate;
+            var date_index = 0;
+            // array, stores all the in day events of this day.
+            var events_in_a_day = [];
 
+            // divide all day events from in day events, in week view,
+            // they are shown in different place.
             for (i = 0; i < control.event_model.events.length; ++i) {
                 var event = control.event_model.events[i];
 
                 var last_days = event_utils.lastDays(
                             event.startDateTime, event.endDateTime);
+                // all day or multi day events
                 if (last_days > 1 || event.allDay) {
                     events_cross_day.push(event);
-                } else {
+                } else { // in day events
+                    // new day, new start.
                     if (event.startDateTime.getDate() !== current_date.getDate()) {
                         events_of_day[date_index] = events_in_a_day;
 
@@ -591,100 +604,28 @@ Item {
             }
             events_of_day[date_index] = events_in_a_day;
 
-            for (i = 0; i < week_view.columns; ++i) {
-                var array = events_of_day[i];
-                if (array === 0) {
-                    continue;
-                }
+            createCrossDayEvents(events_cross_day);
+            createInDayEvents(events_of_day);
+        }
 
-                var events_count_of_cell = [];
-                for (var j = 0; j < 24 * 2; ++j) {
-                    events_count_of_cell.push(0);
-                }
-                var events_exists_of_cell = [];
-                for (j = 0; j < 24 * 2; ++j) {
-                    events_exists_of_cell.push(0);
-                }
-
-                for (var event_index = 0; event_index < array.length; ++event_index) {
-
-                    var start_cell_index =
-                            array[event_index].startDateTime.getHours() * 2 +
-                            array[event_index].startDateTime.getMinutes() / 30;
-                    var end_cell_index =
-                            array[event_index].endDateTime.getHours() * 2 +
-                            (array[event_index].endDateTime.getMinutes() - 1) / 30;
-                    //array[event_index].endDateTime.getMinutes() / 30;
-
-                    for (j = start_cell_index; j <= end_cell_index; ++j) {
-                        ++events_count_of_cell[j];
-                    }
-                }
-
-                var component = Qt.createComponent("WeekEventLabel.qml");
-                for (event_index = 0; event_index < array.length; ++event_index) {
-                    start_cell_index =
-                            array[event_index].startDateTime.getHours() * 2 +
-                            array[event_index].startDateTime.getMinutes() / 30;
-                    end_cell_index =
-                            array[event_index].endDateTime.getHours() * 2 +
-                            (array[event_index].endDateTime.getMinutes() - 1) / 30;
-                    //array[event_index].endDateTime.getMinutes() / 30;
-
-                    var max_stack = 0;
-                    for (j = start_cell_index; j <= end_cell_index; ++j) {
-                        if (events_count_of_cell[j] > max_stack) {
-                            max_stack = events_count_of_cell[j];
-                        }
-                    }
-
-                    var stack = events_exists_of_cell[start_cell_index] + 1;
-
-                    // create label object
-                    console.log("In day Event:", array[event_index].displayLabel,
-                                array[event_index].startDateTime.toLocaleString(),
-                                "stack_index:", stack, max_stack);
-
-                    var properties = {
-                        "eventItem": array[event_index],
-                        "date_index": i,
-                        "stack_index": stack,
-                        "max_stack": max_stack,
-                        "start_cell_index": start_cell_index,
-                        "end_cell_index": end_cell_index };
-                    CreateObject.createInComponent(
-                                component, week_view_inner_container, properties,
-                                panelItem.labelListModelAddItem);
-
-                    for (j = start_cell_index; j <= end_cell_index; ++j) {
-                        ++events_exists_of_cell[j];
-                    }
-                }
-
-                component.destroy();
-            }
-
-            //
-            // all day or multi days events
-            //
-
+        function createCrossDayEvents(events_cross_day) {
             // events_info_array
             // properties:
             // @count: track of the events count of this day.
             // @show_order: it's an array of length: @max_shown_all_day_events,
             //  used for putting the event to the proper position.
             var events_info_array = [];
-            for (i = 0; i < week_view.columns; ++i) {
+            for (var i = 0; i < week_view.columns; ++i) {
                 events_info_array.push(
                             EventJs.EventsInfo.createNew(max_shown_all_day_events));
             }
 
-            component = Qt.createComponent("WeekAllDayEventLabel.qml")
+            var component = Qt.createComponent("WeekAllDayEventLabel.qml")
             for (i = 0; i < events_cross_day.length; ++i) {
                 // represent the event that pass from C++
                 var cross_day_event = events_cross_day[i];
 
-                date_index = event_utils.daysTo(
+                var date_index = event_utils.daysTo(
                             my_week_model_in_delegate.firstVisibleDate,
                             cross_day_event.startDateTime);
                 console.log("date_index", date_index);
@@ -708,7 +649,7 @@ Item {
                 // arrange the shown order of this event. just put it to the
                 // first blank place, that's ok.
                 var show_order = 0;
-                for (j = 0; j < max_shown_all_day_events; ++j) {
+                for (var j = 0; j < max_shown_all_day_events; ++j) {
                     if (events_info_array[date_index].show_order[j] === 0) {
                         show_order = j;
                         break;
@@ -731,7 +672,7 @@ Item {
                             cross_day_event.startDateTime.toLocaleString(),
                             "stack_index:", date_index, range_days);
 
-                properties = {
+                var properties = {
                     "eventItem": cross_day_event,
                     "show_order_in_a_day": show_order,
                     "date_index": date_index,
@@ -755,6 +696,91 @@ Item {
             }
             max_events_count = Math.min(max_events_count, max_shown_all_day_events);
             cross_day_events_panel.height = 16 + 20 * max_events_count;
+        }
+
+        function getStartCellIndex(date_time) {
+            return date_time.getHours() * 2 + date_time.getMinutes() / 30;
+        }
+        function getEndCellIndex(date_time) {
+            return date_time.getHours() * 2 + (date_time.getMinutes() - 1) / 30;
+        }
+
+        function createInDayEvents(events_of_day) {
+            for (var i = 0; i < week_view.columns; ++i) {
+                // events array of this day, going to deal with events day by day.
+                var array = events_of_day[i];
+                if (array === 0) {
+                    continue;
+                }
+
+                // stores the total events count of this cell (half an hour).
+                var events_count_of_cell = [];
+                for (var j = 0; j < 24 * 2; ++j) {
+                    events_count_of_cell.push(0);
+                }
+                // stores already shown events of this cell.
+                // used for arranging the shown stack of events.
+                var events_existed_of_cell = [];
+                for (j = 0; j < 24 * 2; ++j) {
+                    events_existed_of_cell.push(0);
+                }
+
+                // before createObject, got the total events count of every cell
+                // at first.
+                for (var event_index = 0; event_index < array.length; ++event_index) {
+                    var start_cell_index =
+                            getStartCellIndex(array[event_index].startDateTime);
+                    var end_cell_index =
+                            getEndCellIndex(array[event_index].endDateTime);
+
+                    for (j = start_cell_index; j <= end_cell_index; ++j) {
+                        ++events_count_of_cell[j];
+                    }
+                }
+
+                var component = Qt.createComponent("WeekEventLabel.qml");
+                for (event_index = 0; event_index < array.length; ++event_index) {
+                    // used to decide the y and height property of this event.
+                    start_cell_index =
+                            getStartCellIndex(array[event_index].startDateTime);
+                    end_cell_index =
+                            getEndCellIndex(array[event_index].endDateTime);
+
+                    // the shown width of this event is decided here.
+                    var max_stack = 0;
+                    for (j = start_cell_index; j <= end_cell_index; ++j) {
+                        if (events_count_of_cell[j] > max_stack) {
+                            max_stack = events_count_of_cell[j];
+                        }
+                    }
+
+                    // the z property of this event is decided here.
+                    var stack = events_existed_of_cell[start_cell_index] + 1;
+
+                    // create label object
+                    console.log("In day Event:", array[event_index].displayLabel,
+                                array[event_index].startDateTime.toLocaleString(),
+                                "stack_index:", stack, max_stack);
+
+                    var properties = {
+                        "eventItem": array[event_index],
+                        "date_index": i,
+                        "stack_index": stack,
+                        "max_stack": max_stack,
+                        "start_cell_index": start_cell_index,
+                        "end_cell_index": end_cell_index };
+                    CreateObject.createInComponent(
+                                component, week_view_inner_container, properties,
+                                panelItem.labelListModelAddItem);
+
+                    // have shown an event label, marked it here.
+                    for (j = start_cell_index; j <= end_cell_index; ++j) {
+                        ++events_existed_of_cell[j];
+                    }
+                }
+
+                component.destroy();
+            }
         }
     } // week_delegate
 }

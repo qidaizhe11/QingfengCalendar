@@ -33,7 +33,6 @@ ComboBox {
 
             Image {
                 id: imageItem
-//                visible: control.menu !== null
                 source: "../images/arrow-7-down.png"
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.right: parent.right

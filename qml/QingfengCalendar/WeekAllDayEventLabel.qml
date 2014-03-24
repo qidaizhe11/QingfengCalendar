@@ -15,9 +15,6 @@ Rectangle {
 
     property int __index: -1
 
-//    property bool is_all_day: eventItem.allDay
-//    property bool is_multi_days: (range_days === 1) ? true : false
-
     property color left_block_color: "yellow"
     property color font_color: "white"
 
@@ -28,7 +25,7 @@ Rectangle {
     x: parent.width / days_in_week * date_index + 2
     y: height * show_order_in_a_day + 1
 
-//    opacity: 0
+    //opacity: 0
 
     property color base_color: {
         var the_color = Qt.darker("lightblue", 1.3);
@@ -108,6 +105,6 @@ Rectangle {
         }
     }
 
-//    NumberAnimation on opacity { from: 0; to: 1; duration: 200; }
+    //NumberAnimation on opacity { from: 0; to: 1; duration: 200; }
 }
 

@@ -47,13 +47,9 @@ Item {
         width: parent.width
         anchors.top: parent.top
         anchors.bottom: resize_rectangle.top
-//        anchors.fill: parent
-
-//        anchors.margins: 2
         anchors.leftMargin: 2
 
 
-//        color: base_color
         color: panel_mouse_area.pressed ? "orange" : base_color
         border.color: Qt.darker(base_color, 1.2)
         border.width: 1
@@ -68,11 +64,9 @@ Item {
 
             text: {
                 var the_text = "";
-                the_text += eventItem.startDateTime.toLocaleTimeString(
-                            Qt.locale(), "hh:mm");
+                the_text += Qt.formatTime(eventItem.startDateTime, "hh:mm");
                 the_text += " - ";
-                the_text += eventItem.endDateTime.toLocaleTimeString(
-                            Qt.locale(), "hh:mm");
+                the_text += Qt.formatTime(eventItem.endDateTime, "hh:mm");
                 the_text;
             }
         }
@@ -111,7 +105,7 @@ Item {
         id: resize_rectangle
         width: parent.width
         height: 13
-//        anchors.bottom: parent.bottom
+        //anchors.bottom: parent.bottom
         y: parent.height - 13
         anchors.leftMargin: 2
 
@@ -123,7 +117,7 @@ Item {
         MouseArea {
             id: resize_mouse_area
             anchors.fill: parent
-//            cursorShape: Qt.SizeVerCursor
+            //cursorShape: Qt.SizeVerCursor
 
             drag.target: resize_rectangle
             drag.axis: Drag.YAxis
@@ -138,9 +132,9 @@ Item {
                             panel.height)
                 if (panel.height !== parent.old_height) {
                     parent.old_height = panel.height
-                    resize_rectangle.y +=
-                            (cell_height -
-                             (parent.old_height + resize_mouse_area.height) % cell_height)
+                    resize_rectangle.y += (
+                                cell_height -
+                                (parent.old_height + resize_mouse_area.height) % cell_height);
                 }
             }
         }

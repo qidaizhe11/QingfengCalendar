@@ -8,8 +8,6 @@ Item {
 //    property alias font_size: text_area.font.pointSize
     property alias placeholder_text: placeholder.text
 
-//    activeFocusOnTab: true
-
     MouseArea {
         visible: (!my_text_area.activeFocus)
         anchors.fill: parent
@@ -26,7 +24,6 @@ Item {
         horizontalAlignment: text_area.horizontalAlignment
         verticalAlignment: text_area.horizontalAlignment
 
-//        text: qsTr("Add a description")
         color: "darkgrey"
         opacity: !text_area.text.length ? 1 : 0
         renderType: Text.NativeRendering
@@ -46,8 +43,5 @@ Item {
 
         // TODO: seems it didn't take effect, didn't find out why yet.
         tabChangesFocus: true
-
-//        KeyNavigation.tab: text_area.Keynavigation.tab
-//        KeyNavigation.backtab: text_area.Keynavigation.backtab
     }
 }

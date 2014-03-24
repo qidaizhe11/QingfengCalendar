@@ -20,7 +20,6 @@ Item {
         style: button_style
 
         onClicked: {
-//            parent.state = (parent.state === "drop_down" ? "" : "drop_down")
             if (parent.state === "") {
                 calendar.visibleMonth = selected_date.getMonth();
                 calendar.visibleYear = selected_date.getFullYear();
@@ -121,7 +120,6 @@ Item {
 
             Image {
                 id: imageItem
-//                visible: control.menu !== null
                 source: "../images/arrow-7-down.png"
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.right: parent.right

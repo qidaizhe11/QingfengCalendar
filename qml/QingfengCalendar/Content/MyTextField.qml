@@ -92,7 +92,5 @@ FocusScope {
             Qt.inputMethod.hide()
             textfield.accepted()
         }
-
-        //        onEditingFinished: textfield.editingFinished()
     }
 }

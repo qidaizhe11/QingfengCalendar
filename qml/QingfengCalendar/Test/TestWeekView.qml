@@ -377,9 +377,9 @@ Item {
             for (var j = 0; j < 24 * 2; ++j) {
                 events_count_of_cell.push(0);
             }
-            var events_exists_of_cell = [];
+            var events_existed_of_cell = [];
             for (j = 0; j < 24 * 2; ++j) {
-                events_exists_of_cell.push(0);
+                events_existed_of_cell.push(0);
             }
 
             console.log("week: ", i, "events count:", array.length);
@@ -415,7 +415,7 @@ Item {
                     }
                 }
 
-                var stack = events_exists_of_cell[start_cell_index] + 1;
+                var stack = events_existed_of_cell[start_cell_index] + 1;
 
                 // create label object
                 console.log("Event:", array[event_index].displayLabel,
@@ -439,7 +439,7 @@ Item {
                             labelListModelAddItem);
 
                 for (j = start_cell_index; j <= end_cell_index; ++j) {
-                    ++events_exists_of_cell[j];
+                    ++events_existed_of_cell[j];
                 }
             }
         }

@@ -1,6 +1,5 @@
 import QtQuick 2.1
 import QtQuick.Controls 1.0
-//import QtQuick.Controls.Styles 1.0
 import QtQuick.Layouts 1.0
 import QtGraphicalEffects 1.0
 import MyCalendar2.Events 1.0
@@ -11,7 +10,7 @@ Item {
     width: 500
     height: 220
 
-    z: 1
+    z: 10
 
     property date event_date
     property var event_item
@@ -24,7 +23,6 @@ Item {
     signal showAdd(date dt_start)
     signal showEdit(var event)
     signal hide()
-//    signal saveClicked(var my_event)
     signal editDetails()
     signal addDetails()
 
@@ -51,8 +49,6 @@ Item {
     }
 
     onAddDetails: {
-//        stack_view.push({ item: Qt.resolvedUrl("EventEditWindow.qml"),
-//                        properties: {event_date: event_date} });
         stack_view.push({item: main_window.edit_view,
                             properties: {event_date: event_date, state: "add"}});
         float_edit.hide();
@@ -62,8 +58,6 @@ Item {
         stack_view.push({item: main_window.edit_view,
                             properties: {event_item: event_item, state: "edit"}});
         float_edit.hide();
-
-        console.log("Is allday: ", event_item.allDay);
     }
 
     Connections {
@@ -122,7 +116,6 @@ Item {
     }
 
     property Component event_edit_panel: Rectangle {
-//    Rectangle {
         id: event_edit_panel
         color: base_color
 
@@ -146,7 +139,6 @@ Item {
                 height: event_edit_panel.state === "show" ?
                             edit_title_text.height :
                             edit_title_enter.height
-//                visible: true
 
                 Rectangle {
                     id: edit_title_show
@@ -157,7 +149,6 @@ Item {
 
                     Label {
                         id: edit_title_text
-    //                    anchors.fill: parent
                         width: parent.width
 
                         elide: Text.ElideRight
@@ -181,7 +172,6 @@ Item {
                         }
 
                         onClicked: {
-//                            loader.sourceComponent = event_edit_enter;
                             event_edit_panel.state = "edit";
                             edit_title_enter.forceActiveFocus();
                         }
@@ -196,7 +186,7 @@ Item {
 
                     text: event_item ? event_item.displayLabel : ""
                     font_size: float_edit.font_size + 2
-//                    font.bold: true
+                    //font.bold: true
                     textColor: "indigo"
                     border_radius: 0
                     focus: true
@@ -341,7 +331,6 @@ Item {
     property Component event_add_panel: Rectangle {
         color: base_color
 
-//        property string event_title
         property alias title_text: title_edit.text
         signal forceActiveFocus()
 

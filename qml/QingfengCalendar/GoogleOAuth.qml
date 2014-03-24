@@ -65,16 +65,6 @@ Rectangle {
         url: ""
         onUrlChanged: OAuth.urlChanged(url)
 
-//        onLoadFinished: {
-//            console.log("onLoadFinished.")
-//            web_view_mousearea.cursorShape = Qt.ArrowCursor;
-//        }
-
-//        onLoadStarted: {
-//            console.log("onLoadStarted.")
-//            web_view_mousearea.cursorShape = Qt.WaitCursor;
-//        }
-
         onLoadingChanged: {
             switch (loadRequest.status) {
             case WebView.LoadSucceededStatus:

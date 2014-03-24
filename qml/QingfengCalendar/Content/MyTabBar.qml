@@ -17,12 +17,9 @@ FocusScope {
             tabView.currentIndex = tabView.currentIndex - 1
     }
 
-//    onTabViewChanged: parent = tabView
     visible: true
 
     property var tabView
-//    property var style
-//    property var styleItem: tabView.__styleItem ? tabView.__styleItem : null
 
     property bool tabsMovable: false
 

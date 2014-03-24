@@ -96,7 +96,7 @@ Rectangle {
         onClicked: {
             var date = control.__model.dateAt(grid_index);
             if (__isValidDate(date)) {
-//                            control.clicked(date);
+                //control.clicked(date);
             }
 
             var global_pos = month_event_label.mapToItem(null, mouseX, mouseY);

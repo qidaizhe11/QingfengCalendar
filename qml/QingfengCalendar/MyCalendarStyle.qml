@@ -183,7 +183,7 @@ Style {
         FloatEditView {
             id: float_edit
             visible: false
-            z: 1
+            z: 10
         }
 
         // Stores the event label objects shown currently.

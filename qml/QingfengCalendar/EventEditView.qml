@@ -1,7 +1,6 @@
 import QtQuick 2.1
 import QtQuick.Controls 1.0
 import QtQuick.Controls.Styles 1.0
-//import QtQuick.Window 2.1
 import QtQuick.Layouts 1.0
 import MyCalendar2.Events 1.0
 import "Content"
@@ -40,8 +39,6 @@ Rectangle {
     property date end_date: state === "edit" ? event_item.endDateTime :
                                                event_date
 
-//    property real left_part_width: width * 0.4
-
     property real font_size: 12
 
     property bool is_date_error: false
@@ -79,9 +76,6 @@ Rectangle {
         } else {
             the_date = event_item.endDateTime;
         }
-
-//        console.log("End_time, add hour failed? ", the_date);
-
         the_date;
     }
 
@@ -135,7 +129,6 @@ Rectangle {
                 width: parent.height * 0.45
                 height: parent.height * 0.45
 
-//                button_color: "indigo"
                 button_color: event_color
                 icon_source: "images/back.png"
 
@@ -155,7 +148,6 @@ Rectangle {
                     anchors.verticalCenter: parent.verticalCenter
                     width: parent.height * 0.5
                     height: parent.height * 0.5
-//                    color: "indigo"
                     color: event_color
                 }
 
@@ -168,7 +160,6 @@ Rectangle {
 
                     text: event_collection ? event_collection.name :
                                              qsTr("MyCalendar")
-//                    text: "MyCallendar"
                     font.pointSize: left_part.title_font_size
                 }
             }
@@ -192,7 +183,6 @@ Rectangle {
             Component.onCompleted: {
                 for (var i = 0; i < 60; i += 5) {
                     if (i < 10) {
-//                        var str = ("0" + i).toString();
                         minute_model.append({ "text": '0' + i.toString()});
                     } else {
                         minute_model.append({ "text": i.toString() });
@@ -231,7 +221,6 @@ Rectangle {
 
             Flickable {
                 id: event_edit_flickable
-//                anchors.fill: parent
                 anchors.centerIn: parent
                 width: parent.width
                 height: parent.height < edit_layout.height ?
@@ -389,10 +378,8 @@ Rectangle {
     Rectangle {
         id: right_part
 
-//        width: parent.width - parent.left_part_width
         width: parent.width * 0.6
         height: parent.height
-//        anchors.left: left_part.right
         anchors.right: parent.right
         anchors.top: parent.top
 
@@ -442,8 +429,7 @@ Rectangle {
 
             Rectangle {
                 id: line
-                anchors.top: title_edit.bottom
-//                anchors.topMargin: parent.height * 0.02
+                anchors.top: title_edit.bottom2
                 width: parent.width
                 height: 1
                 color: "lightgrey"
@@ -456,7 +442,7 @@ Rectangle {
                 height: parent.height * 0.75
                 width: parent.width
 
-//                font_size: 12
+                //font_size: 12
                 placeholder_text: qsTr("Add a description")
 
                 text: event_edit_view.state === "edit" ?
@@ -470,10 +456,10 @@ Rectangle {
                 id: save_button
                 anchors.left: parent.left
                 anchors.bottom: parent.bottom
-                text: qsTr("Save")
                 width: parent.width * parent.button_width_level
                 height: parent.height * 0.08
-//                button_color: "indigo"
+
+                text: qsTr("Save")
                 button_color: event_color
                 font_size: parent.button_font_size
                 font_bold: true
@@ -493,7 +479,6 @@ Rectangle {
                 text: qsTr("Cancel")
                 font_size: parent.button_font_size
                 button_color: Qt.darker("lightgray", 1.6)
-//                font_bold: true
 
                 onClicked: event_edit_view.cancel();
             }
@@ -589,8 +574,6 @@ Rectangle {
         if (selected_end_time.getTime() < selected_start_time.getTime()) {
             end_hour_combo.currentIndex = start_hour_combo.currentIndex;
             end_minute_combo.currentIndex = start_minute_combo.currentIndex;
-
-//            console.log("Come here?")
         } else if (is_date_error) {
             is_date_error = false;
         }
