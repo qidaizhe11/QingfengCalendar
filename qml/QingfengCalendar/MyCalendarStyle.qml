@@ -162,6 +162,8 @@ Style {
                 title: "Week"
                 WeekView {
                     id: week_tab
+
+                    Component.onCompleted: control.refreshEvents()
                 }
             }
 
@@ -169,6 +171,8 @@ Style {
                 title: "Month"
                 MonthView {
                     id: month_tab
+
+                    Component.onCompleted: control.refreshEvents()
                 }
             }
         }

@@ -5,6 +5,7 @@ import "Private"
 import "Private/CalendarUtils.js" as CalendarUtils
 import "MonthViewUtils.js" as MonthViewUtils
 import "CreateObject.js" as CreateObject
+import "EventJsUtils.js" as EventJs
 
 Item {
     id: month_view
@@ -28,6 +29,13 @@ Item {
                   control.visible_date.getMonth(),
                   1).toLocaleDateString(Qt.locale(), "yyyy年")) +
                 Qt.locale().standaloneMonthName(control.visible_date.getMonth());
+    }
+
+    // Copied from QtQuick.Controls.Calenadr, serviced as MonthModel here.
+    // holes the model that will be used by the Calendar to populate month date
+    // that available to the user.
+    property CalendarModel month_model: CalendarModel {
+        visibleDate: control.visible_date
     }
 
     Connections {
@@ -501,89 +509,119 @@ Item {
         } // view Repeater
     } // month_delegate
 
+    Connections {
+        target: control
+        onRefreshEvents: {
+            if (month_view.visible) {
+                console.log("MonthView, onRefreshEvents.")
+                panelItem.clearLabelListModel();
+                updateEventModel();
+                createEventLabels();
+            }
+        } // onRefreshEvents
+    } // connections
+
     function updateEventModel() {
-        control.event_model.startDate = control.__model.firstVisibleDate;
-        control.event_model.endDate = control.__model.lastVisibleDate;
+        control.event_model.startDate = month_model.firstVisibleDate;
+        control.event_model.endDate = month_model.lastVisibleDate;
         control.event_model.updateCollections();
         control.event_model.updateEvents();
     }
 
-    Connections {
-        target: control
-        onRefreshEvents: {
-            if (!month_view.visible)
-                return;
+    function createEventLabels() {
+        if (!month_view.visible)
+            return;
 
-            console.log("OnRefreshEvents, label_list_model count: ",
-                        label_list_model.count);
+        console.log("OnRefreshEvents, label_list_model count: ",
+                    label_list_model.count);
 
-            panelItem.clearLabelListModel();
-            updateEventModel();
+        panelItem.clearLabelListModel();
+        updateEventModel();
 
-            var event_counts_of_day = [];
-            var show_orders_of_day = [];
-            MonthViewUtils.initEventCountArray(event_counts_of_day);
-            MonthViewUtils.initShowOrdersArray(show_orders_of_day);
+        var col = month_view.columns;
 
-            var component = Qt.createComponent("MonthEventLabel.qml");
+        // events_info_array
+        // properties:
+        // @count: track of the events count of this day.
+        // @show_order: it's an array of length: @max_shown_all_day_events,
+        //  used for putting the event to the proper position.
+        var events_info_array = [];
+        for (var i = 0; i < month_view.total_cells; ++i) {
+            events_info_array.push(
+                        EventJs.EventsInfo.createNew(max_show_events_of_day));
+        }
 
-            for (var i = 0; i < control.event_model.events.length; ++i) {
-                var event = control.event_model.events[i];
+        var component = Qt.createComponent("MonthEventLabel.qml");
 
-                var index_of_cell = event_utils.daysTo(
-                            control.__model.firstVisibleDate, event.startDateTime);
+        for (i = 0; i < control.event_model.events.length; ++i) {
+            // represent the event that pass from C++
+            var event = control.event_model.events[i];
 
-                var day_event_count = event_counts_of_day[index_of_cell];
+            var index_of_cell = event_utils.daysTo(
+                        month_model.firstVisibleDate, event.startDateTime);
 
-                if (day_event_count >= month_view.max_show_events_of_day) {
-                    event_counts_of_day[index_of_cell] += 1;
-                    continue;
+            // TODO: this should be improved. If there are too much events,
+            // then they should be stored and shown in a popup view once
+            // the mark is clicked.
+            var day_event_count = events_info_array[index_of_cell].count;
+            if (day_event_count >= month_view.max_show_events_of_day) {
+                ++events_info_array[index_of_cell].count;
+                continue;
+            }
+
+            // arrange the shown order of this event. just put it to the
+            // first blank place, that's ok.
+            var show_order_in_a_day = 0;
+            for (var j = 0; j < max_show_events_of_day; ++j) {
+                if (events_info_array[index_of_cell].show_order[j] === 0) {
+                    show_order_in_a_day = j;
+                    break;
                 }
+            }
 
-                var show_order_in_a_day = MonthViewUtils.calculateShowOrder(
-                            show_orders_of_day, index_of_cell);
+            // got the ranged days of this event.
+            var last_days = event_utils.lastDays(
+                        event.startDateTime, event.endDateTime);
+            if (last_days === 0 && event.allDay) {
+                last_days = 1;
+            }
 
-                var last_days = event_utils.lastDays(
-                            event.startDateTime, event.endDateTime);
-                if (last_days === 0 && event.allDay) {
-                    last_days = 1;
-                }
+            // If the event lasts outside this range, just clip it.
+            if (index_of_cell + last_days > total_cells) {
+                last_days -= (index_of_cell + last_days - total_cells);
+            }
 
-                if (index_of_cell + last_days > total_cells) {
-                    last_days -= (index_of_cell + last_days - total_cells);
-                }
+            // after createObject, the events_info_array should be refreshed.
+            for (j = 0; j < last_days; ++j) {
+                events_info_array[index_of_cell + j].increaseInfo(show_order_in_a_day);
+            }
 
-                MonthViewUtils.increaseEventCount(event_counts_of_day, index_of_cell, last_days);
-                MonthViewUtils.increaseShowFlag(show_orders_of_day,
-                                              show_order_in_a_day,
-                                              index_of_cell,
-                                              last_days);
+            var properties;
+            // If the event lasts more than 7 days within this month view range,
+            // clip it to multi labels.
+            // Note that they are in fact still only one, all appear or all disappear.
+            while (index_of_cell % col + last_days > col) {
+                var clipped_days = col - index_of_cell % col;
 
-                var col = month_view.columns;
-                var properties;
-                while (index_of_cell % col + last_days > col) {
-                    var clipped_days = col - index_of_cell % col;
-
-                    properties = {
-                        "eventItem": event,
-                        "show_order_in_a_day": show_order_in_a_day,
-                        "grid_index": index_of_cell,
-                        "last_days": clipped_days};
-                    CreateObject.createInComponent(
-                                component, viewContainer, properties,
-                                labelListModelAddItem);
-
-                    index_of_cell += clipped_days;
-                    last_days -= clipped_days;
-                }
-
-                properties = {"eventItem": event, "show_order_in_a_day": show_order_in_a_day,
-                    "grid_index": index_of_cell, "last_days": last_days};
+                properties = {
+                    "eventItem": event,
+                    "show_order_in_a_day": show_order_in_a_day,
+                    "grid_index": index_of_cell,
+                    "last_days": clipped_days};
                 CreateObject.createInComponent(
-                            component, viewContainer, properties, labelListModelAddItem);
-            } // for
+                            component, viewContainer, properties,
+                            labelListModelAddItem);
 
-            component.destroy();
-        } // onRefreshEvents
-    } // connections
+                index_of_cell += clipped_days;
+                last_days -= clipped_days;
+            }
+
+            properties = {"eventItem": event, "show_order_in_a_day": show_order_in_a_day,
+                "grid_index": index_of_cell, "last_days": last_days};
+            CreateObject.createInComponent(
+                        component, viewContainer, properties, labelListModelAddItem);
+        } // for
+
+        component.destroy();
+    }
 }

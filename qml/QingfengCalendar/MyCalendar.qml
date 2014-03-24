@@ -59,14 +59,6 @@ Control {
 
 //    property var __locale: Qt.locale()
 
-    // Copied from QtQuick.Controls.Calenadr, serviced as MonthModel here.
-    // holes the model that will be used by the Calendar to populate month date
-    // that available to the user.
-    property CalendarModel __model: CalendarModel {
-//        locale: my_calendar.__locale
-        visibleDate: visible_date
-    }
-
     // Provides list model of MyEvents, MyCollections that ranged in the given
     // start date and end date, the core center between c++ and qml.
     // The items could be accessed by direct list.

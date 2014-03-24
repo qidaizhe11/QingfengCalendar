@@ -5,6 +5,7 @@ import "Private"
 import "Private/CalendarUtils.js" as CalendarUtils
 import MyCalendar.Weeks 1.0
 import "CreateObject.js" as CreateObject
+import "EventJsUtils.js" as EventJs
 
 Item {
     id: week_view
@@ -29,6 +30,7 @@ Item {
         var title = "";
         var range_start_date = week_model.firstVisibleDate;
         var format = qsTr("yyyy年M月d日");
+        //title += Qt.formatDateTime(range_start_date, format);
         title += range_start_date.toLocaleDateString(Qt.locale(), format);
         title += " - ";
         var range_end_date = week_model.lastVisibleDate;
@@ -52,7 +54,7 @@ Item {
         onCurrentIndexChanged: {
             if (week_view.visible) {
                 week_list_model.refresh();
-                control.refreshEvents();
+                control.refreshEvents()
                 console.log("WeekView, onCurrentIndexChanged.");
             }
         }
@@ -110,11 +112,9 @@ Item {
         color: my_calendar_style.base_color
         Label {
             text: {
-                var the_text;
                 var the_time = new Date();
-                the_time.setHours(styleData.index);
-                the_time.setMinutes(0);
-                the_text = the_time.toLocaleTimeString(Qt.locale(), "hh:mm");
+                the_time.setHours(styleData.index, 0);
+                var the_text = Qt.formatTime(the_time, "hh:mm")
                 the_text;
             }
 
@@ -551,6 +551,10 @@ Item {
 
         function createEventLabels() {
             console.log("WeekView::createEventLabels");
+
+            //
+            // in day events
+            //
             var events_of_day = [];
             var events_cross_day = [];
             var current_date = control.event_model.startDate;
@@ -660,20 +664,24 @@ Item {
                 component.destroy();
             }
 
-            var events_count_array = [];
-            var show_orders_array = [];
+            //
+            // all day or multi days events
+            //
+
+            // events_info_array
+            // properties:
+            // @count: track of the events count of this day.
+            // @show_order: it's an array of length: @max_shown_all_day_events,
+            //  used for putting the event to the proper position.
+            var events_info_array = [];
             for (i = 0; i < week_view.columns; ++i) {
-                events_count_array.push(0);
-            }
-            for (i = 0; i < week_view.columns; ++i) {
-                show_orders_array[i] = [];
-                for (var order = 0; order < max_shown_all_day_events; ++order) {
-                    show_orders_array[i][order] = 0;
-                }
+                events_info_array.push(
+                            EventJs.EventsInfo.createNew(max_shown_all_day_events));
             }
 
             component = Qt.createComponent("WeekAllDayEventLabel.qml")
             for (i = 0; i < events_cross_day.length; ++i) {
+                // represent the event that pass from C++
                 var cross_day_event = events_cross_day[i];
 
                 date_index = event_utils.daysTo(
@@ -687,34 +695,36 @@ Item {
                 if (date_index < 0)
                     continue;
 
-                var day_event_count = events_count_array[date_index];
-
+                // got already existed events count of this day
+                var day_event_count = events_info_array[date_index].count;
+                // TODO: this should be improved. If there are too much events,
+                // then they should be stored and shown in a popup view once
+                // the mark is clicked.
                 if (day_event_count >= week_view.max_shown_all_day_events) {
-                    events_count_array[date_index] += 1;
+                    events_info_array[date_index].count += 1;
                     continue;
                 }
 
+                // arrange the shown order of this event. just put it to the
+                // first blank place, that's ok.
                 var show_order = 0;
                 for (j = 0; j < max_shown_all_day_events; ++j) {
-                    if (show_orders_array[date_index][j] === 0) {
+                    if (events_info_array[date_index].show_order[j] === 0) {
                         show_order = j;
                         break;
                     }
                 }
 
+                // got the ranged days of this event.
                 var range_days = event_utils.lastDays(
                             cross_day_event.startDateTime, cross_day_event.endDateTime);
                 if (range_days === 0 && cross_day_event.allDay) {
                     range_days = 1;
                 }
 
+                // If the event lasts outside this range, just clip it.
                 if (date_index + range_days > week_view.columns) {
                     range_days -= (date_index + range_days - week_view.columns);
-                }
-
-                for (j = 0; j < range_days; ++j) {
-                    ++events_count_array[date_index + j];
-                    show_orders_array[date_index + j][show_order] = 1;
                 }
 
                 console.log("Cross day Event:", cross_day_event.displayLabel,
@@ -728,13 +738,19 @@ Item {
                     "range_days": range_days};
                 CreateObject.createInComponent(component, cross_day_events_panel,
                                                properties, labelListModelAddItem);
+
+                // after createObject, the events_info_array should be refreshed.
+                for (j = 0; j < range_days; ++j) {
+                    events_info_array[date_index + j].increaseInfo(show_order);
+                }
             }
             component.destroy();
 
+            // After created, the height of cross_day_events_panel should be changed.
             var max_events_count = 0;
             for (i = 0; i < week_view.columns; ++i) {
-                if (events_count_array[i] > max_events_count) {
-                    max_events_count = events_count_array[i];
+                if (events_info_array[i].count > max_events_count) {
+                    max_events_count = events_info_array[i].count;
                 }
             }
             max_events_count = Math.min(max_events_count, max_shown_all_day_events);
