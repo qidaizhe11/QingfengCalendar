@@ -50,13 +50,15 @@ Item {
 
     onAddDetails: {
         stack_view.push({item: main_window.edit_view,
-                            properties: {event_date: event_date, state: "add"}});
+                            properties: {event_date: event_date, state: "add"},
+                            destroyOnPop:true});
         float_edit.hide();
     }
 
     onEditDetails: {
         stack_view.push({item: main_window.edit_view,
-                            properties: {event_item: event_item, state: "edit"}});
+                            properties: {event_item: event_item, state: "edit"},
+                            destroyOnPop:true});
         float_edit.hide();
     }
 

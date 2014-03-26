@@ -521,12 +521,6 @@ Item {
                             height: __gridLineWidth
                             color: is_hour ? my_calendar_style.gridColor :
                                              Qt.lighter("lightgrey", 1.03)
-
-                            Component.onCompleted: {
-                                console.log("horizontalGridLineRepeater,",
-                                            "index:", index, "y:", parent.y);
-                            }
-
                         }
                     }
                 } // week_container_view
@@ -598,7 +592,7 @@ Item {
                         var days = event_utils.lastDays(current_date, event.startDateTime) - 1;
                         date_index += days;
                         current_date.setDate(current_date.getDate() + days);
-                        events_in_a_day.splice(0, events_in_a_day.length);
+                        events_in_a_day = [];
                     }
 
                     events_in_a_day.push(event);
@@ -608,9 +602,6 @@ Item {
 
             createCrossDayEvents(events_cross_day);
             createInDayEvents(events_of_day);
-
-            events_of_day.splice(0, events_of_day.length);
-            events_cross_day.splice(0, events_cross_day.length);
         }
 
         function createCrossDayEvents(events_cross_day) {
@@ -633,7 +624,7 @@ Item {
                 var date_index = event_utils.daysTo(
                             my_week_model_in_delegate.firstVisibleDate,
                             cross_day_event.startDateTime);
-                console.log("date_index", date_index);
+//                console.log("date_index", date_index);
 
                 // TODO: I set the firstVisibleDate to 2013-12-02, and it gave me
                 // all day events that start at 2013-12-01, end at 2013-12-02, it
@@ -701,8 +692,6 @@ Item {
             }
             max_events_count = Math.min(max_events_count, max_shown_all_day_events);
             cross_day_events_panel.height = 16 + 20 * max_events_count;
-
-            events_info_array.splice(0, events_info_array.length);
         }
 
         function getStartCellIndex(date_time) {
@@ -787,7 +776,6 @@ Item {
                 }
 
                 component.destroy();
-                array.splice(0, array.length);
             }
         }
     } // week_delegate

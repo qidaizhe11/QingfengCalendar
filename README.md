@@ -41,8 +41,6 @@ UI界面采用 Qt Quick/ Qml 绘制
 
 下载安装即可
 
-注：因为一个严重的bug, [QTBUG-35989](https://bugreports.qt-project.org/browse/QTBUG-35989), Linux系统需回退到 **Qt 5.1** 版本，否则可能会因 ComboBox 等导致崩溃。
-
 ####[Qt Organizer](https://qt.gitorious.org/qt/qtpim/)
 
 git clone 后 qmake, make, make install

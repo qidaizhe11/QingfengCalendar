@@ -27,7 +27,7 @@ int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
 
-    const char* private_uri = "MyCalendar2.Controls.Private";
+    const char* private_uri = "MyCalendar.Controls.Private";
     // @uri MyCalendar.Controls.Private
     qmlRegisterType<QQuickAbstractStyle>(private_uri, 1, 0, "AbstractStyle");
     qmlRegisterType<QQuickRangedDate>(private_uri, 1, 0, "RangedDate");

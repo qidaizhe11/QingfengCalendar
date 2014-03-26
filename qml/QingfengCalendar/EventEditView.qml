@@ -24,7 +24,9 @@ Rectangle {
     signal deleteEvent()
 
     onCancel: {
-        if (stack_view) stack_view.pop();
+        if (stack_view) {
+            stack_view.pop();
+        }
     }
 
     onDeleteEvent: {
@@ -429,7 +431,7 @@ Rectangle {
 
             Rectangle {
                 id: line
-                anchors.top: title_edit.bottom2
+                anchors.top: title_edit.bottom
                 width: parent.width
                 height: 1
                 color: "lightgrey"
