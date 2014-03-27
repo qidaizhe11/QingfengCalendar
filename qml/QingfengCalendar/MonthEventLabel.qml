@@ -94,7 +94,7 @@ Rectangle {
         onExited: parent.color = base_color;
         onPressed: parent.color = Qt.darker(base_color, 1.5);
         onClicked: {
-            var date = control.__model.dateAt(grid_index);
+            var date = month_model.dateAt(grid_index);
             if (__isValidDate(date)) {
                 //control.clicked(date);
             }

@@ -40,7 +40,7 @@ bool MyEventDetail::removeValue(int field)
     return ok;
 }
 
-QOrganizerItemDetail MyEventDetail::detail() const
+QOrganizerItemDetail MyEventDetail::toOrganizerDetail() const
 {
     return m_detail;
 }

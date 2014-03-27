@@ -46,7 +46,8 @@ SOURCES += main.cpp \
     MyPlugins/MyCollection.cpp \
     Google/GoogleManager.cpp \
     MyPlugins/MyEventDetail.cpp \
-    MyPlugins/MyWeekModel.cpp
+    MyPlugins/MyWeekModel.cpp \
+    MyPlugins/MyRecurrenceRule.cpp
 
 # Installation path
 # target.path =
@@ -97,7 +98,8 @@ HEADERS += \
     MyPlugins/MyCollection.h \
     Google/GoogleManager.h \
     MyPlugins/MyEventDetail.h \
-    MyPlugins/MyWeekModel.h
+    MyPlugins/MyWeekModel.h \
+    MyPlugins/MyRecurrenceRule.h
 
 RESOURCES += \
     resources/Calendar.qrc

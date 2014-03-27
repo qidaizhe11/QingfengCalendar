@@ -57,7 +57,7 @@ public:
   Q_INVOKABLE bool removeValue(int key);
 
   // non-QML APIs
-  QOrganizerItemDetail detail() const;
+  QOrganizerItemDetail toOrganizerDetail() const;
   void setDetail(const QOrganizerItemDetail& detail);
 
 Q_SIGNALS:

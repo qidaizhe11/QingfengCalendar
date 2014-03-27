@@ -24,17 +24,17 @@ MyEvent::MyEvent(const QOrganizerEvent &event, QObject* parent)
   m_description = event.description();
   m_location = event.location();
 
-//  foreach (MyEventDetail* detail, m_details) {
-//    delete detail;
-//  }
-//  m_details.clear();
-//  QList<QOrganizerItemDetail> details(event.details());
-//  foreach (const QOrganizerItemDetail& detail, details) {
-//    MyEventDetail* item_detail = MyEventDetailFactory::createItemDetail(
-//          static_cast<MyEventDetail::DetailType>(detail.type()));
-//    item_detail->setDetail(detail);
-//    m_details.append(item_detail);
-//  }
+  foreach (MyEventDetail* detail, m_details) {
+    delete detail;
+  }
+  m_details.clear();
+  QList<QOrganizerItemDetail> details(event.details());
+  foreach (const QOrganizerItemDetail& detail, details) {
+    MyEventDetail* item_detail = MyEventDetailFactory::createItemDetail(
+          static_cast<MyEventDetail::DetailType>(detail.type()));
+    item_detail->setDetail(detail);
+    m_details.append(item_detail);
+  }
 }
 
 MyEvent::~MyEvent()
@@ -85,6 +85,12 @@ void MyEvent::setCollectionId(const QString &collectionId)
 QOrganizerEvent MyEvent::toQOrganizerEvent() const
 {
   QOrganizerEvent event;
+
+  foreach (MyEventDetail* detail, m_details) {
+    QOrganizerItemDetail item_detail = detail->toOrganizerDetail();
+    event.saveDetail(&item_detail);
+  }
+
   event.setId(m_id);
   event.setCollectionId(m_collection_id);
   event.setStartDateTime(m_start_date_time);
@@ -100,11 +106,6 @@ QOrganizerEvent MyEvent::toQOrganizerEvent() const
   event.setDescription(m_description);
   event.setLocation(m_location);
 
-//  foreach (MyEventDetail* detail, m_details) {
-//    QOrganizerItemDetail item_detail = detail->detail();
-//    event.saveDetail(&item_detail);
-//  }
-
   return event;
 }
 
@@ -117,7 +118,7 @@ MyEventDetail* MyEvent::detail(int type)
     if (type == detail->type()) {
       MyEventDetail* event_detail =
           MyEventDetailFactory::createItemDetail(detail->type());
-      event_detail->setDetail(detail->detail());
+      event_detail->setDetail(detail->toOrganizerDetail());
       return event_detail;
     }
   }
