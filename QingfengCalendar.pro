@@ -18,18 +18,12 @@ SOURCES += main.cpp \
 #    Database/Event.cpp \
 #    Database/EventRecurrence.cpp \
 #    Database/RecurrenceProcessor.cpp \
-#    CalendarComponents/Calendar.cpp \
-#    CalendarComponents/DaysModel.cpp \
-#    CalendarPlugin/plugin.cpp \
-#    CalendarPlugin/Private/qquickrangeddate.cpp
     CalendarPlugin/Private/qquickrangeddate.cpp \
     CalendarPlugin/Private/private_plugin.cpp \
     CalendarPlugin/Private/qquickcalendarmodel.cpp \
     CalendarPlugin/Private/qquickabstractstyle.cpp \
-#    MyPlugins/myplugins_plugin.cpp
     MyPlugins/MyEventModel.cpp \
     MyPlugins/MyTestEvent.cpp \
-#    MyPlugins/myplugins_plugin.cpp
     MyPlugins/EventUtils.cpp \
     versitorganizer/qversitorganizerimporter_p.cpp \
     versitorganizer/qversitorganizerhandler.cpp \
@@ -47,7 +41,15 @@ SOURCES += main.cpp \
     MyPlugins/MyWeekModel.cpp \
     MyPlugins/MyRecurrenceRule.cpp \
     MyPlugins/MyItem.cpp \
-    MyPlugins/MyItemDetail.cpp
+    MyPlugins/MyItemDetail.cpp \
+    QDeclarativeOrganizer/qdeclarativeorganizercollection.cpp \
+    QDeclarativeOrganizer/qdeclarativeorganizeritem.cpp \
+    QDeclarativeOrganizer/qdeclarativeorganizeritemdetail.cpp \
+    QDeclarativeOrganizer/qdeclarativeorganizeritemfetchhint.cpp \
+    QDeclarativeOrganizer/qdeclarativeorganizeritemfilter.cpp \
+    QDeclarativeOrganizer/qdeclarativeorganizeritemsortorder.cpp \
+    QDeclarativeOrganizer/qdeclarativeorganizermodel.cpp \
+    QDeclarativeOrganizer/qdeclarativeorganizerrecurrencerule.cpp
 
 # Installation path
 # target.path =
@@ -63,21 +65,14 @@ HEADERS += \
 #    Database/Event.h \
 #    Database/EventRecurrence.h \
 #    Database/RecurrenceProcessor.h \
-#    CalendarComponents/Calendar.h \
-#    CalendarComponents/DayData.h \
-#    CalendarComponents/DaysModel.h \
-#    CalendarPlugin/plugin.h \
-#    CalendarPlugin/Private/qquickrangeddate_p.h
     CalendarPlugin/Private/private_plugin.h \
     CalendarPlugin/Private/qquickrangeddate_p.h \
     CalendarPlugin/Private/qquickcalendarmodel_p.h \
     CalendarPlugin/Private/qquickabstractstyle_p.h \
     CalendarPlugin/Private/qquickpadding_p.h \
     CalendarPlugin/Private/qquickcontrolsprivate_p.h \
-#    MyPlugins/myplugins_plugin.h
     MyPlugins/MyEventModel.h \
     MyPlugins/MyTestEvent.h \
-#    MyPlugins/myplugins_plugin.h
     MyPlugins/EventUtils.h \
     versitorganizer/qversitorganizerhandler.h \
     versitorganizer/qversitorganizerglobal.h \
@@ -99,7 +94,15 @@ HEADERS += \
     MyPlugins/MyWeekModel.h \
     MyPlugins/MyRecurrenceRule.h \
     MyPlugins/MyItem.h \
-    MyPlugins/MyItemDetail.h
+    MyPlugins/MyItemDetail.h \
+    QDeclarativeOrganizer/qdeclarativeorganizercollection_p.h \
+    QDeclarativeOrganizer/qdeclarativeorganizeritem_p.h \
+    QDeclarativeOrganizer/qdeclarativeorganizeritemdetail_p.h \
+    QDeclarativeOrganizer/qdeclarativeorganizeritemfetchhint_p.h \
+    QDeclarativeOrganizer/qdeclarativeorganizeritemfilter_p.h \
+    QDeclarativeOrganizer/qdeclarativeorganizeritemsortorder_p.h \
+    QDeclarativeOrganizer/qdeclarativeorganizermodel_p.h \
+    QDeclarativeOrganizer/qdeclarativeorganizerrecurrencerule_p.h
 
 RESOURCES += \
     resources/Calendar.qrc
