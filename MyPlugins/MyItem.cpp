@@ -1,4 +1,4 @@
-#include "MyEvent.h"
+#include "MyItem.h"
 #include <QDateTime>
 
 //-------------------------------------------------------------------------
@@ -24,14 +24,14 @@ MyEvent::MyEvent(const QOrganizerEvent &event, QObject* parent)
   m_description = event.description();
   m_location = event.location();
 
-  foreach (MyEventDetail* detail, m_details) {
+  foreach (MyItemDetail* detail, m_details) {
     delete detail;
   }
   m_details.clear();
   QList<QOrganizerItemDetail> details(event.details());
   foreach (const QOrganizerItemDetail& detail, details) {
-    MyEventDetail* item_detail = MyEventDetailFactory::createItemDetail(
-          static_cast<MyEventDetail::DetailType>(detail.type()));
+    MyItemDetail* item_detail = MyItemDetailFactory::createItemDetail(
+          static_cast<MyItemDetail::DetailType>(detail.type()));
     item_detail->setDetail(detail);
     m_details.append(item_detail);
   }
@@ -40,7 +40,7 @@ MyEvent::MyEvent(const QOrganizerEvent &event, QObject* parent)
 MyEvent::~MyEvent()
 {
   if (!m_details.empty()) {
-    foreach (MyEventDetail* detail, m_details) {
+    foreach (MyItemDetail* detail, m_details) {
       delete detail;
     }
     m_details.clear();
@@ -52,8 +52,8 @@ MyEvent::~MyEvent()
 
 MyItemType::ItemType MyEvent::itemType() const
 {
-  foreach (MyEventDetail* detail, m_details) {
-    if (MyEventDetail::ItemType == detail->type()) {
+  foreach (MyItemDetail* detail, m_details) {
+    if (MyItemDetail::ItemType == detail->type()) {
       return static_cast<MyItemType* >(detail)->itemType();
     }
   }
@@ -86,7 +86,7 @@ QOrganizerEvent MyEvent::toQOrganizerEvent() const
 {
   QOrganizerEvent event;
 
-  foreach (MyEventDetail* detail, m_details) {
+  foreach (MyItemDetail* detail, m_details) {
     QOrganizerItemDetail item_detail = detail->toOrganizerDetail();
     event.saveDetail(&item_detail);
   }
@@ -112,12 +112,12 @@ QOrganizerEvent MyEvent::toQOrganizerEvent() const
 //-------------------------------------------------------------------------
 // Q_INVOKABLE functions
 
-MyEventDetail* MyEvent::detail(int type)
+MyItemDetail* MyEvent::detail(int type)
 {
-  foreach (MyEventDetail* detail, m_details) {
+  foreach (MyItemDetail* detail, m_details) {
     if (type == detail->type()) {
-      MyEventDetail* event_detail =
-          MyEventDetailFactory::createItemDetail(detail->type());
+      MyItemDetail* event_detail =
+          MyItemDetailFactory::createItemDetail(detail->type());
       event_detail->setDetail(detail->toOrganizerDetail());
       return event_detail;
     }
@@ -128,10 +128,10 @@ MyEventDetail* MyEvent::detail(int type)
 QVariantList MyEvent::details(int type)
 {
   QVariantList list;
-  foreach (MyEventDetail* detail, m_details) {
+  foreach (MyItemDetail* detail, m_details) {
     if (type == detail->type()) {
-      MyEventDetail* item_detail =
-          MyEventDetailFactory::createItemDetail(detail->type());
+      MyItemDetail* item_detail =
+          MyItemDetailFactory::createItemDetail(detail->type());
       list.append(QVariant::fromValue<QObject*>(item_detail));
     }
   }

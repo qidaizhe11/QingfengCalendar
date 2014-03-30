@@ -1,5 +1,5 @@
-#ifndef MYEVENT_H
-#define MYEVENT_H
+#ifndef MYITEM_H
+#define MYITEM_H
 
 #include <QObject>
 #include <QtQml/qqml.h>
@@ -8,12 +8,57 @@
 #include <QDebug>
 #include <QtOrganizer/QOrganizerEvent>
 #include <QtOrganizer/qorganizerglobal.h>
-#include "MyEventDetail.h"
+#include "MyItemDetail.h"
 
 //QT_USE_NAMESPACE
 
 //QTORGANIZER_USE_NAMESPACE
 using namespace QtOrganizer;
+
+class MyItem : public QObject
+{
+  Q_OBJECT
+
+  Q_PROPERTY(bool modified READ modified NOTIFY modifiedChanged)
+  Q_PROPERTY(MyItemType::ItemType itemType READ itemType
+             NOTIFY valueChanged)
+  Q_PROPERTY(QString itemId READ itemId NOTIFY valueChanged)
+  Q_PROPERTY(QString collectionId READ collectionId WRITE setCollectionId
+             NOTIFY valueChanged)
+  Q_PROPERTY(QString displayLabel READ displayLabel WRITE setDisplayLabel
+             NOTIFY valueChanged)
+  Q_PROPERTY(QString description READ description WRITE setDescription
+             NOTIFY valueChanged)
+  Q_PROPERTY(QString guid READ guid WRITE setGuid NOTIFY guidChanged)
+
+public:
+  explicit MyItem(QObject* parent = 0);
+  ~MyItem();
+
+  bool modified() const;
+
+  MyItemType::ItemType itemType() const;
+  QString itemId() const;
+
+  QString collectionId() const;
+  void setCollectionId(const QString& collectionId);
+
+  QString displayLabel() const;
+  void setDisplayLabel(const QString &label);
+
+  QString description() const;
+  void setDescription(const QString &description);
+
+  QString guid() const;
+  void setGuid(const QString& guid);
+
+  Q_INVOKABLE MyItemDetail* detail(int type);
+  Q_INVOKABLE QVariantList details(int type);
+
+  Q_INVOKABLE virtual void setDetail(MyItemDetail* detail);
+  Q_INVOKABLE virtual void removeDetail(MyItemDetail* detail);
+  Q_INVOKABLE virtual void clearDetails();
+};
 
 class MyEvent : public QObject
 {
@@ -75,10 +120,10 @@ public:
 
   QOrganizerEvent toQOrganizerEvent() const;
 
-  Q_INVOKABLE MyEventDetail* detail(int type);
+  Q_INVOKABLE MyItemDetail* detail(int type);
   Q_INVOKABLE QVariantList details(int type);
-//  Q_INVOKABLE MyEventDetail* detail(MyEventDetail::ItemType type);
-//  Q_INVOKABLE MyEventDetail* details(MyEventDetail::ItemType type);
+//  Q_INVOKABLE MyItemDetail* detail(MyItemDetail::ItemType type);
+//  Q_INVOKABLE MyItemDetail* details(MyItemDetail::ItemType type);
 
 Q_SIGNALS:
   void valueChanged();
@@ -86,7 +131,7 @@ Q_SIGNALS:
   void endDateTimeChanged();
 
 private:
-  QList<MyEventDetail*> m_details;
+  QList<MyItemDetail*> m_details;
 
   QOrganizerItemId m_id;
   QOrganizerCollectionId m_collection_id;
@@ -100,4 +145,4 @@ private:
 
 Q_DECLARE_METATYPE(MyEvent*)
 
-#endif // MYEVENT_H
+#endif // MYITEM_H

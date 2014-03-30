@@ -1,5 +1,5 @@
-#ifndef MYEVENTDETAIL_H
-#define MYEVENTDETAIL_H
+#ifndef MyItemDetail_H
+#define MyItemDetail_H
 
 #include <QObject>
 #include <QtQml/qqml.h>
@@ -11,7 +11,7 @@ using namespace QtOrganizer;
 
 QT_BEGIN_NAMESPACE
 
-class MyEventDetail : public QObject
+class MyItemDetail : public QObject
 {
   Q_OBJECT
 
@@ -47,8 +47,8 @@ public:
 ////    TodoProgress = QOrganizerItemDetail::TypeTodoProgress
   };
 
-  explicit MyEventDetail(QObject *parent = 0);
-  ~MyEventDetail();
+  explicit MyItemDetail(QObject *parent = 0);
+  ~MyItemDetail();
 
   virtual DetailType type() const;
 
@@ -67,11 +67,11 @@ protected:
   QOrganizerItemDetail m_detail;
 
 private:
-  Q_DISABLE_COPY(MyEventDetail)
+  Q_DISABLE_COPY(MyItemDetail)
 
 };
 
-class MyItemType : public MyEventDetail
+class MyItemType : public MyItemDetail
 {
     Q_OBJECT
 
@@ -107,7 +107,7 @@ Q_SIGNALS:
     void valueChanged();
 };
 
-class MyEventParent : public MyEventDetail
+class MyEventParent : public MyItemDetail
 {
   Q_OBJECT
 
@@ -140,7 +140,7 @@ Q_SIGNALS:
   void valueChanged();
 };
 
-//class MyEventPriority : public MyEventDetail
+//class MyEventPriority : public MyItemDetail
 //{
 //    Q_OBJECT
 
@@ -178,7 +178,7 @@ Q_SIGNALS:
 //    void valueChanged();
 //};
 
-//class MyEventRecurrence : public MyEventDetail
+//class MyEventRecurrence : public MyItemDetail
 //{
 //    Q_OBJECT
 
@@ -233,7 +233,7 @@ Q_SIGNALS:
 //    QList<MyRecurrenceRule*>   m_exceptionRules;
 //};
 
-//class MyEventTimestamp : public MyEventDetail
+//class MyEventTimestamp : public MyItemDetail
 //{
 //    Q_OBJECT
 
@@ -262,7 +262,7 @@ Q_SIGNALS:
 //    void valueChanged();
 //};
 
-//class MyEventReminder : public MyEventDetail
+//class MyEventReminder : public MyItemDetail
 //{
 //    Q_OBJECT
 
@@ -406,7 +406,7 @@ Q_SIGNALS:
 //    void valueChanged();
 //};
 
-class MyEventAttendee : public MyEventDetail
+class MyEventAttendee : public MyItemDetail
 {
     Q_OBJECT
 
@@ -477,7 +477,7 @@ Q_SIGNALS:
 };
 
 
-//class MyEventRsvp : public MyEventDetail
+//class MyEventRsvp : public MyItemDetail
 //{
 //    Q_OBJECT
 //    Q_PROPERTY(MyEventAttendee::ParticipationStatus participationStatus
@@ -544,13 +544,13 @@ Q_SIGNALS:
 //    void valueChanged();
 //};
 
-class MyEventDetailFactory
+class MyItemDetailFactory
 {
 public:
-    static MyEventDetail *createItemDetail(MyEventDetail::DetailType type);
+    static MyItemDetail *createItemDetail(MyItemDetail::DetailType type);
 };
 
-QML_DECLARE_TYPE(MyEventDetail)
+QML_DECLARE_TYPE(MyItemDetail)
 //QML_DECLARE_TYPE(MyEventTime)
 //QML_DECLARE_TYPE(MyEventComment)
 //QML_DECLARE_TYPE(MyEventDescription)
@@ -580,4 +580,4 @@ QT_END_NAMESPACE
 
 //class MyEventParent
 
-#endif // MYEVENTDETAIL_H
+#endif // MyItemDetail_H

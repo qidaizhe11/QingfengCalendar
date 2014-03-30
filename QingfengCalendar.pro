@@ -26,7 +26,6 @@ SOURCES += main.cpp \
     CalendarPlugin/Private/private_plugin.cpp \
     CalendarPlugin/Private/qquickcalendarmodel.cpp \
     CalendarPlugin/Private/qquickabstractstyle.cpp \
-    MyPlugins/MyEvent.cpp \
 #    MyPlugins/myplugins_plugin.cpp
     MyPlugins/MyEventModel.cpp \
     MyPlugins/MyTestEvent.cpp \
@@ -45,9 +44,10 @@ SOURCES += main.cpp \
     Google/GoogleSettings.cpp \
     MyPlugins/MyCollection.cpp \
     Google/GoogleManager.cpp \
-    MyPlugins/MyEventDetail.cpp \
     MyPlugins/MyWeekModel.cpp \
-    MyPlugins/MyRecurrenceRule.cpp
+    MyPlugins/MyRecurrenceRule.cpp \
+    MyPlugins/MyItem.cpp \
+    MyPlugins/MyItemDetail.cpp
 
 # Installation path
 # target.path =
@@ -74,7 +74,6 @@ HEADERS += \
     CalendarPlugin/Private/qquickabstractstyle_p.h \
     CalendarPlugin/Private/qquickpadding_p.h \
     CalendarPlugin/Private/qquickcontrolsprivate_p.h \
-    MyPlugins/MyEvent.h \
 #    MyPlugins/myplugins_plugin.h
     MyPlugins/MyEventModel.h \
     MyPlugins/MyTestEvent.h \
@@ -97,9 +96,10 @@ HEADERS += \
     Google/GoogleSettings.h \
     MyPlugins/MyCollection.h \
     Google/GoogleManager.h \
-    MyPlugins/MyEventDetail.h \
     MyPlugins/MyWeekModel.h \
-    MyPlugins/MyRecurrenceRule.h
+    MyPlugins/MyRecurrenceRule.h \
+    MyPlugins/MyItem.h \
+    MyPlugins/MyItemDetail.h
 
 RESOURCES += \
     resources/Calendar.qrc

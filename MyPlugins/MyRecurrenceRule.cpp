@@ -9,7 +9,7 @@ MyRecurrenceRule::MyRecurrenceRule(QObject *parent) :
 void MyRecurrenceRule::setFrequency(Frequency freq)
 {
   if (freq != frequency()) {
-    m_rule.setFrequency(static_cast<MyRecurrenceRule::Frequency>(freq));
+    m_rule.setFrequency(static_cast<QOrganizerRecurrenceRule::Frequency>(freq));
     emit recurrenceRuleChanged();
   }
 }

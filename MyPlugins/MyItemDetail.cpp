@@ -1,30 +1,30 @@
-#include "MyEventDetail.h"
+#include "MyItemDetail.h"
 #include <QtQml/QQmlInfo>
 #include <QtOrganizer/QOrganizerItemId>
 
 //-------------------------------------------------------------------------
-// MyEventDetail
+// MyItemDetail
 
-MyEventDetail::MyEventDetail(QObject *parent) :
+MyItemDetail::MyItemDetail(QObject *parent) :
   QObject(parent)
 {
 }
 
-MyEventDetail::~MyEventDetail()
+MyItemDetail::~MyItemDetail()
 {
 }
 
-MyEventDetail::DetailType MyEventDetail::type() const
+MyItemDetail::DetailType MyItemDetail::type() const
 {
     return Undefined;
 }
 
-QVariant MyEventDetail::value(int field) const
+QVariant MyItemDetail::value(int field) const
 {
     return m_detail.value(field);
 }
 
-bool MyEventDetail::setValue(int field, const QVariant &value)
+bool MyItemDetail::setValue(int field, const QVariant &value)
 {
     bool ok = m_detail.setValue(field, value);
     if (ok)
@@ -32,7 +32,7 @@ bool MyEventDetail::setValue(int field, const QVariant &value)
     return ok;
 }
 
-bool MyEventDetail::removeValue(int field)
+bool MyItemDetail::removeValue(int field)
 {
     bool ok = m_detail.removeValue(field);
     if (ok)
@@ -40,12 +40,12 @@ bool MyEventDetail::removeValue(int field)
     return ok;
 }
 
-QOrganizerItemDetail MyEventDetail::toOrganizerDetail() const
+QOrganizerItemDetail MyItemDetail::toOrganizerDetail() const
 {
     return m_detail;
 }
 
-void MyEventDetail::setDetail(const QOrganizerItemDetail &detail)
+void MyItemDetail::setDetail(const QOrganizerItemDetail &detail)
 {
     m_detail = detail;
     emit detailChanged();
@@ -55,15 +55,15 @@ void MyEventDetail::setDetail(const QOrganizerItemDetail &detail)
 // MyItemType
 
 MyItemType::MyItemType(QObject *parent)
-    : MyEventDetail(parent)
+    : MyItemDetail(parent)
 {
     connect(this, SIGNAL(valueChanged()), SIGNAL(detailChanged()));
     setDetail(QOrganizerItemType());
 }
 
-MyEventDetail::DetailType MyItemType::type() const
+MyItemDetail::DetailType MyItemType::type() const
 {
-    return MyEventDetail::ItemType;
+    return MyItemDetail::ItemType;
 }
 
 void MyItemType::setItemType(ItemType newType)
@@ -85,15 +85,15 @@ MyItemType::ItemType MyItemType::itemType() const
 // MyEventParent
 
 MyEventParent::MyEventParent(QObject *parent)
-    : MyEventDetail(parent)
+    : MyItemDetail(parent)
 {
     connect(this, SIGNAL(valueChanged()), SIGNAL(detailChanged()));
     setDetail(QOrganizerItemParent());
 }
 
-MyEventDetail::DetailType MyEventParent::type() const
+MyItemDetail::DetailType MyEventParent::type() const
 {
-    return MyEventDetail::Parent;
+    return MyItemDetail::Parent;
 }
 
 QVariant MyEventParent::value(int field) const
@@ -206,15 +206,15 @@ QString MyEventParent::parentId() const
 // MyEventAttendee
 
 MyEventAttendee::MyEventAttendee(QObject *parent)
-    : MyEventDetail(parent)
+    : MyItemDetail(parent)
 {
     connect(this, SIGNAL(valueChanged()), SIGNAL(detailChanged()));
     setDetail(QOrganizerEventAttendee());
 }
 
-MyEventDetail::DetailType MyEventAttendee::type() const
+MyItemDetail::DetailType MyEventAttendee::type() const
 {
-    return MyEventDetail::EventAttendee;
+    return MyItemDetail::EventAttendee;
 }
 
 /*!
@@ -338,61 +338,61 @@ QString MyEventAttendee::attendeeId() const
 
 
 //-------------------------------------------------------------------------
-// MyEventDetailFactory
+// MyItemDetailFactory
 
-MyEventDetail *MyEventDetailFactory::createItemDetail(
-    MyEventDetail::DetailType type)
+MyItemDetail *MyItemDetailFactory::createItemDetail(
+    MyItemDetail::DetailType type)
 {
-    MyEventDetail *itemDetail;
-//    if (type == MyEventDetail::EventTime)
+    MyItemDetail *itemDetail;
+//    if (type == MyItemDetail::EventTime)
 //        itemDetail = new QDeclarativeOrganizerEventTime;
-//    else if (type == MyEventDetail::AudibleReminder)
+//    else if (type == MyItemDetail::AudibleReminder)
 //        itemDetail = new MyEventAudibleReminder;
-//    else if (type == MyEventDetail::Comment)
+//    else if (type == MyItemDetail::Comment)
 //        itemDetail = new MyEventComment;
-//    else if (type == MyEventDetail::Description)
+//    else if (type == MyItemDetail::Description)
 //        itemDetail = new MyEventDescription;
-//    else if (type == MyEventDetail::DisplayLabel)
+//    else if (type == MyItemDetail::DisplayLabel)
 //        itemDetail = new MyEventDisplayLabel;
-//    else if (type == MyEventDetail::EmailReminder)
+//    else if (type == MyItemDetail::EmailReminder)
 //        itemDetail = new MyEventEmailReminder;
-//    else if (type == MyEventDetail::Guid)
+//    else if (type == MyItemDetail::Guid)
 //        itemDetail = new MyEventGuid;
-//    else if (type == MyEventDetail::Location)
+//    else if (type == MyItemDetail::Location)
 //        itemDetail = new MyEventLocation;
-    if (type == MyEventDetail::Parent)
+    if (type == MyItemDetail::Parent)
         itemDetail = new MyEventParent;
-//    else if (type == MyEventDetail::Priority)
+//    else if (type == MyItemDetail::Priority)
 //        itemDetail = new MyEventPriority;
-//    else if (type == MyEventDetail::Recurrence)
+//    else if (type == MyItemDetail::Recurrence)
 //        itemDetail = new MyEventRecurrence;
-//    else if (type == MyEventDetail::Reminder)
+//    else if (type == MyItemDetail::Reminder)
 //        itemDetail = new MyEventReminder;
-//    else if (type == MyEventDetail::Tag)
+//    else if (type == MyItemDetail::Tag)
 //        itemDetail = new MyEventTag;
-//    else if (type == MyEventDetail::Timestamp)
+//    else if (type == MyItemDetail::Timestamp)
 //        itemDetail = new MyEventTimestamp;
-    else if (type == MyEventDetail::ItemType)
+    else if (type == MyItemDetail::ItemType)
         itemDetail = new MyItemType;
-//    else if (type == MyEventDetail::VisualReminder)
+//    else if (type == MyItemDetail::VisualReminder)
 //        itemDetail = new MyEventVisualReminder;
-//    else if (type == MyEventDetail::JournalTime)
+//    else if (type == MyItemDetail::JournalTime)
 //        itemDetail = new QDeclarativeOrganizerJournalTime;
-//    else if (type == MyEventDetail::TodoProgress)
+//    else if (type == MyItemDetail::TodoProgress)
 //        itemDetail = new QDeclarativeOrganizerTodoProgress;
-//    else if (type == MyEventDetail::TodoTime)
+//    else if (type == MyItemDetail::TodoTime)
 //        itemDetail = new QDeclarativeOrganizerTodoTime;
-//    else if (type == MyEventDetail::ExtendedDetail)
+//    else if (type == MyItemDetail::ExtendedDetail)
 //        itemDetail = new MyEventExtendedDetail;
-    else if (type == MyEventDetail::EventAttendee)
+    else if (type == MyItemDetail::EventAttendee)
         itemDetail = new MyEventAttendee;
-//    else if (type == MyEventDetail::EventRsvp)
+//    else if (type == MyItemDetail::EventRsvp)
 //        itemDetail = new QDeclarativeOrganizerEventRsvp;
-//    else if (type == MyEventDetail::Classification)
+//    else if (type == MyItemDetail::Classification)
 //        itemDetail = new MyEventClassification;
-//    else if (type == MyEventDetail::Version)
+//    else if (type == MyItemDetail::Version)
 //        itemDetail = new MyEventVersion;
     else
-        itemDetail = new MyEventDetail;
+        itemDetail = new MyItemDetail;
     return itemDetail;
 }
