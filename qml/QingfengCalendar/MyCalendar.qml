@@ -74,12 +74,16 @@ Control {
 //    }
 
     property OrganizerModel event_model: OrganizerModel {
-        startPeriod: new Date()
-        endPeriod: new Date()
+        startPeriod: '2005-01-01'
+        endPeriod: '2015-01-01'
+
+        autoUpdate: true
+
+        manager: "memory"
 
         onModelChanged: {
-            console.log("OrganizerModel, onModelChanged.");
-            my_calendar.refreshEvents();
+//            console.log("OrganizerModel, onModelChanged.");
+//            my_calendar.refreshEvents();
         }
     }
 

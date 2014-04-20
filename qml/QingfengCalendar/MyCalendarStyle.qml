@@ -175,6 +175,8 @@ Style {
                     Component.onCompleted: control.refreshEvents()
                 }
             }
+
+            currentIndex: 1
         }
 
         // A light event edit view, only provides most frequent used properties.

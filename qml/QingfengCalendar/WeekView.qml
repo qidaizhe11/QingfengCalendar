@@ -541,15 +541,20 @@ Item {
             }
         }
 
+        property var events: []
+
         function updateEventModel() {
             console.log("WeekView::updateEventModel.");
             console.log("startDateTime:", my_week_model_in_delegate.firstVisibleDate);
             console.log("EndDateTime:", my_week_model_in_delegate.lastVisibleDate);
 
-            control.event_model.startPeriod = my_week_model_in_delegate.firstVisibleDate;
-            control.event_model.endPeriod = my_week_model_in_delegate.lastVisibleDate;
-//            control.event_model.updateCollections();
-//            control.event_model.updateEvents();
+            for (var i = 0; i < events.length; ++i) {
+                delete events[i];
+            }
+
+            events = control.event_model.itemsByTimePeriod(
+                        my_week_model_in_delegate.firstVisibleDate,
+                        my_week_model_in_delegate.lastVisibleDate);
         }
 
         function createEventLabels() {
@@ -564,7 +569,8 @@ Item {
             // stores all day or mutli days events.
             var events_cross_day = [];
 
-            if (control.event_model.events.length === 0) {
+            console.log("events.length:", events.length);
+            if (events.length === 0) {
                 return;
             }
 
@@ -576,8 +582,8 @@ Item {
 
             // divide all day events from in day events, in week view,
             // they are shown in different place.
-            for (i = 0; i < control.event_model.events.length; ++i) {
-                var event = control.event_model.events[i];
+            for (i = 0; i < events.length; ++i) {
+                var event = events[i];
 
                 var last_days = event_utils.lastDays(
                             event.startDateTime, event.endDateTime);

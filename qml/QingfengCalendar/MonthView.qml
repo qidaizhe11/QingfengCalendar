@@ -514,6 +514,10 @@ Item {
         onRefreshEvents: {
             if (month_view.visible) {
                 console.log("MonthView, onRefreshEvents.")
+
+                console.log("OnRefreshEvents, label_list_model count: ",
+                            label_list_model.count);
+
                 panelItem.clearLabelListModel();
                 updateEventModel();
                 createEventLabels();
@@ -521,22 +525,20 @@ Item {
         } // onRefreshEvents
     } // connections
 
+    property var events: []
+
     function updateEventModel() {
-        control.event_model.startPeriod = month_model.firstVisibleDate;
-        control.event_model.endPeriod = month_model.lastVisibleDate;
-//        control.event_model.updateCollections();
-//        control.event_model.updateEvents();
+        for (var i = 0; i < events.length; ++i) {
+            delete events[i];
+        }
+
+        events = control.event_model.itemsByTimePeriod(month_model.firstVisibleDate,
+                                                      month_model.lastVisibleDate);
     }
 
     function createEventLabels() {
         if (!month_view.visible)
             return;
-
-        console.log("OnRefreshEvents, label_list_model count: ",
-                    label_list_model.count);
-
-        panelItem.clearLabelListModel();
-        updateEventModel();
 
         var col = month_view.columns;
 
@@ -553,9 +555,10 @@ Item {
 
         var component = Qt.createComponent("MonthEventLabel.qml");
 
-        for (i = 0; i < control.event_model.events.length; ++i) {
+        console.log("events.length:", events.length);
+        for (i = 0; i < events.length; ++i) {
             // represent the event that pass from C++
-            var event = control.event_model.events[i];
+            var event = events[i];
 
             var index_of_cell = event_utils.daysTo(
                         month_model.firstVisibleDate, event.startDateTime);
@@ -615,6 +618,10 @@ Item {
                 index_of_cell += clipped_days;
                 last_days -= clipped_days;
             }
+
+            console.log("Create Event:", event.displayLabel,
+                        event.startDateTime.toLocaleString(),
+                        event.endDateTime.toLocaleString());
 
             properties = {"eventItem": event, "show_order_in_a_day": show_order_in_a_day,
                 "grid_index": index_of_cell, "last_days": last_days};
