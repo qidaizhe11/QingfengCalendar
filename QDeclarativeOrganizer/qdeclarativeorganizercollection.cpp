@@ -154,6 +154,31 @@ void QDeclarativeOrganizerCollection::setImage(const QUrl &url)
     setMetaData(QOrganizerCollection::KeyImage, url);
 }
 
+//-------------------------------------------------------------------------
+// my extended property, used for online sync.
+
+QString QDeclarativeOrganizerCollection::extendedId() const
+{
+  return extendedMetaData("ExtendedId").toString();
+}
+
+void QDeclarativeOrganizerCollection::setExtendedId(const QString &extended_id)
+{
+  setExtendedMetaData("ExtendedId", extended_id);
+}
+
+QString QDeclarativeOrganizerCollection::storage() const
+{
+  return extendedMetaData("Storage").toString();
+}
+
+void QDeclarativeOrganizerCollection::setStorage(const QString &storage)
+{
+  setExtendedMetaData("Storage", storage);
+}
+
+//-------------------------------------------------------------------------
+
 /*!
     \qmlmethod Collection::setMetaData(key, value)
 

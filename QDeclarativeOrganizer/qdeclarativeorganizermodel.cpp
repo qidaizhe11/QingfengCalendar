@@ -581,6 +581,19 @@ void QDeclarativeOrganizerModel::setManager(const QString& managerName)
     connect(d->m_manager, SIGNAL(collectionsChanged(QList<QOrganizerCollectionId>)), this, SLOT(fetchCollections()));
     connect(d->m_manager, SIGNAL(collectionsRemoved(QList<QOrganizerCollectionId>)), this, SLOT(fetchCollections()));
 
+    QOrganizerCollection collection;
+    collection.setId(d->m_manager->defaultCollection().id());
+    collection.setMetaData(QOrganizerCollection::KeyName, "MyCalendar");
+    collection.setMetaData(QOrganizerCollection::KeyColor,
+                           QColor("lightblue").darker(130));
+    //  Qt.darker("lightblue", 1.3);
+    d->m_manager->saveCollection(&collection);
+
+    QDeclarativeOrganizerCollection* my_collection = new QDeclarativeOrganizerCollection();
+    my_collection->setCollection(collection);
+    d->m_collections.append(my_collection);
+//    d->m_default_collection_id = my_collection->id();
+
     const QOrganizerManager::Error managerError = d->m_manager->error();
     if (QOrganizerManager::NoError != managerError && d->m_error != managerError) {
         d->m_error = managerError;
@@ -1762,6 +1775,32 @@ QQmlListProperty<QDeclarativeOrganizerCollection> QDeclarativeOrganizerModel::co
 {
     return QQmlListProperty<QDeclarativeOrganizerCollection>(this, 0, collection_count, collection_at);
 }
+
+//-------------------------------------------------------------------------
+
+QVariantList QDeclarativeOrganizerModel::events()
+{
+  Q_D(QDeclarativeOrganizerModel);
+  QVariantList list;
+  foreach (QDeclarativeOrganizerItem *item, d->m_items) {
+//    QQmlEngine::setObjectOwnership(event, QQmlEngine::JavaScriptOwnership);
+    list.append(QVariant::fromValue<QObject*>(item));
+  }
+  return list;
+}
+
+QVariantList QDeclarativeOrganizerModel::calendars()
+{
+  Q_D(QDeclarativeOrganizerModel);
+  QVariantList list;
+  foreach (QDeclarativeOrganizerCollection* collection, d->m_collections) {
+//    QQmlEngine::setObjectOwnership(collection, QQmlEngine::JavaScriptOwnership);
+    list.append(QVariant::fromValue<QObject*>(collection));
+  }
+  return list;
+}
+
+//-------------------------------------------------------------------------
 
 int  QDeclarativeOrganizerModel::item_count(QQmlListProperty<QDeclarativeOrganizerItem> *p)
 {

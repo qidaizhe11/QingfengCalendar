@@ -546,10 +546,10 @@ Item {
             console.log("startDateTime:", my_week_model_in_delegate.firstVisibleDate);
             console.log("EndDateTime:", my_week_model_in_delegate.lastVisibleDate);
 
-            control.event_model.startDate = my_week_model_in_delegate.firstVisibleDate;
-            control.event_model.endDate = my_week_model_in_delegate.lastVisibleDate;
-            control.event_model.updateCollections();
-            control.event_model.updateEvents();
+            control.event_model.startPeriod = my_week_model_in_delegate.firstVisibleDate;
+            control.event_model.endPeriod = my_week_model_in_delegate.lastVisibleDate;
+//            control.event_model.updateCollections();
+//            control.event_model.updateEvents();
         }
 
         function createEventLabels() {
@@ -569,7 +569,7 @@ Item {
             }
 
             // date flag
-            var current_date = control.event_model.startDate;
+            var current_date = control.event_model.startPeriod;
             var date_index = 0;
             // array, stores all the in day events of this day.
             var events_in_a_day = [];

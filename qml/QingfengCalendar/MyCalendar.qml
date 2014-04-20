@@ -4,7 +4,8 @@ import QtQuick.Controls.Styles 1.0
 import MyCalendar.Controls.Private 1.0
 import MyCalendar2.Events 1.0
 import MyCalendar.Weeks 1.0
-import QtOrganizer 5.0
+//import QtOrganizer 5.0
+import MyCalendar.QtOrganizer 5.0
 import "Private"
 import "Private/CalendarUtils.js" as CalendarUtils
 
@@ -62,12 +63,22 @@ Control {
     // Provides list model of MyEvents, MyCollections that ranged in the given
     // start date and end date, the core center between c++ and qml.
     // The items could be accessed by direct list.
-    property MyEventModel event_model: MyEventModel {
-        startDate: new Date()
-        endDate: new Date()
+//    property MyEventModel event_model: MyEventModel {
+//        startDate: new Date()
+//        endDate: new Date()
 
-        onEventsChanged: {
-            console.log("MyEventModel, onEventsChanged.");
+//        onEventsChanged: {
+//            console.log("MyEventModel, onEventsChanged.");
+//            my_calendar.refreshEvents();
+//        }
+//    }
+
+    property OrganizerModel event_model: OrganizerModel {
+        startPeriod: new Date()
+        endPeriod: new Date()
+
+        onModelChanged: {
+            console.log("OrganizerModel, onModelChanged.");
             my_calendar.refreshEvents();
         }
     }

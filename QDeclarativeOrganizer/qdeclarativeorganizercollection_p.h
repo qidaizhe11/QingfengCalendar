@@ -66,6 +66,11 @@ class QDeclarativeOrganizerCollection : public QObject
     Q_PROPERTY(QColor secondaryColor READ secondaryColor WRITE setSecondaryColor NOTIFY valueChanged)
     Q_PROPERTY(QUrl image READ image WRITE setImage NOTIFY valueChanged)
 
+  Q_PROPERTY(QString extendedId READ extendedId WRITE setExtendedId
+             NOTIFY valueChanged)
+  Q_PROPERTY(QString storage READ storage WRITE setStorage
+             NOTIFY valueChanged)
+
 public:
     enum MetaDataKey {
         KeyName = QOrganizerCollection::KeyName,
@@ -95,6 +100,12 @@ public:
 
     QUrl image() const;
     void setImage(const QUrl &url);
+
+    QString extendedId() const;
+    void setExtendedId(const QString& extended_id);
+
+    QString storage() const;
+    void setStorage(const QString& storage);
 
     Q_INVOKABLE void setMetaData(QOrganizerCollection::MetaDataKey key, const QVariant &value);
     Q_INVOKABLE QVariant metaData(QOrganizerCollection::MetaDataKey key) const;

@@ -522,10 +522,10 @@ Item {
     } // connections
 
     function updateEventModel() {
-        control.event_model.startDate = month_model.firstVisibleDate;
-        control.event_model.endDate = month_model.lastVisibleDate;
-        control.event_model.updateCollections();
-        control.event_model.updateEvents();
+        control.event_model.startPeriod = month_model.firstVisibleDate;
+        control.event_model.endPeriod = month_model.lastVisibleDate;
+//        control.event_model.updateCollections();
+//        control.event_model.updateEvents();
     }
 
     function createEventLabels() {

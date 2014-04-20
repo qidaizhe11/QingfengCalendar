@@ -79,6 +79,10 @@ class QDeclarativeOrganizerModel : public QAbstractListModel, public QQmlParserS
     Q_PROPERTY(QQmlListProperty<QDeclarativeOrganizerItemSortOrder> sortOrders READ sortOrders NOTIFY sortOrdersChanged)
     Q_PROPERTY(QQmlListProperty<QDeclarativeOrganizerItem> items READ items NOTIFY modelChanged)
     Q_PROPERTY(QQmlListProperty<QDeclarativeOrganizerCollection> collections READ collections NOTIFY collectionsChanged)
+
+  Q_PROPERTY(QVariantList events READ events NOTIFY modelChanged)
+  Q_PROPERTY(QVariant calendars READ calendars NOTIFY collectionsChanged)
+
     Q_PROPERTY(QString error READ error NOTIFY errorChanged)
     Q_PROPERTY(int itemCount READ itemCount NOTIFY modelChanged)
     Q_ENUMS(ExportError)
@@ -139,6 +143,9 @@ public:
     QQmlListProperty<QDeclarativeOrganizerItem> items() ;
     QQmlListProperty<QDeclarativeOrganizerItemSortOrder> sortOrders() ;
     QQmlListProperty<QDeclarativeOrganizerCollection> collections();
+
+    QVariantList events();
+    QVariantList calendars();
 
     Q_INVOKABLE void removeItem(const QString& id);
     Q_INVOKABLE void removeItem(QDeclarativeOrganizerItem *item);

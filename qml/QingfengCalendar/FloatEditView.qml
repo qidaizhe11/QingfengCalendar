@@ -259,7 +259,7 @@ Item {
 
                     onClicked: {
                         event_item.displayLabel = edit_title_enter.text;
-                        control.event_model.saveEvent(event_item);
+                        control.event_model.saveItem(event_item);
                         float_edit.hide();
                         control.refreshEvents();
                     }
@@ -324,7 +324,7 @@ Item {
         }
 
         function deleteEvent() {
-            control.event_model.deleteEvent(event_item);
+            control.event_model.removeItem(event_item);
             float_edit.hide();
             control.refreshEvents();
         }
@@ -437,7 +437,7 @@ Item {
                 dt_end.setTime(dt_start.getTime() + 24*60*60*1000);
 
                 var new_event = Qt.createQmlObject(
-                            "import QtQuick 2.1; import MyCalendar2.Events 1.0; MyEvent {}",
+                            "import MyCalendar.QtOrganizer 5.0; Event {}",
                             float_edit);
 
                 new_event.startDateTime = dt_start;
@@ -449,7 +449,7 @@ Item {
                 console.log("End date time: ", new_event.endDateTime);
                 console.log("Display Label: " + new_event.displayLabel);
                 console.log("All day: " + new_event.allDay);
-                control.event_model.saveEvent(new_event);
+                control.event_model.saveItem(new_event);
 
                 float_edit.hide();
                 control.refreshEvents();

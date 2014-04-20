@@ -62,7 +62,7 @@ Window {
             visible = false;
             google_settings.accessToken = google_oauth.access_token;
 
-            calendar.event_model.initGoogleSync();
+//            calendar.event_model.initGoogleSync();
         }
     }
 
@@ -72,6 +72,7 @@ Window {
 
     Component.onCompleted: {
         calendar.refreshEvents();
+        calendar.event_model.importItems("file:///home/daizhe/qidaizhe11@gmail.com-2.ics");
 
         if (google_settings.refreshToken === "") {
             google_oauth.visible = true;

@@ -30,7 +30,7 @@ Rectangle {
     }
 
     onDeleteEvent: {
-        calendar.event_model.deleteEvent(event_item);
+        calendar.event_model.removeItem(event_item);
         calendar.refreshEvents();
         state = "add";
         if (stack_view) stack_view.pop();
@@ -91,8 +91,8 @@ Rectangle {
 //                    collection.collectionId);
 //        var summary = calendar.event_model.defaultCollection().name;
 
-        for( var i = 0; i < calendar.event_model.collections.length; ++i) {
-            var temp_collection = calendar.event_model.collections[i];
+        for( var i = 0; i < calendar.event_model.calendars.length; ++i) {
+            var temp_collection = calendar.event_model.calendars[i];
             if (event_item &&
                     temp_collection.collectionId === event_item.collectionId) {
                 collection = temp_collection;
@@ -599,7 +599,7 @@ Rectangle {
 
     onSaveEvent: {
         var new_event = Qt.createQmlObject(
-                    "import QtQuick 2.1; import MyCalendar2.Events 1.0; MyEvent {}",
+                    "import MyCalendar.QtOrganizer 5.0; Event {}",
                     event_edit_view);
         new_event.startDateTime = selected_start_time;
         new_event.allDay = allday_checkbox.checked;
@@ -607,7 +607,7 @@ Rectangle {
         new_event.displayLabel = title_edit.text;
         new_event.description = description_edit.text;
         new_event.location = location_label.text;
-        calendar.event_model.saveEvent(new_event);
+        calendar.event_model.saveItem(new_event);
         calendar.refreshEvents();
         if (stack_view) stack_view.pop();
     }

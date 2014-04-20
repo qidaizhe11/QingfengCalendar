@@ -13,6 +13,9 @@ QTORGANIZER_USE_NAMESPACE
 class MyEvent;
 class MyCollection;
 
+class QDeclarativeOrganizerEvent;
+class QDeclarativeOrganizerCollection;
+
 class GoogleManager : public QObject
 {
   Q_OBJECT
@@ -31,8 +34,8 @@ public:
 //  void newCalendar(const QString& cal_id);
 //  void createEvent(const QString& access_token,)
 
-  void parseEvent(QVariant event_var, MyEvent* out_event);
-  void parseCalendar(QVariant calendar_var, MyCollection* out_collection);
+  static void parseEvent(QVariant event_var, QDeclarativeOrganizerEvent* out_event);
+  static void parseCalendar(QVariant calendar_var, QDeclarativeOrganizerCollection* out_collection);
 
 signals:
   void errorOccured(const QString& error);

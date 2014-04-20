@@ -4,8 +4,10 @@
 #include <QJsonDocument>
 #include <QOrganizerManager>
 #include "GoogleSettings.h"
-#include "MyPlugins/MyEvent.h"
-#include "MyPlugins/MyCollection.h"
+//#include "MyPlugins/MyEvent.h"
+//#include "MyPlugins/MyCollection.h"
+#include "QDeclarativeOrganizer/qdeclarativeorganizeritem_p.h"
+#include "QDeclarativeOrganizer/qdeclarativeorganizercollection_p.h"
 
 //-------------------------------------------------------------------------
 
@@ -171,7 +173,7 @@ void GoogleManager::getEventsOfCalendar(const QString &cal_id)
 //
 // parseEvent
 //
-void GoogleManager::parseEvent(QVariant event_var, MyEvent *out_event)
+void GoogleManager::parseEvent(QVariant event_var, QDeclarativeOrganizerEvent *out_event)
 {
 //  qDebug() << Q_FUNC_INFO;
   QVariantMap event = event_var.toMap();
@@ -223,7 +225,7 @@ void GoogleManager::parseEvent(QVariant event_var, MyEvent *out_event)
 // parseCalendar
 //
 void GoogleManager::parseCalendar(QVariant calendar_var,
-                                  MyCollection *out_collection)
+                                  QDeclarativeOrganizerCollection *out_collection)
 {
   QVariantMap calendar = calendar_var.toMap();
 
