@@ -64,6 +64,8 @@ QTVERSIT_USE_NAMESPACE
 
 QT_BEGIN_NAMESPACE
 
+class GoogleManager;
+
 class QDeclarativeOrganizerModelPrivate;
 class QDeclarativeOrganizerModel : public QAbstractListModel, public QQmlParserStatus
 {
@@ -197,6 +199,8 @@ signals:
     void exportCompleted(ExportError error, QUrl url);
     void importCompleted(ImportError error, QUrl url);
 
+    void initGoogleSync();
+
 public slots:
     void update();
     void updateItems();
@@ -226,6 +230,8 @@ private slots:
     void startImport(QVersitReader::State state);
     void itemsExported(QVersitWriter::State state);
 
+    void saveGoogleCalendars(QVariantList calendars);
+    void saveGoogleEvents(const QString& cal_id, QVariantList events);
 
 private:
     void removeItemsFromModel(const QList<QString>& ids);

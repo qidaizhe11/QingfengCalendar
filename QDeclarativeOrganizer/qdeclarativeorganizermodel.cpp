@@ -56,6 +56,8 @@
 
 #include "qdeclarativeorganizercollection_p.h"
 
+#include "Google/GoogleManager.h"
+
 #include <QDebug>
 
 QTORGANIZER_USE_NAMESPACE
@@ -106,7 +108,8 @@ public:
           m_updatePendingFlag(QDeclarativeOrganizerModelPrivate::NonePending),
           m_componentCompleted(false),
           m_initialUpdate(false),
-          m_lastRequestId(0)
+          m_lastRequestId(0),
+          m_google_manager(0)
     {
     }
     ~QDeclarativeOrganizerModelPrivate()
@@ -117,6 +120,8 @@ public:
             delete m_filter;
         delete m_reader;
         delete m_writer;
+
+        delete m_google_manager;
     }
 
     QList<QDeclarativeOrganizerItem*> m_items;
@@ -153,6 +158,8 @@ public:
     QHash<QOrganizerAbstractRequest *, int> m_requestIdHash;
     QUrl m_lastExportUrl;
     QUrl m_lastImportUrl;
+
+    GoogleManager* m_google_manager;
 };
 
 /*!
@@ -206,11 +213,64 @@ QDeclarativeOrganizerModel::QDeclarativeOrganizerModel(QObject *parent) :
     connect(this, SIGNAL(sortOrdersChanged()), SLOT(doUpdateItems()));
     connect(this, SIGNAL(startPeriodChanged()), SLOT(doUpdateItems()));
     connect(this, SIGNAL(endPeriodChanged()), SLOT(doUpdateItems()));
+
+    Q_D(QDeclarativeOrganizerModel);
+
+    d->m_google_manager = new GoogleManager(this);
+
+    connect(this, SIGNAL(initGoogleSync()),
+            d->m_google_manager,SLOT(freshStartSync()));
+    connect(d->m_google_manager, SIGNAL(calendarListReady(QVariantList)),
+            this, SLOT(saveGoogleCalendars(QVariantList)));
+    connect(d->m_google_manager, SIGNAL(eventsReady(QString,QVariantList)),
+            this, SLOT(saveGoogleEvents(QString,QVariantList)));
 }
 
 QDeclarativeOrganizerModel::~QDeclarativeOrganizerModel()
 {
 }
+
+//-------------------------------------------------------------------------
+
+void QDeclarativeOrganizerModel::saveGoogleCalendars(QVariantList calendars)
+{
+    qDebug() << "QDeclarativeOrganizerModel::saveGoogleCalendars.";
+    foreach (QVariant calender_var, calendars) {
+        QDeclarativeOrganizerCollection* collection = new QDeclarativeOrganizerCollection();
+        GoogleManager::parseCalendar(calender_var, collection);
+        saveCollection(collection);
+    }
+    updateCollections();
+}
+
+void QDeclarativeOrganizerModel::saveGoogleEvents(const QString &cal_id, QVariantList events)
+{
+    qDebug() << "QDeclarativeOrganizerModel::saveGoogleEvents";
+
+    Q_D(QDeclarativeOrganizerModel);
+    QString collection_id;
+    foreach (QDeclarativeOrganizerCollection* my_collection, d->m_collections) {
+        qDebug() << "extendedId:" << my_collection->extendedId();
+        qDebug() << "cal_id" << cal_id;
+        if (my_collection->extendedId() == cal_id) {
+            collection_id = my_collection->id();
+            qDebug() << "collection_id" << collection_id;
+        }
+    }
+
+    foreach (QVariant event_var, events) {
+        QDeclarativeOrganizerEvent* event = new QDeclarativeOrganizerEvent();
+        GoogleManager::parseEvent(event_var, event);
+        event->setCollectionId(collection_id);
+        saveItem(event);
+    }
+    //  updateEvents();
+    //  if (events.count() != 0) {
+    //    emit modelChanged();
+    //  }
+}
+
+//-------------------------------------------------------------------------
 
 QHash<int, QByteArray> QDeclarativeOrganizerModel::roleNames() const
 {
