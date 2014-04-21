@@ -575,7 +575,7 @@ Item {
             }
 
             // date flag
-            var current_date = control.event_model.startPeriod;
+            var current_date = my_week_model_in_delegate.firstVisibleDate;
             var date_index = 0;
             // array, stores all the in day events of this day.
             var events_in_a_day = [];
@@ -598,6 +598,7 @@ Item {
                         var days = event_utils.lastDays(current_date, event.startDateTime) - 1;
                         date_index += days;
                         current_date.setDate(current_date.getDate() + days);
+
                         events_in_a_day = [];
                     }
 
@@ -783,6 +784,6 @@ Item {
 
                 component.destroy();
             }
-        }
+        } // createInDayEvents
     } // week_delegate
 }
