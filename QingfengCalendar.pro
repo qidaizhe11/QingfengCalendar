@@ -37,7 +37,7 @@ HEADERS += \
 
 include(QDeclarativeOrganizer/QDeclarativeOrganizer.pri)
 
-include(versitorganizer/versitorganizer.pri)
+#include(versitorganizer/versitorganizer.pri)
 
 include(CalendarPlugin/Private/QtQuickControls.pri)
 
