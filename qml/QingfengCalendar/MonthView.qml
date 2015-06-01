@@ -1,7 +1,8 @@
-import QtQuick 2.1
-import QtQuick.Controls 1.0
-import MyCalendar.Controls.Private 1.0
-import "Private"
+import QtQuick 2.3
+import QtQuick.Controls 1.2
+import QtQuick.Controls.Private 1.0
+//import MyCalendar.Controls.Private 1.0
+//import "Private"
 import "Private/CalendarUtils.js" as CalendarUtils
 import "MonthViewUtils.js" as MonthViewUtils
 import "CreateObject.js" as CreateObject
@@ -136,7 +137,9 @@ Item {
 
             Repeater {
                 id: repeater
-                model: CalendarHeaderModel {}
+                model: CalendarHeaderModel {
+                    locale: Qt.locale()
+                }
                 Loader {
                     id: dayOfWeekDelegateLoader
                     sourceComponent: dayOfWeekDelegate

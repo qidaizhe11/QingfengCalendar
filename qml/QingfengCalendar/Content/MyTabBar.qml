@@ -1,5 +1,6 @@
-import QtQuick 2.1
-import QtQuick.Controls 1.1
+import QtQuick 2.3
+import QtQuick.Controls 1.2
+import QtQuick.Controls.Private 1.0
 
 FocusScope {
     id: tabbar
@@ -91,7 +92,8 @@ FocusScope {
             elide: Text.ElideMiddle
             renderType: Text.NativeRendering
             scale: control.tabPosition === Qt.TopEdge ? 1 : -1
-            color: __syspal.text
+//            color: __syspal.text
+            color: SystemPaletteSingleton.text(styleData.enabled)
             Rectangle {
                 anchors.centerIn: parent
                 width: textitem.paintedWidth + 6

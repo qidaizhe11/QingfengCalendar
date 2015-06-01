@@ -1,12 +1,13 @@
-import QtQuick 2.1
-import QtQuick.Controls 1.0
-import QtQuick.Controls.Styles 1.0
-import MyCalendar.Controls.Private 1.0
+import QtQuick 2.3
+import QtQuick.Controls 1.2
+import QtQuick.Controls.Styles 1.2
+import QtQuick.Controls.Private 1.0
+//import MyCalendar.Controls.Private 1.0
 import MyCalendar2.Events 1.0
 import MyCalendar.Weeks 1.0
 //import QtOrganizer 5.0
 import MyCalendar.QtOrganizer 5.0
-import "Private"
+//import "Private"
 import "Private/CalendarUtils.js" as CalendarUtils
 
 Control {
@@ -58,7 +59,7 @@ Control {
 //    property int dayOfWeekFormat: Locale.ShortFormat
     property int dayOfWeekFormat: Locale.LongFormat
 
-//    property var __locale: Qt.locale()
+    property var __locale: Qt.locale()
 
     // Provides list model of MyEvents, MyCollections that ranged in the given
     // start date and end date, the core center between c++ and qml.

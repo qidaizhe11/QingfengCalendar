@@ -13,11 +13,11 @@
 
 #include "MyPlugins/MyWeekModel.h"
 
-#include "CalendarPlugin/Private/qquickabstractstyle_p.h"
-#include "CalendarPlugin/Private/qquickcalendarmodel_p.h"
-#include "CalendarPlugin/Private/qquickcontrolsettings_p.h"
-#include "CalendarPlugin/Private/qquickcontrolsprivate_p.h"
-#include "CalendarPlugin/Private/qquickrangeddate_p.h"
+//#include "CalendarPlugin/Private/qquickabstractstyle_p.h"
+//#include "CalendarPlugin/Private/qquickcalendarmodel_p.h"
+//#include "CalendarPlugin/Private/qquickcontrolsettings_p.h"
+//#include "CalendarPlugin/Private/qquickcontrolsprivate_p.h"
+//#include "CalendarPlugin/Private/qquickrangeddate_p.h"
 
 #include "Google/MainWindow.h"
 #include "Google/GoogleSettings.h"
@@ -102,11 +102,11 @@ int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
 
-    const char* private_uri = "MyCalendar.Controls.Private";
-    // @uri MyCalendar.Controls.Private
-    qmlRegisterType<QQuickAbstractStyle>(private_uri, 1, 0, "AbstractStyle");
-    qmlRegisterType<QQuickRangedDate>(private_uri, 1, 0, "RangedDate");
-    qmlRegisterType<QQuickCalendarModel>(private_uri, 1, 0, "CalendarModel");
+//    const char* private_uri = "MyCalendar.Controls.Private";
+//    // @uri MyCalendar.Controls.Private
+//    qmlRegisterType<QQuickAbstractStyle>(private_uri, 1, 0, "AbstractStyle");
+//    qmlRegisterType<QQuickRangedDate>(private_uri, 1, 0, "RangedDate");
+//    qmlRegisterType<QQuickCalendarModel>(private_uri, 1, 0, "CalendarModel");
 
     const char* uri = "MyCalendar2.Events";
     // @uri MyCalendar2.Events

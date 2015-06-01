@@ -39,7 +39,7 @@ include(QDeclarativeOrganizer/QDeclarativeOrganizer.pri)
 
 #include(versitorganizer/versitorganizer.pri)
 
-include(CalendarPlugin/Private/QtQuickControls.pri)
+#include(CalendarPlugin/Private/QtQuickControls.pri)
 
 RESOURCES += \
     resources/Calendar.qrc
