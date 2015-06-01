@@ -649,7 +649,8 @@ void QDeclarativeOrganizerModel::setManager(const QString& managerName)
     connect(d->m_manager, SIGNAL(collectionsRemoved(QList<QOrganizerCollectionId>)), this, SLOT(fetchCollections()));
 
     QOrganizerCollection collection;
-    collection.setId(d->m_manager->defaultCollection().id());
+    //collection.setId(d->m_manager->defaultCollection().id());
+    collection.setId(d->m_manager->defaultCollectionId());
     collection.setMetaData(QOrganizerCollection::KeyName, "MyCalendar");
     collection.setMetaData(QOrganizerCollection::KeyColor,
                            QColor("lightblue").darker(130));
@@ -1776,13 +1777,13 @@ void QDeclarativeOrganizerModel::removeCollection(const QString &collectionId)
 }
 
 /*!
-  \qmlmethod Collection OrganizerModel::defaultCollection()
-  Returns the default Collection object.
+  \qmlmethod string OrganizerModel::defaultCollectionId()
+  Returns the id of a default Collection object.
   */
-QDeclarativeOrganizerCollection* QDeclarativeOrganizerModel::defaultCollection()
+QString QDeclarativeOrganizerModel::defaultCollectionId() const
 {
-    Q_D(QDeclarativeOrganizerModel);
-    return collection(d->m_manager->defaultCollection().id().toString());
+    Q_D(const QDeclarativeOrganizerModel);
+    return d->m_manager->defaultCollectionId().toString();
 }
 
 /*!
