@@ -1,27 +1,23 @@
 TEMPLATE = lib
 TARGET = MyPlugins
-QT += qml quick core gui widgets organizer versit versitorganizer
+QT += qml quick core gui widgets
 CONFIG += qt plugin
 
-DESTDIR = ../build
-OBJECTS_DIR = $$DESTDIR
-MOC_DIR = $$DESTDIR
+DESTDIR = ../../imports/MyPlugins
+#OBJECTS_DIR = $$DESTDIR/.obj
+#MOC_DIR = $$DESTDIR/.moc
 
 TARGET = $$qtLibraryTarget($$TARGET)
-uri = MyCalendar.Utils.Events
+uri = MyCalendar.Utils
 
 # Input
 SOURCES += \
     myplugins_plugin.cpp \
-    EventUtils.cpp \
-    MyEventModel.cpp \
-    MyEvent.cpp \
+    EventUtils.cpp
 
 HEADERS += \
     myplugins_plugin.h \
-    EventUtils.h \
-    MyEventModel.h \
-    MyEvent.h \
+    EventUtils.h
 
 OTHER_FILES = qmldir
 
@@ -40,4 +36,3 @@ unix {
     target.path = $$installPath
     INSTALLS += target qmldir
 }
-

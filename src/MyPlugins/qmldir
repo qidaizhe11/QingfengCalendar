@@ -1,4 +1,4 @@
-module MyCalendar.Utils.Events
+module MyCalendar.Utils
 plugin MyPlugins
 typeinfo plugins.qmltypes
 

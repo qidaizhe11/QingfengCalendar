@@ -131,6 +131,7 @@ int main(int argc, char *argv[])
     registerQtOrganizerTypes("MyCalendar.QtOrganizer");
 
     QtQuick2ControlsApplicationViewer viewer;
+    viewer.addImportPath("imports");
     viewer.setMainQmlFile(QStringLiteral("qml/QingfengCalendar/main.qml"));
 
     viewer.show();
