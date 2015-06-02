@@ -2,6 +2,7 @@ import QtQuick 2.1
 import QtQuick.Controls 1.0
 import QtQuick.Window 2.1
 import QtQuick.Dialogs 1.0
+import QtGraphicalEffects 1.0
 import MyCalendar.Sync.Google 1.0
 import "Content"
 
@@ -15,11 +16,22 @@ Window {
 
     title: "Qingfeng Calendar"
 
+//    color: "transparent"
+//    flags: Qt.FramelessWindowHint
+
+    property real shadow_radius: 0
+
     id: main_window
 
     StackView {
         id: stack_view
-        anchors.fill: parent
+//        anchors.fill: parent
+
+        width: parent.width - 2 * shadow_radius
+        height: parent.height - 2 * shadow_radius
+//        color: "transparent"
+        anchors.centerIn: parent
+
         focus: true
 
         delegate: MyStackViewDelegate {}
@@ -81,4 +93,16 @@ Window {
 //            google_oauth.refreshAccessToken(google_settings.refreshToken);
 //        }
     }
+
+//    Item {//最小化按钮、关闭按钮
+//        anchors.right: banner.right
+//        anchors.rightMargin: 60
+//        SysBtnGroup
+//        {
+//            id: sysbtngrp
+
+//            onMin: window.showMinimized()
+//            onClose: window.close()
+//        }
+//    }
 }

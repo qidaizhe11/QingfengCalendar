@@ -99,6 +99,8 @@ Style {
             anchors.bottom: parent.bottom
             height: parent.height * 0.3
             width: parent.width * 0.1
+
+            font_size: 10
         }
     } // navigationBar
 
@@ -160,15 +162,6 @@ Style {
             frameVisible: false
 
             Tab {
-                title: "Week"
-                WeekView {
-                    id: week_tab
-
-                    Component.onCompleted: control.refreshEvents()
-                }
-            }
-
-            Tab {
                 title: "Month"
                 MonthView {
                     id: month_tab
@@ -177,7 +170,16 @@ Style {
                 }
             }
 
-            currentIndex: 1
+            Tab {
+                title: "Week"
+                WeekView {
+                    id: week_tab
+
+                    Component.onCompleted: control.refreshEvents()
+                }
+            }
+
+            currentIndex: 0
         }
 
         // A light event edit view, only provides most frequent used properties.

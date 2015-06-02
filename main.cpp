@@ -102,6 +102,8 @@ int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
 
+    QApplication::setFont(QFont("Microsoft YaHei"));
+
 //    const char* private_uri = "MyCalendar.Controls.Private";
 //    // @uri MyCalendar.Controls.Private
 //    qmlRegisterType<QQuickAbstractStyle>(private_uri, 1, 0, "AbstractStyle");

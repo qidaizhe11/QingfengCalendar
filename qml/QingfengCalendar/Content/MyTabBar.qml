@@ -22,6 +22,8 @@ FocusScope {
 
     property var tabView
 
+    property real font_size: 10
+
     property bool tabsMovable: false
 
     property int tabsAlignment: Qt.AlignLeft
@@ -94,6 +96,7 @@ FocusScope {
             scale: control.tabPosition === Qt.TopEdge ? 1 : -1
 //            color: __syspal.text
             color: SystemPaletteSingleton.text(styleData.enabled)
+            font.pointSize: font_size
             Rectangle {
                 anchors.centerIn: parent
                 width: textitem.paintedWidth + 6
