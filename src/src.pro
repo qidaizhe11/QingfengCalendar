@@ -1,3 +1,3 @@
 TEMPLATE = subdirs
 CONFIG  += ordered
-SUBDIRS = MyPlugins QDeclarativeOrganizer QingfengCalendar
+SUBDIRS = MyPlugins QDeclarativeOrganizer Database QingfengCalendar
