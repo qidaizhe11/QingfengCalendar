@@ -1,12 +1,12 @@
-import QtQuick 2.3
+import QtQuick 2.2
 import QtQuick.Controls 1.2
 import QtQuick.Controls.Styles 1.2
 import QtQuick.Controls.Private 1.0
 //import MyCalendar.Controls.Private 1.0
-import MyCalendar2.Events 1.0
-import MyCalendar.Weeks 1.0
+import MyCalendar.Utils 1.0
+//import MyCalendar.Weeks 1.0
 //import QtOrganizer 5.0
-import MyCalendar.QtOrganizer 5.0
+import MyCalendar.MyQtOrganizer 1.0
 //import "Private"
 import "Private/CalendarUtils.js" as CalendarUtils
 

@@ -1,23 +1,37 @@
 TEMPLATE = lib
-TARGET = Utils
-QT += qml quick core gui widgets
+TARGET = MyQtOrganizer
+QT += qml quick core gui widgets organizer versit versitorganizer
 CONFIG += qt plugin
 
-DESTDIR = ../../imports/MyCalendar/Utils
+DESTDIR = ../../imports/MyCalendar/MyQtOrganizer
 #OBJECTS_DIR = $$DESTDIR/.obj
 #MOC_DIR = $$DESTDIR/.moc
 
 TARGET = $$qtLibraryTarget($$TARGET)
-uri = MyCalendar.Utils
+uri = MyCalendar.MyQtOrganizer
 
 # Input
 SOURCES += \
-    myplugins_plugin.cpp \
-    EventUtils.cpp
+    QDeclarativeOrganizer_plugin.cpp \
+    qdeclarativeorganizercollection.cpp \
+    qdeclarativeorganizeritem.cpp \
+    qdeclarativeorganizeritemdetail.cpp \
+    qdeclarativeorganizeritemfetchhint.cpp \
+    qdeclarativeorganizeritemfilter.cpp \
+    qdeclarativeorganizeritemsortorder.cpp \
+    qdeclarativeorganizermodel.cpp \
+    qdeclarativeorganizerrecurrencerule.cpp
 
 HEADERS += \
-    myplugins_plugin.h \
-    EventUtils.h
+    QDeclarativeOrganizer_plugin.h \
+    qdeclarativeorganizercollection_p.h \
+    qdeclarativeorganizeritem_p.h \
+    qdeclarativeorganizeritemdetail_p.h \
+    qdeclarativeorganizeritemfetchhint_p.h \
+    qdeclarativeorganizeritemfilter_p.h \
+    qdeclarativeorganizeritemsortorder_p.h \
+    qdeclarativeorganizermodel_p.h \
+    qdeclarativeorganizerrecurrencerule_p.h
 
 OTHER_FILES = qmldir
 
@@ -30,6 +44,7 @@ OTHER_FILES = qmldir
 }
 
 qmldir.files = qmldir
+
 unix {
     installPath = $$[QT_INSTALL_QML]/$$replace(uri, \\., /)
     qmldir.path = $$installPath

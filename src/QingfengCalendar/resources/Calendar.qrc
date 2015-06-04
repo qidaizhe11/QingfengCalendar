@@ -3,5 +3,10 @@
         <file>sql/create.sql</file>
         <file>images/arrow-left.png</file>
         <file>images/arrow-right.png</file>
+        <file>images/close.png</file>
+        <file>images/tab.png</file>
+        <file>images/tab_selected.png</file>
+        <file>images/arrow-left-mine.png</file>
+        <file>images/arrow-right-mine.png</file>
     </qresource>
 </RCC>

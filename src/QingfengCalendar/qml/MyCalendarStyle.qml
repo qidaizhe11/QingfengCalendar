@@ -3,12 +3,12 @@ import QtQuick.Controls 1.2
 import QtQuick.Controls.Styles 1.2
 import QtQuick.Controls.Private 1.0
 //import MyCalendar.Controls.Private 1.0
-import MyCalendar2.Events 1.0
+import MyCalendar.Utils 1.0
 //import QtOrganizer 5.0
 //import "Private"
 import "Private/CalendarUtils.js" as CalendarUtils
 import "Content"
-import "Test"
+//import "Test"
 
 Style {
     id: my_calendar_style
@@ -170,14 +170,14 @@ Style {
                 }
             }
 
-            Tab {
-                title: "Week"
-                WeekView {
-                    id: week_tab
+//            Tab {
+//                title: "Week"
+//                WeekView {
+//                    id: week_tab
 
-                    Component.onCompleted: control.refreshEvents()
-                }
-            }
+//                    Component.onCompleted: control.refreshEvents()
+//                }
+//            }
 
             currentIndex: 0
         }

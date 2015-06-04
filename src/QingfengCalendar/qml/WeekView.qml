@@ -4,7 +4,7 @@ import QtQuick.Controls.Private 1.0
 //import MyCalendar.Controls.Private 1.0
 //import "Private"
 import "Private/CalendarUtils.js" as CalendarUtils
-import MyCalendar.Weeks 1.0
+//import MyCalendar.Weeks 1.0
 import "CreateObject.js" as CreateObject
 import "EventJsUtils.js" as EventJs
 

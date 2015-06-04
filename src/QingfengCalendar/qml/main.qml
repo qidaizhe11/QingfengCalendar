@@ -1,9 +1,12 @@
-import QtQuick 2.1
-import QtQuick.Controls 1.0
-import QtQuick.Window 2.1
-import QtQuick.Dialogs 1.0
+import QtQuick 2.4
+import QtQuick.Controls 1.3
+import QtQuick.Window 2.2
+import QtQuick.Dialogs 1.2
 import QtGraphicalEffects 1.0
-import MyCalendar.Sync.Google 1.0
+
+//import com.daizhe.utils 1.0
+
+//import MyCalendar.Sync.Google 1.0
 import "Content"
 
 Window {
@@ -45,8 +48,8 @@ Window {
         }
     }
 
-    property Component edit_view: EventEditView {
-    }
+//    property Component edit_view: EventEditView {
+//    }
 
     FileDialog {
         id: file_dialog
@@ -64,23 +67,23 @@ Window {
 //        Component.onCompleted: visible = true
     }
 
-    GoogleOAuth {
-        id: google_oauth
-        anchors.fill: parent
-        visible: false
+//    GoogleOAuth {
+//        id: google_oauth
+//        anchors.fill: parent
+//        visible: false
 
-        onLoginDone: {
-            console.log("Login Done")
-            visible = false;
-            google_settings.accessToken = google_oauth.access_token;
+//        onLoginDone: {
+//            console.log("Login Done")
+//            visible = false;
+//            google_settings.accessToken = google_oauth.access_token;
 
-            calendar.event_model.initGoogleSync();
-        }
-    }
+//            calendar.event_model.initGoogleSync();
+//        }
+//    }
 
-    GoogleSettings {
-        id: google_settings
-    }
+//    GoogleSettings {
+//        id: google_settings
+//    }
 
     Component.onCompleted: {
 //        calendar.event_model.importItems("file:///home/daizhe/qidaizhe11@gmail.com-2.ics");

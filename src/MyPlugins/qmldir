@@ -1,4 +1,3 @@
 module MyCalendar.Utils
-plugin MyPlugins
-typeinfo plugins.qmltypes
+plugin Utils
 
