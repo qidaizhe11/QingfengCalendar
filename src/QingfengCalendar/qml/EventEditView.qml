@@ -599,7 +599,7 @@ Rectangle {
 
     onSaveEvent: {
         var new_event = Qt.createQmlObject(
-                    "import MyCalendar.QtOrganizer 5.0; Event {}",
+                    "import MyCalendar.MyQtOrganizer 1.0; Event {}",
                     event_edit_view);
         new_event.startDateTime = selected_start_time;
         new_event.allDay = allday_checkbox.checked;

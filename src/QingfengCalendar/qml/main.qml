@@ -4,6 +4,8 @@ import QtQuick.Window 2.2
 import QtQuick.Dialogs 1.2
 import QtGraphicalEffects 1.0
 
+import MyCalendar.MyQtOrganizer 1.0
+
 //import com.daizhe.utils 1.0
 
 //import MyCalendar.Sync.Google 1.0
@@ -48,8 +50,8 @@ Window {
         }
     }
 
-//    property Component edit_view: EventEditView {
-//    }
+    property Component edit_view: EventEditView {
+    }
 
     FileDialog {
         id: file_dialog
@@ -60,11 +62,11 @@ Window {
 
         onAccepted: {
             console.log("FileDialog: ", file_dialog.fileUrl)
-            calendar.event_model.importEvents(file_dialog.fileUrl)
+            calendar.event_model.importItems(file_dialog.fileUrl)
         }
 
         visible: false
-//        Component.onCompleted: visible = true
+        Component.onCompleted: visible = true
     }
 
 //    GoogleOAuth {

@@ -8,5 +8,7 @@
         <file>images/tab_selected.png</file>
         <file>images/arrow-left-mine.png</file>
         <file>images/arrow-right-mine.png</file>
+        <file>images/arrow-7-down.png</file>
+        <file>images/back.png</file>
     </qresource>
 </RCC>

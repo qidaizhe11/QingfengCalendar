@@ -1,6 +1,6 @@
 import QtQuick 2.1
 import QtQuick.Controls 1.0
-import MyCalendar2.Events 1.0
+import MyCalendar.Utils 1.0
 import "Private/CalendarUtils.js" as CalendarUtils
 import "MonthViewUtils.js" as MonthViewUtils
 import "Content"

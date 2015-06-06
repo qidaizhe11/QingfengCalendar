@@ -15,6 +15,8 @@ SOURCES += main.cpp
 
 include(deployment.pri)
 
+include(../../include/include.pri)
+
 RESOURCES += \
     resources/Calendar.qrc \
     qml/qml.qrc

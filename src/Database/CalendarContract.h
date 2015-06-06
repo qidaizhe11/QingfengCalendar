@@ -27,6 +27,8 @@ class Calendars
 {
 public:
   static const QString NAME;
+  static const QString ACCOUNT_NAME;
+  static const QString ACCOUNT_TYPE;
   static const QString CALENDAR_COLOR;
   static const QString CALENDAR_DISPLAYNAME;
   static const QString VISIBLE;
@@ -52,14 +54,18 @@ public:
   static const QString ORGANIZER;
   static const QString LAST_DATE;
 
-  static const int ACCESS_DEFAULT;
-  static const int ACCESS_CONFIDENTIAL;
-  static const int ACCESS_PRIVATE;
-  static const int ACCESS_PUBLIC;
+  enum {
+      ACCESS_DEFAULT = 0,
+      ACCESS_CONFIDENTIAL,
+      ACCESS_PRIVATE,
+      ACCESS_PUBLIC,
+  };
 
-  static const int AVAILABILITY_BUSY;
-  static const int AVAILABILITY_FREE;
-  static const int AVAILABILITY_TENTATIVE;
+  enum {
+      AVAILABILITY_BUSY = 0,
+      AVAILABILITY_FREE,
+      AVAILABILITY_TENTATIVE,
+  };
 };
 
 class Instances
@@ -81,11 +87,13 @@ public:
   static const QString MINUTES;
   static const QString METHOD;
 
-  static const int METHOD_DEFAULT;
-  static const int METHOD_ALERT;
-  static const int METHOD_EMAIL;
-  static const int METHOD_SMS;
-  static const int METHOD_ALARM;
+  enum {
+      METHOD_DEFAULT = 0,
+      METHOD_ALERT,
+      METHOD_EMAIL,
+      METHOD_SMS,
+      METHOD_ALARM,
+  };
 };
 
 #endif // CALENDARCONTRACT_H

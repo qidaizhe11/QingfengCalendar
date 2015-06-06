@@ -1,5 +1,5 @@
 
-QT       += core sql
+QT       += core widgets sql
 
 QT       -= gui
 
@@ -8,6 +8,8 @@ TEMPLATE = lib
 
 DEFINES += Database_LIBRARY
 
+INCLUDEPATH += ../../include
+
 unix {
     target.path = /usr/lib
     INSTALLS += target
@@ -15,17 +17,13 @@ unix {
 
 HEADERS += \
     CalendarContract.h \
-    CalendarInstancesHelper.h \
     Database.h \
     Event.h \
-    EventRecurrence.h \
-    RecurrenceProcessor.h
+    DatabaseModule.h
 
 SOURCES += \
     CalendarContract.cpp \
-    CalendarInstancesHelper.cpp \
     Database.cpp \
     Event.cpp \
-    EventRecurrence.cpp \
-    RecurrenceProcessor.cpp
+    DatabaseModule.cpp
 

@@ -21,6 +21,8 @@ const QString Views::EVENTS = "view_events";
 // Calendars
 
 const QString Calendars::NAME = "name";
+const QString Calendars::ACCOUNT_NAME = "account_name";
+const QString Calendars::ACCOUNT_TYPE = "account_type";
 const QString Calendars::CALENDAR_COLOR = "calendar_color";
 const QString Calendars::CALENDAR_DISPLAYNAME = "calendar_displayName";
 const QString Calendars::VISIBLE = "visible";
@@ -44,15 +46,6 @@ const QString Events::RDATE = "rdate";
 const QString Events::ORGANIZER = "organizer";
 const QString Events::LAST_DATE = "lastDate";
 
-const int Events::ACCESS_DEFAULT = 0;
-const int Events::ACCESS_CONFIDENTIAL = 1;
-const int Events::ACCESS_PRIVATE = 2;
-const int Events::ACCESS_PUBLIC = 3;
-
-const int Events::AVAILABILITY_BUSY = 0;
-const int Events::AVAILABILITY_FREE = 1;
-const int Events::AVAILABILITY_TENTATIVE = 2;
-
 // Instances
 
 const QString Instances::BEGIN = "begin";
@@ -68,9 +61,3 @@ const QString Instances::END_MINUTE = "endMinute";
 const QString Reminders::EVENT_ID = "event_id";
 const QString Reminders::MINUTES = "minutes";
 const QString Reminders::METHOD = "method";
-
-const int Reminders::METHOD_DEFAULT = 0;
-const int Reminders::METHOD_ALERT = 1;
-const int Reminders::METHOD_EMAIL = 2;
-const int Reminders::METHOD_SMS = 3;
-const int Reminders::METHOD_ALARM = 4;
