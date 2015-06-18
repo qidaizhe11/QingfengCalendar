@@ -34,6 +34,8 @@ void MyPluginsPlugin::registerTypes(const char *uri)
   qRegisterMetaType< QList<QDeclarativeOrganizerEvent*> >();
   qRegisterMetaType< QList<QDeclarativeOrganizerCollection*> >();
 
+  qRegisterMetaType<QDeclarativeOrganizerModel*>();
+
   //details
   qmlRegisterType<QDeclarativeOrganizerItemDetail>(uri, major, minor, "Detail");
   qmlRegisterType<QDeclarativeOrganizerEventTime>(uri, major, minor, "EventTime");

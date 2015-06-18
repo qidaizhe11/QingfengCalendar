@@ -10,7 +10,7 @@ CREATE TABLE Calendars (
     calendar_color_index TEXT,
     visible INTEGER NOT NULL DEFAULT 1,
     calendar_timezone TEXT,
-    maxReminders INTEGER DEFAULT 5,
+    maxReminders INTEGER DEFAULT 5
 );
 
 CREATE TABLE Events (
@@ -33,7 +33,7 @@ CREATE TABLE Events (
     lastDate INTEGER,
     hasAttendeeData INTEGER NOT NULL DEFAULT 0,
     organizer STRING,
-    eventEndTimezone TEXT,
+    eventEndTimezone TEXT
 );
 
 CREATE TABLE Instances (
@@ -70,10 +70,13 @@ DELETE ON Calendars BEGIN
 END;
 
 CREATE INDEX eventsCalendarIdIndex ON Events (calendar_id);
+
 CREATE INDEX instancesStartDayIndex ON Instances (startDay);
+
 CREATE INDEX attendeesEventIdIndex ON Attendees (event_id);
+
 CREATE INDEX remindersEventIdIndex ON Reminders (event_id);
--- CREATE INDEX calendarAlertsEventIdIndex ON CalendarAlerts (event_id);
+
 
 CREATE VIEW view_events AS
 SELECT Events._id AS
@@ -103,8 +106,8 @@ calendar_displayName,
 visible,
 calendar_color,
 calendar_color_index,
-maxReminders,
-FROM Events JOIN Calendars ON (Events.calendar_id=Calendars._id)
+maxReminders
+FROM Events JOIN Calendars ON (Events.calendar_id=Calendars._id);
 
 CREATE TRIGGER events_cleanup_delete
 DELETE ON Events BEGIN
@@ -112,18 +115,6 @@ DELETE ON Events BEGIN
     DELETE FROM Attendees WHERE event_id=old._id;
     DELETE FROM Reminders WHERE event_id=old._id;
 END;
-
--- CREATE TRIGGER event_color_update
--- UPDATE OF eventColor_index ON Events
--- WHEN new.eventColor_index NOT NULL BEGIN
---     UPDATE Events SET eventColor=(
---         SELECT color FROM Colors WHERE account_name=(
---             SELECT account_name FROM Calendars WHERE _id=new.calendar_id)
---         AND account_type=(
---             SELECT account_type FROM Calendars WHERE _id=new.calendar_id)
---         AND color_index=new.eventColor_index AND color_type=1)
---     WHERE _id=old._id;
--- END;
 
 CREATE TRIGGER calendar_color_update
 UPDATE OF calendar_color_index ON Calendars

@@ -29,5 +29,6 @@
         <file>EventJsUtils.js</file>
         <file>MonthViewUtils.js</file>
         <file>CreateObject.js</file>
+        <file>test_main.qml</file>
     </qresource>
 </RCC>

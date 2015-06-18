@@ -312,6 +312,19 @@ QString QDeclarativeOrganizerModel::manager() const
     return QString();
 }
 
+//-------------------------------------------------------------------------
+
+QOrganizerManager* QDeclarativeOrganizerModel::managerPtr() const
+{
+    Q_D(const QDeclarativeOrganizerModel);
+    if (d->m_manager) {
+        return d->m_manager;
+    }
+    return NULL;
+}
+
+//-------------------------------------------------------------------------
+
 /*!
   \qmlproperty string OrganizerModel::managerName
 

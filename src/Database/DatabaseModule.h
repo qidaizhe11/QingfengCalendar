@@ -1,26 +1,39 @@
 #ifndef DATABASEMODULE_H
 #define DATABASEMODULE_H
 
-#include <QObject>
-#include "GlobalDefine.h"
+#include <QQuickItem>
+//#include "GlobalDefine.h"
+
+#include "qdeclarativeorganizermodel_p.h"
 
 //NAMESPACE_BEGIN(module)
 
-class DatabaseModule : public QObject
+class DatabaseModule : public QQuickItem
 {
     Q_OBJECT
+    Q_DISABLE_COPY(DatabaseModule)
+
+    Q_PROPERTY(QDeclarativeOrganizerModel* organizerModel READ organizerModel WRITE setOrganizerModel)
 public:
-    explicit DatabaseModule(QObject *parent = 0);
+    DatabaseModule(QQuickItem *parent = 0);
     ~DatabaseModule();
 
-    bool init();
+    QDeclarativeOrganizerModel* organizerModel();
+    void setOrganizerModel(QDeclarativeOrganizerModel* organizer_model);
 
-signals:
+    Q_INVOKABLE bool init();
 
-public slots:
+    Q_INVOKABLE bool sqlSaveOrganizerMemoryDataIntoDb();
+    Q_INVOKABLE bool sqlInsertOrganizerCollection(QDeclarativeOrganizerCollection* p_collection);
+    Q_INVOKABLE bool sqlInsertOrganizerItem(QDeclarativeOrganizerItem* p_item);
+    Q_INVOKABLE bool sqlInsertOrganizerEvent(QDeclarativeOrganizerEvent* p_event);
+
+    // Event相关
+//    bool sql
+
+private:
+    QDeclarativeOrganizerModel* m_organizer_model;
 };
-
-DatabaseModule* getDatabaseModule();
 
 //NAMESPACE_END(module)
 

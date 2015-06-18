@@ -182,6 +182,7 @@ public:
     void setFilter(QDeclarativeOrganizerItemFilter* filter);
     void setFetchHint(QDeclarativeOrganizerItemFetchHint* fetchHint);
 
+    QOrganizerManager* managerPtr() const;
 
 signals:
     void managerChanged();

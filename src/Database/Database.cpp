@@ -6,7 +6,8 @@
 #include <QtSql>
 
 const QString DATABASE_NAME = "calendar.db";
-const int DATABASE_VERSION = 600;
+const int DATABASE_VERSION = 1;
+
 
 QString Database::sm_last_error_ = "";
 
@@ -132,9 +133,9 @@ bool Database::alterDatabase(QSqlDatabase& db,
 {
   qDebug() << "[ALTER DATABASE] Executing:" << script_name;
 
-  QProgressDialog progress;
-  progress.setWindowModality(Qt::WindowModal);
-  progress.setLabelText(message);
+//  QProgressDialog progress;
+//  progress.setWindowModality(Qt::WindowModal);
+//  progress.setLabelText(message);
 
   QStringList queries;
 
@@ -147,25 +148,26 @@ bool Database::alterDatabase(QSqlDatabase& db,
   file.close();
   queries << buffer.split("\n\n", QString::SkipEmptyParts);
 
-  QFile file1(QString(":/sql/%1_init.sql").arg(script_name));
-  if (!file1.open(QIODevice::ReadOnly | QIODevice::Text)) {
-    QTextStream text_stream_1(&file1);
-    buffer = text_stream_1.readAll();
-    file1.close();
-    queries << buffer.split("\n\n", QString::SkipEmptyParts);
-  }
+//  QFile file1(QString(":/sql/%1_init.sql").arg(script_name));
+//  if (!file1.open(QIODevice::ReadOnly | QIODevice::Text)) {
+//    QTextStream text_stream_1(&file1);
+//    buffer = text_stream_1.readAll();
+//    file1.close();
+//    queries << buffer.split("\n\n", QString::SkipEmptyParts);
+//  }
 
-  progress.setMinimum(0);
-  progress.setMaximum(queries.count());
+//  progress.setMinimum(0);
+//  progress.setMaximum(queries.count());
 
   QSqlQuery query(db);
-  int i = 0;
+//  int i = 0;
   foreach (QString text, queries) {
-    progress.setValue(++i);
-    qApp->processEvents();
+//    progress.setValue(++i);
+//    qApp->processEvents();
 
     if (!query.exec(text)) {
-      qDebug() << "[ALTER DATABASE] Error executing:" << text;
+      qDebug() << "[ALTER DATABASE] Error executing:" << text <<
+                  ". LastError: " << query.lastError().text();
       return false;
     }
   }
