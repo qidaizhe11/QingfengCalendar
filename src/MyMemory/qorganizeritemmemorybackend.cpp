@@ -421,7 +421,7 @@ QList<QOrganizerItem> QOrganizerItemMemoryEngine::internalItems(const QDateTime&
     bool isDefFilter = (filter.type() == QOrganizerItemFilter::DefaultFilter);
 
     foreach(const QOrganizerItem& c, d->m_idToItemHash) {
-        if (itemHasReccurence(c)) {
+        if (!forExport &&  itemHasReccurence(c)) {
             addItemRecurrences(sorted, c, startDate, endDate, filter, sortOrders, forExport, &parentsAdded);
         } else {
             if ((isDefFilter || QOrganizerManagerEngine::testFilter(filter, c)) && QOrganizerManagerEngine::isItemBetweenDates(c, startDate, endDate)) {
