@@ -2,6 +2,7 @@ PRAGMA user_version = 1;
 
 CREATE TABLE Calendars (
     _id INTEGER PRIMARY KEY,
+    collection_id TEXT,
     account_name TEXT,
     account_type TEXT,
     name TEXT,
@@ -10,13 +11,17 @@ CREATE TABLE Calendars (
     calendar_color_index TEXT,
     visible INTEGER NOT NULL DEFAULT 1,
     calendar_timezone TEXT,
-    maxReminders INTEGER DEFAULT 5
+    maxReminders INTEGER DEFAULT 5,
+    CONSTRAINT "name" UNIQUE ("name")
 );
 
 CREATE TABLE Events (
     _id INTEGER PRIMARY KEY AUTOINCREMENT,
+    --_id TEXT PRIMARY KEY,
     calendar_id INTEGER NOT NULL,
+    --collection_id TEXT NOT NULL,
     title TEXT,
+    guid TEXT,
     eventLocation TEXT,
     description TEXT,
     eventStatus INTEGER,
@@ -33,7 +38,8 @@ CREATE TABLE Events (
     lastDate INTEGER,
     hasAttendeeData INTEGER NOT NULL DEFAULT 0,
     organizer STRING,
-    eventEndTimezone TEXT
+    eventEndTimezone TEXT,
+    CONSTRAINT "guid" UNIQUE ("guid")
 );
 
 CREATE TABLE Instances (

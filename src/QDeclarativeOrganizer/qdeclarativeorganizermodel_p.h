@@ -149,6 +149,8 @@ public:
     QVariantList events();
     QVariantList calendars();
 
+    QVariantList eventsForExport();
+
     Q_INVOKABLE void removeItem(const QString& id);
     Q_INVOKABLE void removeItem(QDeclarativeOrganizerItem *item);
     Q_INVOKABLE void removeItems(const QStringList& ids);
@@ -213,6 +215,8 @@ private slots:
     void doUpdateItems();
     void fetchAgain();
     void requestUpdated();
+
+    void itemsForExportRequestUpdated();
 
     // handle request from saveItem(), removeItem(), saveCollection(), and removeCollection()
     void onRequestStateChanged(QOrganizerAbstractRequest::State newState);

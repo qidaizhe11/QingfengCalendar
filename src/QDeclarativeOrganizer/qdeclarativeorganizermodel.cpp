@@ -103,6 +103,7 @@ public:
           m_writer(0),
           m_startPeriod(QDateTime::currentDateTime()),
           m_endPeriod(QDateTime::currentDateTime()),
+          m_items_for_export_fetch_request(0),
           m_error(QOrganizerManager::NoError),
           m_autoUpdate(true),
           m_updatePendingFlag(QDeclarativeOrganizerModelPrivate::NonePending),
@@ -141,6 +142,10 @@ public:
     QDateTime m_startPeriod;
     QDateTime m_endPeriod;
     QList<QDeclarativeOrganizerCollection*> m_collections;
+
+    QList<QDeclarativeOrganizerItem*> m_items_for_export;
+    QHash<QString, QDeclarativeOrganizerItem*> m_items_for_export_id_hash;
+    QOrganizerItemFetchForExportRequest* m_items_for_export_fetch_request;
 
     QOrganizerManager::Error m_error;
 
@@ -459,6 +464,12 @@ void QDeclarativeOrganizerModel::cancelUpdate()
         d->m_fetchRequest = 0;
         d->m_updatePendingFlag = QDeclarativeOrganizerModelPrivate::NonePending;
     }
+
+    if (d->m_items_for_export_fetch_request) {
+        d->m_items_for_export_fetch_request->cancel();
+        d->m_items_for_export_fetch_request->deleteLater();
+        d->m_items_for_export_fetch_request = 0;
+    }
 }
 /*!
   \qmlproperty date OrganizerModel::startPeriod
@@ -661,18 +672,18 @@ void QDeclarativeOrganizerModel::setManager(const QString& managerName)
     connect(d->m_manager, SIGNAL(collectionsChanged(QList<QOrganizerCollectionId>)), this, SLOT(fetchCollections()));
     connect(d->m_manager, SIGNAL(collectionsRemoved(QList<QOrganizerCollectionId>)), this, SLOT(fetchCollections()));
 
-    QOrganizerCollection collection;
+    //QOrganizerCollection collection;
     //collection.setId(d->m_manager->defaultCollection().id());
-    collection.setId(d->m_manager->defaultCollectionId());
-    collection.setMetaData(QOrganizerCollection::KeyName, "MyCalendar");
-    collection.setMetaData(QOrganizerCollection::KeyColor,
-                           QColor("lightblue").darker(130));
+    //collection.setId(d->m_manager->defaultCollectionId());
+    //collection.setMetaData(QOrganizerCollection::KeyName, "MyCalendar");
+    //collection.setMetaData(QOrganizerCollection::KeyColor,
+    //                       QColor("lightblue").darker(130));
     //  Qt.darker("lightblue", 1.3);
-    d->m_manager->saveCollection(&collection);
+    //d->m_manager->saveCollection(&collection);
 
-    QDeclarativeOrganizerCollection* my_collection = new QDeclarativeOrganizerCollection();
-    my_collection->setCollection(collection);
-    d->m_collections.append(my_collection);
+    //QDeclarativeOrganizerCollection* my_collection = new QDeclarativeOrganizerCollection();
+    //my_collection->setCollection(collection);
+    //d->m_collections.append(my_collection);
     //    d->m_default_collection_id = my_collection->id();
 
     const QOrganizerManager::Error managerError = d->m_manager->error();
@@ -841,10 +852,43 @@ void QDeclarativeOrganizerModel::startImport(QVersitReader::State state)
 
             qDebug() << "imported items count:" << items.count();
 
+            foreach (QOrganizerItem tmp_item, items) {
+                if (tmp_item.type() == QOrganizerItemType::TypeEvent) {
+                    QOrganizerEvent event =
+                            static_cast<QOrganizerEvent>(tmp_item);
+                    qDebug() << "imported event:" <<
+                                event.displayLabel() <<
+                                event.startDateTime().toString("yyyy-MM-d hh:mm") <<
+                                " End:" <<
+                                event.endDateTime().toString("yyyy-MM-d hh:mm") <<
+                                event.isAllDay() <<
+                                event.location();
+                } else if (tmp_item.type() == QOrganizerItemType::TypeEventOccurrence) {
+                    QOrganizerEventOccurrence event_occurrence =
+                            static_cast<QOrganizerEventOccurrence>(tmp_item);
+                    qDebug() << "imported event_occurrence:" <<
+                                event_occurrence.displayLabel() <<
+                                event_occurrence.startDateTime().toString("yyyy-MM-d hh:mm") <<
+                                " End:" <<
+                                event_occurrence.endDateTime().toString("yyyy-MM-d hh:mm") <<
+                                event_occurrence.location();
+                }
+            }
+
             if (d->m_manager && !d->m_manager->saveItems(&items) && d->m_error != d->m_manager->error()) {
                 d->m_error = d->m_manager->error();
                 emit errorChanged();
             }
+
+            QList<QOrganizerItem> tmp_items = d->m_manager->items();
+
+//            foreach (QOrganizerItem tmp_item, tmp_items) {
+//                qDebug() << "imported item: " << tmp_item.id() << tmp_item.displayLabel();
+//            }
+
+            qDebug() << "saved imported items count:" << tmp_items.count();
+            qDebug() << "d->m_manager->itemsForExport count: " <<
+                        d->m_manager->itemsForExport().count();
         }
         emit importCompleted(QDeclarativeOrganizerModel::ImportError(d->m_reader->error()), d->m_lastImportUrl);
     }
@@ -1253,6 +1297,27 @@ void QDeclarativeOrganizerModel::fetchAgain()
 
     connect(d->m_fetchRequest, SIGNAL(stateChanged(QOrganizerAbstractRequest::State)), this, SLOT(requestUpdated()));
     d->m_fetchRequest->start();
+
+    d->m_items_for_export_fetch_request = new QOrganizerItemFetchForExportRequest(this);
+    d->m_items_for_export_fetch_request->setManager(d->m_manager);
+    d->m_items_for_export_fetch_request->setSorting(d->m_sortOrders);
+    d->m_items_for_export_fetch_request->setStartDate(d->m_startPeriod);
+    d->m_items_for_export_fetch_request->setEndDate(d->m_endPeriod);
+
+    if (d->m_filter) {
+        d->m_items_for_export_fetch_request->setFilter(d->m_filter->filter());
+    } else {
+        d->m_items_for_export_fetch_request->setFilter(QOrganizerItemFilter());
+    }
+    d->m_items_for_export_fetch_request->setFetchHint(
+                d->m_fetchHint ? d->m_fetchHint->fetchHint() : QOrganizerItemFetchHint());
+
+    connect(d->m_items_for_export_fetch_request,
+            SIGNAL(stateChanged(QOrganizerAbstractRequest::State)),
+            this,
+            SLOT(itemsForExportRequestUpdated()));
+
+    d->m_items_for_export_fetch_request->start();
 }
 
 /*
@@ -1334,6 +1399,73 @@ void QDeclarativeOrganizerModel::requestUpdated()
         emit modelChanged();
     }
 }
+
+//-------------------------------------------------------------------------
+
+void QDeclarativeOrganizerModel::itemsForExportRequestUpdated()
+{
+    Q_D(QDeclarativeOrganizerModel);
+    QList<QOrganizerItem> items;
+    QOrganizerItemFetchForExportRequest* ifr =
+            qobject_cast<QOrganizerItemFetchForExportRequest*>(QObject::sender());
+    Q_ASSERT(ifr);
+    if (ifr->isFinished()) {
+        items = ifr->items();
+        checkError(ifr);
+        ifr->deleteLater();
+        d->m_items_for_export_fetch_request = 0;
+    } else {
+        return;
+    }
+
+    if (!items.isEmpty() || !d->m_items_for_export.isEmpty()) {
+        QList<QDeclarativeOrganizerItem*> new_list;
+        QHash<QString, QDeclarativeOrganizerItem*> new_item_id_hash;
+        QHash<QString, QDeclarativeOrganizerItem*>::iterator iterator;
+        QOrganizerItem item;
+        QString id_string;
+        QDeclarativeOrganizerItem* declarative_item;
+
+        for (int i = 0; i < items.size(); ++i) {
+            item = items[i];
+            id_string = item.id().toString();
+            if (item.id().isNull()) {
+                // occurrence
+                declarative_item = createItem(item);
+            } else {
+                iterator = d->m_items_for_export_id_hash.find(id_string);
+                if (iterator != d->m_items_for_export_id_hash.end()) {
+                    declarative_item = iterator.value();
+                    declarative_item->setItem(item);
+                } else {
+                    declarative_item = createItem(item);
+                }
+                new_item_id_hash.insert(id_string, declarative_item);
+            }
+            new_list.append(declarative_item);
+        }
+
+        for (int i = 0; i < d->m_items_for_export.size(); ++i) {
+            if (d->m_items_for_export[i]->item().id().isNull()) {
+                d->m_items_for_export[i]->deleteLater();
+            } else {
+                iterator = new_item_id_hash.find(d->m_items_for_export[i]->itemId());
+                if (iterator == new_item_id_hash.end()) {
+                    d->m_items_for_export[i]->deleteLater();
+                }
+            }
+        }
+
+        beginResetModel();
+        d->m_items_for_export = new_list;
+        endResetModel();
+
+        d->m_items_for_export_id_hash = new_item_id_hash;
+        emit modelChanged();
+    }
+}
+
+//-------------------------------------------------------------------------
 
 /*!
   \qmlmethod OrganizerModel::saveItem(OrganizerItem item)
@@ -1522,6 +1654,30 @@ void QDeclarativeOrganizerModel::onItemsModified(const QList<QPair<QOrganizerIte
         d->m_notifiedItems.insert(fetchRequest, addedAndChangedItems);
 
         fetchRequest->start();
+
+        if (d->m_items_for_export_fetch_request) {
+            d->m_items_for_export_fetch_request->cancel();
+            d->m_items_for_export_fetch_request->deleteLater();
+            d->m_items_for_export_fetch_request = 0;
+        }
+
+        d->m_items_for_export_fetch_request = new QOrganizerItemFetchForExportRequest(this);
+        d->m_items_for_export_fetch_request->setManager(d->m_manager);
+        d->m_items_for_export_fetch_request->setSorting(d->m_sortOrders);
+        d->m_items_for_export_fetch_request->setStartDate(d->m_startPeriod);
+        d->m_items_for_export_fetch_request->setEndDate(d->m_endPeriod);
+
+        d->m_items_for_export_fetch_request->setFilter(
+                    d->m_filter ? d->m_filter->filter() : QOrganizerItemFilter());
+        d->m_items_for_export_fetch_request->setFetchHint(
+                    d->m_fetchHint ? d->m_fetchHint->fetchHint() : QOrganizerItemFetchHint());
+
+        connect(d->m_items_for_export_fetch_request,
+                SIGNAL(stateChanged(QOrganizerAbstractRequest::State)),
+                this,
+                SLOT(itemsForExportRequestUpdated()));
+
+        d->m_items_for_export_fetch_request->start();
     }
 }
 
@@ -1880,6 +2036,17 @@ QVariantList QDeclarativeOrganizerModel::calendars()
     foreach (QDeclarativeOrganizerCollection* collection, d->m_collections) {
         //    QQmlEngine::setObjectOwnership(collection, QQmlEngine::JavaScriptOwnership);
         list.append(QVariant::fromValue<QObject*>(collection));
+    }
+    return list;
+}
+
+QVariantList QDeclarativeOrganizerModel::eventsForExport()
+{
+    Q_D(QDeclarativeOrganizerModel);
+    QVariantList list;
+
+    foreach (QDeclarativeOrganizerItem* item, d->m_items_for_export) {
+        list.append(QVariant::fromValue<QObject*>(item));
     }
     return list;
 }

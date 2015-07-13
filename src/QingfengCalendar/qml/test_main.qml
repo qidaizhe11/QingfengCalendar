@@ -45,12 +45,12 @@ Window {
         id: organizer_model
         objectName: "organizer_model"
 
-        startPeriod: '2005-01-01'
-        endPeriod: '2015-01-01'
+        startPeriod: '2006-01-01'
+        endPeriod: '2016-01-01'
 
         autoUpdate: true
 
-        manager: "memory"
+        manager: "mymemory"
 
         onModelChanged: {
 //            console.log("OrganizerModel, onModelChanged.");
@@ -73,7 +73,7 @@ Window {
         }
 
         visible: false
-        Component.onCompleted: visible = true
+        //Component.onCompleted: visible = true
     }
 
     DatabaseModule {
@@ -94,5 +94,7 @@ Window {
         calendar.refreshEvents();
 
         database_module.init();
+
+        database_module.sqlInitOrganizerMemoryDataFromDb();
     }
 }

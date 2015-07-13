@@ -8,6 +8,8 @@
 
 //NAMESPACE_BEGIN(module)
 
+class QSqlRecord;
+
 class DatabaseModule : public QQuickItem
 {
     Q_OBJECT
@@ -24,12 +26,33 @@ public:
     Q_INVOKABLE bool init();
 
     Q_INVOKABLE bool sqlSaveOrganizerMemoryDataIntoDb();
+    Q_INVOKABLE bool sqlInitOrganizerMemoryDataFromDb();
     Q_INVOKABLE bool sqlInsertOrganizerCollection(QDeclarativeOrganizerCollection* p_collection);
     Q_INVOKABLE bool sqlInsertOrganizerItem(QDeclarativeOrganizerItem* p_item);
     Q_INVOKABLE bool sqlInsertOrganizerEvent(QDeclarativeOrganizerEvent* p_event);
 
     // Event相关
 //    bool sql
+
+private:
+    bool _sqlInsertOrganizerEvent(const QOrganizerEvent& event) const;
+    bool _sqlInsertOrganizerItem(const QOrganizerItem& item) const;
+
+    bool _sqlCreateOrganizerEventFromDb(const QSqlRecord& record, QOrganizerEvent* event);
+
+    bool parseRecurrenceRuleStr(const QString& str,
+                                QOrganizerRecurrenceRule* rule) const;
+    QString encodeRecurrenceRule(const QOrganizerRecurrenceRule& rule) const;
+
+
+    void parseRecurrenceFragment(const QString& key, const QString& value,
+                                 QOrganizerRecurrenceRule* rule) const;
+    QSet<int> parseInts(const QString& str, int min, int max) const;
+    int parseDayOfWeek(const QString& str) const;
+    QDateTime parseDateTime(QString str) const;
+
+    QString encodeInts(const QSet<int>& ints) const;
+    QString encodeWeekString(Qt::DayOfWeek day) const;
 
 private:
     QDeclarativeOrganizerModel* m_organizer_model;
