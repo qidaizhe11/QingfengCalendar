@@ -13,11 +13,13 @@ uri = MyCalendar.Utils
 # Input
 SOURCES += \
     myplugins_plugin.cpp \
-    EventUtils.cpp
+    EventUtils.cpp \
+    MyQQuickCalendarModel.cpp
 
 HEADERS += \
     myplugins_plugin.h \
-    EventUtils.h
+    EventUtils.h \
+    MyQQuickCalendarModel.h
 
 OTHER_FILES = qmldir
 
