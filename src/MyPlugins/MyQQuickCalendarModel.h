@@ -15,6 +15,8 @@ class MyQQuickCalendarModel : public QAbstractListModel
     Q_PROPERTY(QDate visibleDate READ visibleDate WRITE setVisibleDate NOTIFY visibleDateChanged)
     Q_PROPERTY(QLocale locale READ locale WRITE setLocale NOTIFY localeChanged)
     Q_PROPERTY(int count READ rowCount NOTIFY countChanged)
+    Q_PROPERTY(QDate firstVisibleDate READ firstVisibleDate NOTIFY visibleDateChanged)
+    Q_PROPERTY(QDate lastVisibleDate READ lastVisibleDate NOTIFY visibleDateChanged)
 
 public:
     explicit MyQQuickCalendarModel(QObject *parent = 0);
@@ -29,6 +31,9 @@ public:
 
     QLocale locale() const;
     void setLocale(const QLocale &locale);
+
+    QDate firstVisibleDate() const { return mFirstVisibleDate; }
+    QDate lastVisibleDate() const { return mLastVisibleDate; }
 
     QVariant data(const QModelIndex &index, int role) const Q_DECL_OVERRIDE;
 

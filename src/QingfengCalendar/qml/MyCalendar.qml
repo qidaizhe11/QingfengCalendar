@@ -75,8 +75,8 @@ Control {
 //    }
 
     property OrganizerModel event_model: OrganizerModel {
-        startPeriod: '2005-01-01'
-        endPeriod: '2015-01-01'
+        startPeriod: '2006-01-01'
+        endPeriod: '2016-01-01'
 
         autoUpdate: true
 

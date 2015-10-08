@@ -50,7 +50,7 @@ Window {
 
         autoUpdate: true
 
-        manager: "mymemory"
+        manager: "memory"
 
         onModelChanged: {
 //            console.log("OrganizerModel, onModelChanged.");
@@ -67,13 +67,13 @@ Window {
 
         onAccepted: {
             console.log("FileDialog: ", file_dialog.fileUrl)
-//            calendar.event_model.importItems(file_dialog.fileUrl)
-            organizer_model.importItems(file_dialog.fileUrl)
+            calendar.event_model.importItems(file_dialog.fileUrl)
+//            organizer_model.importItems(file_dialog.fileUrl)
 //            database_module.sqlSaveOrganizerMemoryDataIntoDb()
         }
 
         visible: false
-        //Component.onCompleted: visible = true
+        Component.onCompleted: visible = true
     }
 
     DatabaseModule {
@@ -86,15 +86,16 @@ Window {
     Connections {
         target: organizer_model
         onImportCompleted: {
-            database_module.sqlSaveOrganizerMemoryDataIntoDb();
+//            database_module.sqlSaveOrganizerMemoryDataIntoDb();
+            calendar.refreshEvents();
         }
     }
 
     Component.onCompleted: {
         calendar.refreshEvents();
 
-        database_module.init();
+//        database_module.init();
 
-        database_module.sqlInitOrganizerMemoryDataFromDb();
+//        database_module.sqlInitOrganizerMemoryDataFromDb();
     }
 }

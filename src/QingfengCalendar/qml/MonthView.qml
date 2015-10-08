@@ -3,6 +3,7 @@ import QtQuick.Controls 1.2
 import QtQuick.Controls.Private 1.0
 //import MyCalendar.Controls.Private 1.0
 //import "Private"
+import MyCalendar.Utils 1.0
 import "Private/CalendarUtils.js" as CalendarUtils
 import "MonthViewUtils.js" as MonthViewUtils
 import "CreateObject.js" as CreateObject
@@ -35,7 +36,7 @@ Item {
     // Copied from QtQuick.Controls.Calenadr, serviced as MonthModel here.
     // holes the model that will be used by the Calendar to populate month date
     // that available to the user.
-    property CalendarModel month_model: CalendarModel {
+    property MyCalendarModel month_model: MyCalendarModel {
         visibleDate: control.visible_date
     }
 
