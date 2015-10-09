@@ -4,7 +4,7 @@
 #include <QObject>
 #include <QNetworkReply>
 #include <QNetworkAccessManager>
-#include <qorganizerglobal.h>
+#include <QtOrganizer/qorganizerglobal.h>
 #include <QOrganizerManager>
 #include <QMap>
 

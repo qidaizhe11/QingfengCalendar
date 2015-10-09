@@ -6,8 +6,8 @@
 #include "GoogleSettings.h"
 //#include "MyPlugins/MyEvent.h"
 //#include "MyPlugins/MyCollection.h"
-#include "QDeclarativeOrganizer/qdeclarativeorganizeritem_p.h"
-#include "QDeclarativeOrganizer/qdeclarativeorganizercollection_p.h"
+#include "qdeclarativeorganizeritem_p.h"
+#include "qdeclarativeorganizercollection_p.h"
 
 //-------------------------------------------------------------------------
 

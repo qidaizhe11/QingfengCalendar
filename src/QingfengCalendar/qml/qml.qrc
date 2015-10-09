@@ -30,5 +30,6 @@
         <file>MonthViewUtils.js</file>
         <file>CreateObject.js</file>
         <file>test_main.qml</file>
+        <file>GoogleOAuth.js</file>
     </qresource>
 </RCC>

@@ -1,0 +1,3 @@
+module MyCalendar.Google
+plugin Google
+
