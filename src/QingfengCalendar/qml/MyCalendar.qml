@@ -80,7 +80,7 @@ Control {
 
         autoUpdate: true
 
-        manager: "memory"
+        manager: "mymemory"
 
         onModelChanged: {
 //            console.log("OrganizerModel, onModelChanged.");

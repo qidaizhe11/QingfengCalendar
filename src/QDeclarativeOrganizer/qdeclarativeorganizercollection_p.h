@@ -70,6 +70,7 @@ class QDeclarativeOrganizerCollection : public QObject
              NOTIFY valueChanged)
   Q_PROPERTY(QString storage READ storage WRITE setStorage
              NOTIFY valueChanged)
+    Q_PROPERTY(QString accessRole READ accessRole WRITE setAccessRole NOTIFY valueChanged)
 
 public:
     enum MetaDataKey {
@@ -106,6 +107,9 @@ public:
 
     QString storage() const;
     void setStorage(const QString& storage);
+
+    QString accessRole() const;
+    void setAccessRole(const QString& access_role);
 
     Q_INVOKABLE void setMetaData(QOrganizerCollection::MetaDataKey key, const QVariant &value);
     Q_INVOKABLE QVariant metaData(QOrganizerCollection::MetaDataKey key) const;

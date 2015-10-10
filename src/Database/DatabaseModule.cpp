@@ -18,7 +18,9 @@ namespace
 //            "insert into " + Tables::CALENDARS +
 //            " values (" + ":" + Calendars::NAME + ", :" + Calendars::ACCOUNT_NAME + ")");
     const QString insertCollectionSql(
-            "insert or replace into Calendars (name) values (:name)");
+            "insert or ignore into Calendars "
+            "(collection_id, name, calendar_displayName, calendar_color) "
+            "values (:collection_id, :name, :calendar_displayName, :calendar_color)");
 
     const QString insertEventSql(
             "insert or replace into Events "
@@ -180,14 +182,18 @@ bool DatabaseModule::sqlInsertOrganizerCollection(QDeclarativeOrganizerCollectio
     }
 
 //    const QString insertCollectionSql(
-//            "insert or ignore into Calendars (_id, name) values (:collection_id, :name)");
+//            "insert or ignore into Calendars "
+//            "(collection_id, name, calendar_displayName, calendar_color) "
+//            "values (:collection_id, :name, :calendar_displayName, :calendar_color)");
 
     QSqlQuery query(db);
     query.prepare(insertCollectionSql);
 //    query.bindValue(QString(":" + Calendars::NAME), p_collection->name());
 //    query.bindValue(QString(":" + Calendars::ACCOUNT_NAME), p_collection->description());
-    //query.bindValue(":collection_id", p_collection->id());
+    query.bindValue(":collection_id", p_collection->id());
     query.bindValue(":name", p_collection->name());
+    query.bindValue(":calendar_displayName", p_collection->description());
+    query.bindValue(":calendar_color", p_collection->color().name());
 
     if (!query.exec()) {
         qDebug() << "SQL exec error, lastError:" << query.lastError().text();

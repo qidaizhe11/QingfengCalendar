@@ -177,6 +177,16 @@ void QDeclarativeOrganizerCollection::setStorage(const QString &storage)
   setExtendedMetaData("Storage", storage);
 }
 
+QString QDeclarativeOrganizerCollection::accessRole() const
+{
+    return extendedMetaData("AccessRole").toString();
+}
+
+void QDeclarativeOrganizerCollection::setAccessRole(const QString &access_role)
+{
+    setExtendedMetaData("AccessRole", access_role);
+}
+
 //-------------------------------------------------------------------------
 
 /*!

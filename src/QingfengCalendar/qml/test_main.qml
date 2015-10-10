@@ -127,8 +127,11 @@ Window {
                             main_window);
                 google_manager.parseCalendar(calendar_var, new_calendar);
                 calendar.event_model.saveCollection(new_calendar);
+                //console.log("new_calendar.collectionId: ", new_calendar.collectionId);
                 database_module.sqlInsertOrganizerCollection(new_calendar);
             }
+
+            calendar.refreshEvents();
         }
     }
 
@@ -147,6 +150,15 @@ Window {
                 calendar.event_model.saveItem(new_event);
                 database_module.sqlInsertOrganizerEvent(new_event);
             }
+
+            calendar.refreshEvents();
+        }
+    }
+
+    Connections {
+        target: calendar.event_model
+        onErrorChanged: {
+            console.log("calendar.event_model onErrorChanged, error: ", calendar.event_model.error);
         }
     }
 

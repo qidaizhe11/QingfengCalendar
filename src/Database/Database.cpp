@@ -139,7 +139,7 @@ bool Database::alterDatabase(QSqlDatabase& db,
 
   QStringList queries;
 
-  QFile file(QString(":/sql/%1.sql").arg(script_name));
+  QFile file(QString(":/resources/sql/%1.sql").arg(script_name));
   if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
     return false;
   }

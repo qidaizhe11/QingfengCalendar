@@ -18,5 +18,5 @@ include(deployment.pri)
 include(../../include/include.pri)
 
 RESOURCES += \
-    resources/Calendar.qrc \
-    qml/qml.qrc
+    resources.qrc \
+    qml.qrc

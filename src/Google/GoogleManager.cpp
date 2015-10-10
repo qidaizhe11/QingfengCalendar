@@ -153,7 +153,6 @@ void GoogleManager::getEventsOfCalendar(const QString &cal_id)
     //  GoogleSettings settings;
     //  m_access_token = settings.accessToken().toString();
 
-    qDebug() << Q_FUNC_INFO;
     QString str = QString("https://www.googleapis.com/calendar/v3/calendars/%1/"
                           "events").arg(cal_id);
 
@@ -175,7 +174,10 @@ void GoogleManager::getEventsOfCalendar(const QString &cal_id)
 //
 void GoogleManager::parseEvent(QVariant event_var, QDeclarativeOrganizerEvent *out_event)
 {
-    //  qDebug() << Q_FUNC_INFO;
+    if (out_event == NULL) {
+        return;
+    }
+
     QVariantMap event = event_var.toMap();
 
     QDateTime dt_start;
@@ -211,11 +213,14 @@ void GoogleManager::parseEvent(QVariant event_var, QDeclarativeOrganizerEvent *o
         out_event->setDisplayLabel(event.value("summary").toString());
         out_event->setLocation(event.value("location").toString());
 
+        out_event->setGuid(event.value("iCalUID").toString());
+
         qDebug() << "OutEvent:" << out_event->displayLabel() <<
                     out_event->startDateTime().toString("yyyy-MM-d hh:mm") <<
                     " End:" <<
                     out_event->endDateTime().toString("yyyy-MM-d hh:mm") <<
                     out_event->collectionId() <<
+                    out_event->guid() <<
                     out_event->isAllDay() <<
                     out_event->location();
     }
@@ -230,16 +235,25 @@ void GoogleManager::parseCalendar(QVariant calendar_var,
     QVariantMap calendar = calendar_var.toMap();
 
     if (!calendar.value("id").toString().isEmpty()) {
-        out_collection->setExtendedId(calendar.value("id").toString());
-        out_collection->setName(calendar.value("summary").toString());
-        out_collection->setColor(QColor(calendar.value("backgroundColor").toString()));
-        out_collection->setStorage("Google");
+        if (out_collection == NULL) {
+            return;
+        }
 
-        qDebug() << "OutCalendar:" << out_collection->id() <<
+        out_collection->setExtendedId(calendar.value("id").toString());
+        out_collection->setName(calendar.value("id").toString());
+        out_collection->setDescription(calendar.value("summary").toString());
+        out_collection->setColor(QColor(calendar.value("backgroundColor").toString()));
+        out_collection->setSecondaryColor(QColor(calendar.value("foregroundColor").toString()));
+        out_collection->setStorage("Google");
+        out_collection->setAccessRole(calendar.value("accessRole").toString());
+
+        qDebug() << "OutCalendar:" <<
                     out_collection->extendedId() <<
                     out_collection->name() <<
+                    out_collection->description() <<
                     out_collection->color().name() <<
-                    out_collection->storage();
+                    out_collection->storage() <<
+                    out_collection->accessRole();
     }
 }
 
