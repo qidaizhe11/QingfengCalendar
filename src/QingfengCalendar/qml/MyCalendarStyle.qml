@@ -58,7 +58,7 @@ Style {
             anchors.bottom: parent.bottom
             anchors.bottomMargin: bottom_margin
 
-            iconSource: "images/arrow-left-mine.png"
+            iconSource: "qrc:/resources/images/arrow-left-mine.png"
             opacity: 0.6
 
             onClicked: {
@@ -84,7 +84,7 @@ Style {
             anchors.bottom: parent.bottom
             anchors.rightMargin: parent.height * 0.1
             anchors.bottomMargin: bottom_margin
-            iconSource: "images/arrow-right-mine.png"
+            iconSource: "qrc:/resources/images/arrow-right-mine.png"
             opacity: 0.6
 
             onClicked: parent.showNext()

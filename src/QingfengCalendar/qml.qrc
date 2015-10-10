@@ -1,0 +1,35 @@
+<RCC>
+    <qresource prefix="/">
+        <file>qml/main.qml</file>
+        <file>qml/EventEditView.qml</file>
+        <file>qml/FloatEditView.qml</file>
+        <file>qml/GoogleOAuth.qml</file>
+        <file>qml/MonthEventLabel.qml</file>
+        <file>qml/MonthView.qml</file>
+        <file>qml/MyCalendar.qml</file>
+        <file>qml/MyCalendarStyle.qml</file>
+        <file>qml/WeekAllDayEventLabel.qml</file>
+        <file>qml/WeekEventLabel.qml</file>
+        <file>qml/WeekView.qml</file>
+        <file>qml/Content/Calendar.qml</file>
+        <file>qml/Content/CalendarStyle.qml</file>
+        <file>qml/Content/MyButton.qml</file>
+        <file>qml/Content/MyComboBox.qml</file>
+        <file>qml/Content/MyDateEdit.qml</file>
+        <file>qml/Content/MyIconButton.qml</file>
+        <file>qml/Content/MyMouseArea.qml</file>
+        <file>qml/Content/MyRoundButton.qml</file>
+        <file>qml/Content/MyStackViewDelegate.qml</file>
+        <file>qml/Content/MyTabBar.qml</file>
+        <file>qml/Content/MyTextArea.qml</file>
+        <file>qml/Content/MyTextButton.qml</file>
+        <file>qml/Content/MyTextField.qml</file>
+        <file>qml/Content/MyTextLinkButton.qml</file>
+        <file>qml/Private/CalendarUtils.js</file>
+        <file>qml/EventJsUtils.js</file>
+        <file>qml/MonthViewUtils.js</file>
+        <file>qml/CreateObject.js</file>
+        <file>qml/test_main.qml</file>
+        <file>qml/GoogleOAuth.js</file>
+    </qresource>
+</RCC>

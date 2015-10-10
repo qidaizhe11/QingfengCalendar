@@ -74,8 +74,8 @@ FocusScope {
             BorderImage {
                 anchors.fill: parent
                 source: styleData.selected ?
-                            "../images/tab_selected.png" :
-                            "../images/tab.png"
+                            "qrc:/resources/images/tab_selected.png" :
+                            "qrc:/resources/images/tab.png"
                 border.top: 6
                 border.bottom: 6
                 border.left: 6

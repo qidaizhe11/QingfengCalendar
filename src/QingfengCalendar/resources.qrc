@@ -1,0 +1,14 @@
+<RCC>
+    <qresource prefix="/">
+        <file>resources/sql/create.sql</file>
+        <file>resources/images/arrow-left.png</file>
+        <file>resources/images/arrow-right.png</file>
+        <file>resources/images/close.png</file>
+        <file>resources/images/tab.png</file>
+        <file>resources/images/tab_selected.png</file>
+        <file>resources/images/arrow-left-mine.png</file>
+        <file>resources/images/arrow-right-mine.png</file>
+        <file>resources/images/arrow-7-down.png</file>
+        <file>resources/images/back.png</file>
+    </qresource>
+</RCC>

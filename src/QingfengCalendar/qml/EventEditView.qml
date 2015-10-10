@@ -132,7 +132,7 @@ Rectangle {
                 height: parent.height * 0.45
 
                 button_color: event_color
-                icon_source: "images/back.png"
+                icon_source: "qrc:/resources/images/back.png"
 
                 onClicked: event_edit_view.cancel()
             }

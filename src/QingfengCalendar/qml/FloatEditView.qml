@@ -318,7 +318,7 @@ Item {
             anchors.top: parent.top
             anchors.topMargin: parent.height * 0.1
 
-            icon_source: "images/close.png"
+            icon_source: "qrc:/resources/images/close.png"
 
             onClicked: float_edit.hide()
         }
@@ -423,7 +423,7 @@ Item {
             anchors.top: parent.top
             anchors.topMargin: parent.height * 0.1
 
-            icon_source: "images/close.png"
+            icon_source: "qrc:/resources/images/close.png"
 
             onClicked: float_edit.hide()
         }

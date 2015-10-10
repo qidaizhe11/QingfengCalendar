@@ -57,7 +57,7 @@ Rectangle {
             height: 35
 
             button_color: "indigo"
-            icon_source: "images/back.png"
+            icon_source: "qrc:/resources/images/back.png"
 
             onClicked: google_oauth.visible = false
         }

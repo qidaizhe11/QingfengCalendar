@@ -177,7 +177,7 @@ Style {
             anchors.left: parent.left
             anchors.verticalCenter: parent.verticalCenter
             anchors.leftMargin: (parent.height - height) / 2
-            iconSource: "../images/arrow-left.png"
+            iconSource: "qrc:/resources/images/arrow-left.png"
 
             onClicked: control.showPreviousMonth()
         }
@@ -201,7 +201,7 @@ Style {
             anchors.right: parent.right
             anchors.verticalCenter: parent.verticalCenter
             anchors.rightMargin: (parent.height - height) / 2
-            iconSource: "../images/arrow-right.png"
+            iconSource: "qrc:/resources/images/arrow-right.png"
 
             onClicked: control.showNextMonth()
         }

@@ -120,7 +120,7 @@ Item {
 
             Image {
                 id: imageItem
-                source: "../images/arrow-7-down.png"
+                source: "qrc:/resources/images/arrow-7-down.png"
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.right: parent.right
                 anchors.rightMargin: parent.height * 0.2
