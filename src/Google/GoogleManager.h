@@ -1,7 +1,7 @@
 #ifndef GOOGLEMANAGER_H
 #define GOOGLEMANAGER_H
 
-#include <QObject>
+#include <QQuickItem>
 #include <QNetworkReply>
 #include <QNetworkAccessManager>
 #include <QtOrganizer/qorganizerglobal.h>
@@ -16,48 +16,51 @@ class MyCollection;
 class QDeclarativeOrganizerEvent;
 class QDeclarativeOrganizerCollection;
 
-class GoogleManager : public QObject
+class GoogleManager : public QQuickItem
 {
-  Q_OBJECT
+    Q_OBJECT
+    Q_DISABLE_COPY(GoogleManager)
 public:
-  enum RequestType {
-    GetCalendarList,
-    GetEventsOfCalendar,
-    FreshStartGetCalendars
-  };
+    enum RequestType {
+        GetCalendarList,
+        GetEventsOfCalendar,
+        FreshStartGetCalendars
+    };
 
-  explicit GoogleManager(QObject *parent = 0);
-  ~GoogleManager();
+    explicit GoogleManager(QQuickItem *parent = 0);
+    ~GoogleManager();
 
-  void getCalendarList();
-  void getEventsOfCalendar(const QString& cal_id);
-//  void newCalendar(const QString& cal_id);
-//  void createEvent(const QString& access_token,)
+    //Q_INVOKABLE void startupSync();
 
-  static void parseEvent(QVariant event_var, QDeclarativeOrganizerEvent* out_event);
-  static void parseCalendar(QVariant calendar_var, QDeclarativeOrganizerCollection* out_collection);
+    void getCalendarList();
+    void getEventsOfCalendar(const QString& cal_id);
+    //  void newCalendar(const QString& cal_id);
+    //  void createEvent(const QString& access_token,)
+
+    Q_INVOKABLE static void parseEvent(QVariant event_var, QDeclarativeOrganizerEvent* out_event);
+    Q_INVOKABLE static void parseCalendar(QVariant calendar_var, QDeclarativeOrganizerCollection* out_collection);
 
 signals:
-  void errorOccured(const QString& error);
-  void eventsReady(const QString& cal_id, QVariantList events);
-  void calendarListReady(QVariantList calendars);
+    void errorOccured(const QString& error);
+    void eventsReady(const QString& cal_id, QVariantList events);
+    void calendarListReady(QVariantList calendars);
 
 public slots:
-  void freshStartSync();
+    Q_INVOKABLE void freshStartSync();
 
 private slots:
-  void replyFinished(QNetworkReply* reply);
+    void replyFinished(QNetworkReply* reply);
 
 private:
 
-  void initCalendarListDone(QVariantList calendars);
-//  void initEventsDone(const QString& cal_id, QVariantList events);
+    void initCalendarListDone(QVariantList calendars);
+    //  void initEventsDone(const QString& cal_id, QVariantList events);
 
-  QNetworkAccessManager* m_network_access_manager;
+    QNetworkAccessManager* m_network_access_manager;
 
-  QMap<QNetworkReply*, RequestType> reply_map;
+    QMap<QNetworkReply*, RequestType> reply_map;
 
-  QString m_access_token;
+    QString m_access_token;
 };
 
 #endif // GOOGLEMANAGER_H

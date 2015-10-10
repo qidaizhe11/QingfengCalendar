@@ -102,7 +102,8 @@ Window {
             visible = false;
             google_settings.accessToken = google_oauth.access_token;
 
-            calendar.event_model.initGoogleSync();
+//            calendar.event_model.initGoogleSync();
+            google_manager.freshStartSync();
         }
     }
 
@@ -110,7 +111,48 @@ Window {
         id: google_settings
     }
 
+    GoogleManager {
+        id: google_manager
+    }
+
+    Connections {
+        target: google_manager
+        onCalendarListReady: {
+            var calendars_var = [];
+            calendars_var = calendars;
+            for (var i = 0; i < calendars.length; ++i) {
+                var calendar_var = calendars[i];
+                var new_calendar = Qt.createQmlObject(
+                            "import MyCalendar.MyQtOrganizer 1.0; Collection {}",
+                            main_window);
+                google_manager.parseCalendar(calendar_var, new_calendar);
+                calendar.event_model.saveCollection(new_calendar);
+                database_module.sqlInsertOrganizerCollection(new_calendar);
+            }
+        }
+    }
+
+    Connections {
+        target: google_manager
+        onEventsReady: {
+            var events_var = [];
+            events_var = events;
+            for (var i = 0; i < events.length; ++i) {
+                var event_var = events[i];
+                var new_event = Qt.createQmlObject(
+                            "import MyCalendar.MyQtOrganizer 1.0; Event {}",
+                            main_window);
+                google_manager.parseEvent(event_var, new_event);
+                new_event.collectionId = cal_id;
+                calendar.event_model.saveItem(new_event);
+                database_module.sqlInsertOrganizerEvent(new_event);
+            }
+        }
+    }
+
     Component.onCompleted: {
+        database_module.init();
+
         calendar.refreshEvents();
 
         if (google_settings.refreshToken === "") {

@@ -567,6 +567,10 @@ Item {
             var index_of_cell = event_utils.daysTo(
                         month_model.firstVisibleDate, event.startDateTime);
 
+            if (!(index_of_cell > 0 && index_of_cell < total_cells)) {
+                continue;
+            }
+
             // TODO: this should be improved. If there are too much events,
             // then they should be stored and shown in a popup view once
             // the mark is clicked.
