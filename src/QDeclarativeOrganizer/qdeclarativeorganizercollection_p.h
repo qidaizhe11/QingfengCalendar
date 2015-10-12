@@ -66,11 +66,12 @@ class QDeclarativeOrganizerCollection : public QObject
     Q_PROPERTY(QColor secondaryColor READ secondaryColor WRITE setSecondaryColor NOTIFY valueChanged)
     Q_PROPERTY(QUrl image READ image WRITE setImage NOTIFY valueChanged)
 
-    Q_PROPERTY(QString extendedId READ extendedId WRITE setExtendedId
-               NOTIFY valueChanged)
-    Q_PROPERTY(QString storage READ storage WRITE setStorage
-               NOTIFY valueChanged)
+    Q_PROPERTY(QString calendarId READ calendarId WRITE setCalendarId NOTIFY valueChanged)
+//    Q_PROPERTY(QString storage READ storage WRITE setStorage NOTIFY valueChanged)
+    Q_PROPERTY(QString accountName READ accountName WRITE setAccountName NOTIFY valueChanged)
+    Q_PROPERTY(QString accountType READ accountType WRITE setAccountType NOTIFY valueChanged)
     Q_PROPERTY(QString accessRole READ accessRole WRITE setAccessRole NOTIFY valueChanged)
+    Q_PROPERTY(QString timeZone READ timeZone WRITE setTimeZone NOTIFY valueChanged)
 
 public:
     enum MetaDataKey {
@@ -102,14 +103,20 @@ public:
     QUrl image() const;
     void setImage(const QUrl &url);
 
-    QString extendedId() const;
-    void setExtendedId(const QString& extended_id);
+    QString calendarId() const;
+    void setCalendarId(const QString& calendar_id);
 
-    QString storage() const;
-    void setStorage(const QString& storage);
+    QString accountName() const;
+    void setAccountName(const QString& account_name);
+
+    QString accountType() const;
+    void setAccountType(const QString& account_type);
 
     QString accessRole() const;
     void setAccessRole(const QString& access_role);
+
+    QString timeZone() const;
+    void setTimeZone(const QString& time_zone);
 
     Q_INVOKABLE void setMetaData(QOrganizerCollection::MetaDataKey key, const QVariant &value);
     Q_INVOKABLE QVariant metaData(QOrganizerCollection::MetaDataKey key) const;

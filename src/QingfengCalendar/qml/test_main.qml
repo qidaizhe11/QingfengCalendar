@@ -115,6 +115,10 @@ Window {
         id: google_manager
     }
 
+    //
+    // TODO: onCalendarListReady, onEventsReady logic fully wrong! Require fixed.
+    //
+
     Connections {
         target: google_manager
         onCalendarListReady: {
@@ -131,10 +135,16 @@ Window {
 //                database_module.sqlInsertOrganizerCollection(new_calendar);
             }
 
+            var default_collection_id = calendar.event_model.defaultCollectionId();
             var organizer_calendars = [];
             organizer_calendars = calendar.event_model.calendars;
             for( i = 0; i < organizer_calendars.length; ++i) {
                 var organizer_collection = organizer_calendars[i];
+
+                if (organizer_collection.collectionId === default_collection_id) {
+                    organizer_collection.calendarId = "qingfengcalendar";
+                }
+
                 database_module.sqlInsertOrganizerCollection(organizer_collection);
             }
 
@@ -154,7 +164,7 @@ Window {
                             main_window);
                 google_manager.parseEvent(event_var, new_event);
 //                new_event.collectionId = cal_id;
-                new_event.collectionId = findCollectionIdByName(cal_id);
+                new_event.collectionId = findCollectionIdByCalendarId(cal_id);
                 new_event.calendarName = cal_id;
                 calendar.event_model.saveItem(new_event);
 //                database_module.sqlInsertOrganizerEvent(new_event);
@@ -176,13 +186,13 @@ Window {
         }
     }
 
-    function findCollectionIdByName(name) {
+    function findCollectionIdByCalendarId(cal_id) {
         var collectionId;
         var organizer_calendars = [];
         organizer_calendars = calendar.event_model.calendars;
         for(var i = 0; i < organizer_calendars.length; ++i) {
             var organizer_collection = organizer_calendars[i];
-            if (organizer_collection.name === name) {
+            if (organizer_collection.calendarId === cal_id) {
                 collectionId = organizer_collection.collectionId;
                 break;
             }

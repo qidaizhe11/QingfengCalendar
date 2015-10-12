@@ -17,10 +17,16 @@ namespace
 //    const QString insertCollectionSql(
 //            "insert into " + Tables::CALENDARS +
 //            " values (" + ":" + Calendars::NAME + ", :" + Calendars::ACCOUNT_NAME + ")");
+
     const QString insertCollectionSql(
             "insert or ignore into Calendars "
-            "(collection_id, name, calendar_displayName, calendar_color) "
-            "values (:collection_id, :name, :calendar_displayName, :calendar_color)");
+            "(collection_id, calendar_id, account_name, account_type, "
+            " name, calendar_description, calendar_color, calendar_access_level, "
+            "calendar_timezone) "
+            "values "
+            "(:collection_id, :calendar_id, :account_name, :account_type, "
+            " :name, :calendar_description, :calendar_color, :calendar_access_level, "
+            " :calendar_timezone)");
 
     const QString insertEventSql(
             "insert or replace into Events "
@@ -32,6 +38,9 @@ namespace
 
     const QString selectEventSql(
                 "select * from Events order by _id");
+
+    const QString selectCalendarIdOfEventByCalendarNameSql(
+                "select _id from Calendars c where c.calendar_id = :calendar_name");
 }
 
 DatabaseModule::DatabaseModule(QQuickItem *parent)
@@ -185,17 +194,27 @@ bool DatabaseModule::sqlInsertOrganizerCollection(QDeclarativeOrganizerCollectio
 
 //    const QString insertCollectionSql(
 //            "insert or ignore into Calendars "
-//            "(collection_id, name, calendar_displayName, calendar_color) "
-//            "values (:collection_id, :name, :calendar_displayName, :calendar_color)");
+//            "(collection_id, calendar_id, account_name, account_type, "
+//            " name, calendar_description, calendar_color, calendar_access_level, "
+//            "calendar_timezone) "
+//            "values "
+//            "(:collection_id, :calendar_id, :account_name, :account_type, "
+//            " :name, :calendar_description, :calendar_color, :calendar_access_level, "
+//            " :calendar_timezone)");
 
     QSqlQuery query(db);
     query.prepare(insertCollectionSql);
 //    query.bindValue(QString(":" + Calendars::NAME), p_collection->name());
-//    query.bindValue(QString(":" + Calendars::ACCOUNT_NAME), p_collection->description());
     query.bindValue(":collection_id", p_collection->id());
+    query.bindValue(":calendar_id", p_collection->calendarId());
+    query.bindValue(":account_name", p_collection->accountName());
+    query.bindValue(":account_type", p_collection->accountType());
+//    query.bindValue(":account_name", QString("11"));
     query.bindValue(":name", p_collection->name());
-    query.bindValue(":calendar_displayName", p_collection->description());
+    query.bindValue(":calendar_description", p_collection->description());
     query.bindValue(":calendar_color", p_collection->color().name());
+    query.bindValue(":calendar_access_level", p_collection->accessRole());
+    query.bindValue(":calendar_timezone", p_collection->timeZone());
 
     if (!query.exec()) {
         qDebug() << "SQL exec error, lastError:" << query.lastError().text();
@@ -304,8 +323,8 @@ bool DatabaseModule::_sqlSelectCalendarIdOfEventbyCalendarName(const QString &ca
         return false;
     }
 
-    const QString selectCalendarIdOfEventByCalendarNameSql(
-                "select _id from Calendars c where c.name = :calendar_name");
+//    const QString selectCalendarIdOfEventByCalendarNameSql(
+//                "select _id from Calendars c where c.calendar_id = :calendar_name");
 
     QSqlQuery query(db);
     query.prepare(selectCalendarIdOfEventByCalendarNameSql);

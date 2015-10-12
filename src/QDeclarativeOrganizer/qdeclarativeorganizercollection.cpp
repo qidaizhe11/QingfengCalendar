@@ -157,24 +157,34 @@ void QDeclarativeOrganizerCollection::setImage(const QUrl &url)
 //-------------------------------------------------------------------------
 // my extended property, used for online sync.
 
-QString QDeclarativeOrganizerCollection::extendedId() const
+QString QDeclarativeOrganizerCollection::calendarId() const
 {
-  return extendedMetaData("ExtendedId").toString();
+  return extendedMetaData("CalendarId").toString();
 }
 
-void QDeclarativeOrganizerCollection::setExtendedId(const QString &extended_id)
+void QDeclarativeOrganizerCollection::setCalendarId(const QString &extended_id)
 {
-  setExtendedMetaData("ExtendedId", extended_id);
+  setExtendedMetaData("CalendarId", extended_id);
 }
 
-QString QDeclarativeOrganizerCollection::storage() const
+QString QDeclarativeOrganizerCollection::accountName() const
 {
-  return extendedMetaData("Storage").toString();
+    return extendedMetaData("AccountName").toString();
 }
 
-void QDeclarativeOrganizerCollection::setStorage(const QString &storage)
+void QDeclarativeOrganizerCollection::setAccountName(const QString &account_name)
 {
-  setExtendedMetaData("Storage", storage);
+    setExtendedMetaData("AccountName", account_name);
+}
+
+QString QDeclarativeOrganizerCollection::accountType() const
+{
+    return extendedMetaData("AccountType").toString();
+}
+
+void QDeclarativeOrganizerCollection::setAccountType(const QString &account_type)
+{
+    setExtendedMetaData("AccountType", account_type);
 }
 
 QString QDeclarativeOrganizerCollection::accessRole() const
@@ -185,6 +195,16 @@ QString QDeclarativeOrganizerCollection::accessRole() const
 void QDeclarativeOrganizerCollection::setAccessRole(const QString &access_role)
 {
     setExtendedMetaData("AccessRole", access_role);
+}
+
+QString QDeclarativeOrganizerCollection::timeZone() const
+{
+    return extendedMetaData("TimeZone").toString();
+}
+
+void QDeclarativeOrganizerCollection::setTimeZone(const QString &time_zone)
+{
+    setExtendedMetaData("TimeZone", time_zone);
 }
 
 //-------------------------------------------------------------------------

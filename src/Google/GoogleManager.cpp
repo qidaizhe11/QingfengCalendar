@@ -81,7 +81,7 @@ void GoogleManager::replyFinished(QNetworkReply *reply)
     }
 
     case GetEventsOfCalendar: {
-        //    qDebug() << "Reply = " << reply_json;
+//        qDebug() << "Reply = " << reply_json;
         if (error.error == QJsonParseError::NoError) {
             if (!(json_document.isNull() || json_document.isEmpty()) &&
                     json_document.isObject()) {
@@ -239,21 +239,23 @@ void GoogleManager::parseCalendar(QVariant calendar_var,
             return;
         }
 
-        out_collection->setExtendedId(calendar.value("id").toString());
-        out_collection->setName(calendar.value("id").toString());
-        out_collection->setDescription(calendar.value("summary").toString());
+        out_collection->setCalendarId(calendar.value("id").toString());
+        out_collection->setName(calendar.value("summary").toString());
+        out_collection->setDescription(calendar.value("description").toString());
         out_collection->setColor(QColor(calendar.value("backgroundColor").toString()));
         out_collection->setSecondaryColor(QColor(calendar.value("foregroundColor").toString()));
-        out_collection->setStorage("Google");
+//        out_collection->setStorage("Google");
+        out_collection->setAccountType("Google");
         out_collection->setAccessRole(calendar.value("accessRole").toString());
+        out_collection->setTimeZone(calendar.value("timeZone").toString());
 
         qDebug() << "OutCalendar:" <<
-                    out_collection->extendedId() <<
+                    out_collection->calendarId() <<
                     out_collection->name() <<
                     out_collection->description() <<
                     out_collection->color().name() <<
-                    out_collection->storage() <<
-                    out_collection->accessRole();
+                    out_collection->accessRole() <<
+                    out_collection->timeZone();
     }
 }
 

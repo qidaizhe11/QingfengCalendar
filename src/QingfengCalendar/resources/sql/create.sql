@@ -3,10 +3,11 @@ PRAGMA user_version = 1;
 CREATE TABLE Calendars (
     _id INTEGER PRIMARY KEY,
     collection_id TEXT,
+    calendar_id TEXT,
     account_name TEXT,
     account_type TEXT,
     name TEXT,
-    calendar_displayName TEXT,
+    calendar_description TEXT,
     calendar_color TEXT,
     calendar_color_index INTEGER,
     calendar_access_level TEXT,
@@ -14,7 +15,7 @@ CREATE TABLE Calendars (
     visible INTEGER NOT NULL DEFAULT 1,
     calendar_timezone TEXT,
     maxReminders INTEGER DEFAULT 5,
-    CONSTRAINT "name" UNIQUE ("name")
+    CONSTRAINT "calendar_id" UNIQUE ("calendar_id")
 );
 
 CREATE TABLE Events (
@@ -106,12 +107,12 @@ hasAlarm,
 rrule,
 rdate,
 hasAttendeeData,
-calendar_id,
+Events.calendar_id AS calendar_id,
 organizer,
 Calendars.account_name AS account_name,
 Calendars.account_type AS account_type,
 calendar_timezone,
-calendar_displayName,
+calendar_description,
 visible,
 calendar_color,
 calendar_color_index,
