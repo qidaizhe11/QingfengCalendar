@@ -66,10 +66,10 @@ class QDeclarativeOrganizerCollection : public QObject
     Q_PROPERTY(QColor secondaryColor READ secondaryColor WRITE setSecondaryColor NOTIFY valueChanged)
     Q_PROPERTY(QUrl image READ image WRITE setImage NOTIFY valueChanged)
 
-  Q_PROPERTY(QString extendedId READ extendedId WRITE setExtendedId
-             NOTIFY valueChanged)
-  Q_PROPERTY(QString storage READ storage WRITE setStorage
-             NOTIFY valueChanged)
+    Q_PROPERTY(QString extendedId READ extendedId WRITE setExtendedId
+               NOTIFY valueChanged)
+    Q_PROPERTY(QString storage READ storage WRITE setStorage
+               NOTIFY valueChanged)
     Q_PROPERTY(QString accessRole READ accessRole WRITE setAccessRole NOTIFY valueChanged)
 
 public:

@@ -160,8 +160,8 @@ Rectangle {
                     anchors.leftMargin: 2
                     anchors.verticalCenter: parent.verticalCenter
 
-                    text: event_collection ? event_collection.name :
-                                             qsTr("MyCalendar")
+                    text: event_collection ? event_collection.description :
+                                             qsTr("Calendar")
                     font.pointSize: left_part.title_font_size
                 }
             }

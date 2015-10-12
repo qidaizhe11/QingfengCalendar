@@ -128,7 +128,14 @@ Window {
                 google_manager.parseCalendar(calendar_var, new_calendar);
                 calendar.event_model.saveCollection(new_calendar);
                 //console.log("new_calendar.collectionId: ", new_calendar.collectionId);
-                database_module.sqlInsertOrganizerCollection(new_calendar);
+//                database_module.sqlInsertOrganizerCollection(new_calendar);
+            }
+
+            var organizer_calendars = [];
+            organizer_calendars = calendar.event_model.calendars;
+            for( i = 0; i < organizer_calendars.length; ++i) {
+                var organizer_collection = organizer_calendars[i];
+                database_module.sqlInsertOrganizerCollection(organizer_collection);
             }
 
             calendar.refreshEvents();
@@ -146,13 +153,42 @@ Window {
                             "import MyCalendar.MyQtOrganizer 1.0; Event {}",
                             main_window);
                 google_manager.parseEvent(event_var, new_event);
-                new_event.collectionId = cal_id;
+//                new_event.collectionId = cal_id;
+                new_event.collectionId = findCollectionIdByName(cal_id);
+                new_event.calendarName = cal_id;
                 calendar.event_model.saveItem(new_event);
-                database_module.sqlInsertOrganizerEvent(new_event);
+//                database_module.sqlInsertOrganizerEvent(new_event);
             }
 
             calendar.refreshEvents();
+
+            var organizer_events = [];
+            organizer_events = calendar.event_model.events;
+            for (i = 0; i < organizer_events.length; ++i) {
+                var organizer_event = organizer_events[i];
+//                console.log("organizer_event.collectionId:", organizer_event.collectionId,
+//                            organizer_event.displayLabel);
+                database_module.sqlInsertOrganizerEvent(organizer_event);
+//                console.log("Create Event:", event.displayLabel,
+//                            event.startDateTime.toLocaleString(),
+//                            event.endDateTime.toLocaleString());
+            }
         }
+    }
+
+    function findCollectionIdByName(name) {
+        var collectionId;
+        var organizer_calendars = [];
+        organizer_calendars = calendar.event_model.calendars;
+        for(var i = 0; i < organizer_calendars.length; ++i) {
+            var organizer_collection = organizer_calendars[i];
+            if (organizer_collection.name === name) {
+                collectionId = organizer_collection.collectionId;
+                break;
+            }
+        }
+
+        return collectionId;
     }
 
     Connections {

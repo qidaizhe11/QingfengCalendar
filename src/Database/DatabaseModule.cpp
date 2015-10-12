@@ -24,10 +24,10 @@ namespace
 
     const QString insertEventSql(
             "insert or replace into Events "
-            "(calendar_id, title, guid, eventLocation, description, allDay, dtstart, dtend,"
-            " rrule)"
+            "(calendar_id, calendar_name, title, guid, eventLocation, description, allDay,"
+            "dtstart, dtend, rrule)"
             " values "
-            "(:calendar_id, :title, :guid, :eventLocation, :description, "
+            "(:calendar_id, :calendar_name, :title, :guid, :eventLocation, :description, "
             ":allDay, :dtstart, :dtend, :rrule)");
 
     const QString selectEventSql(
@@ -167,6 +167,8 @@ bool DatabaseModule::sqlInitOrganizerMemoryDataFromDb()
     qDebug() << "after InitfromDb, item count: " << m_organizer_model->itemCount();
     QList<QOrganizerItem> items = m_organizer_model->managerPtr()->itemsForExport();
     qDebug() << "itemForExport count: " << items.count();
+
+    return true;
 }
 
 bool DatabaseModule::sqlInsertOrganizerCollection(QDeclarativeOrganizerCollection* p_collection)
@@ -203,10 +205,11 @@ bool DatabaseModule::sqlInsertOrganizerCollection(QDeclarativeOrganizerCollectio
     return true;
 }
 
-bool DatabaseModule::sqlInsertOrganizerItem(QDeclarativeOrganizerItem *p_item)
-{
-    return true;
-}
+//bool DatabaseModule::sqlInsertOrganizerItem(QDeclarativeOrganizerItem *p_item)
+//{
+//    Q_UNUSED(p_item);
+//    return true;
+//}
 
 bool DatabaseModule::sqlInsertOrganizerEvent(QDeclarativeOrganizerEvent* p_event)
 {
@@ -228,11 +231,12 @@ bool DatabaseModule::_sqlInsertOrganizerEvent(const QOrganizerEvent& event) cons
     }
 
 //    const QString insertEventSql(
-//                "insert or ignore into Events "
-//                "(_id, collection_id, title, eventLocation, description, allDay, dtstart, dtend)"
-//                " values "
-//                "(:item_id, :collection_id, :title, :eventLocation, :description, "
-//                ":allDay, :dtstart, :dtend)");
+//            "insert or replace into Events "
+//            "(calendar_id, calendar_name, title, guid, eventLocation, description, allDay,"
+//            "dtstart, dtend, rrule)"
+//            " values "
+//            "(:calendar_id, :calendar_name, :title, :guid, :eventLocation, :description, "
+//            ":allDay, :dtstart, :dtend, :rrule)");
 
 //    QOrganizerEvent event = static_cast<QOrganizerEvent>(p_event->item());
 
@@ -248,7 +252,16 @@ bool DatabaseModule::_sqlInsertOrganizerEvent(const QOrganizerEvent& event) cons
     query.prepare(insertEventSql);
     //query.bindValue(":item_id", event.id().toString());
     //query.bindValue(":collection_id", event.collectionId().toString());
-    query.bindValue(":calendar_id", 0);
+//    query.bindValue(":calendar_id", 0);
+    int calendar_id = 0;
+//    QString calendar_name;
+    QOrganizerItemExtendedDetail extended_detail =
+            event.detail(QOrganizerItemDetail::TypeExtendedDetail);
+    if (extended_detail.name() == "CalendarName") {
+//        query.bindValue(":calendar_name", extended_detail.data().toString());
+        _sqlSelectCalendarIdOfEventbyCalendarName(extended_detail.data().toString(), &calendar_id);
+    }
+    query.bindValue(":calendar_id", calendar_id);
     query.bindValue(":title", event.displayLabel());
     query.bindValue(":guid", event.guid());
     query.bindValue(":eventLocation", event.location());
@@ -269,6 +282,44 @@ bool DatabaseModule::_sqlInsertOrganizerEvent(const QOrganizerEvent& event) cons
     if (!query.exec()) {
         qDebug() << "SQL exec error, lastError:" << query.lastError().text();
         return false;
+    }
+
+    return true;
+}
+
+bool DatabaseModule::_sqlSelectCalendarIdOfEventbyCalendarName(const QString &calendar_name,
+                                                              int* calendar_id) const
+{
+    QSqlDatabase db = QSqlDatabase::database();
+
+    if (!db.isValid()) {
+        return false;
+    }
+
+    if (!db.isOpen()) {
+        return false;
+    }
+
+    if (calendar_id == NULL) {
+        return false;
+    }
+
+    const QString selectCalendarIdOfEventByCalendarNameSql(
+                "select _id from Calendars c where c.name = :calendar_name");
+
+    QSqlQuery query(db);
+    query.prepare(selectCalendarIdOfEventByCalendarNameSql);
+
+    query.bindValue(":calendar_name", calendar_name);
+
+    if (!query.exec()) {
+        qDebug() << "SQL exec error, lastError:" << query.lastError().text();
+        return false;
+    } else {  // query exec success
+        while (query.next()) {
+            QSqlRecord record = query.record();
+            *calendar_id = record.value(0).toInt();
+        }
     }
 
     return true;

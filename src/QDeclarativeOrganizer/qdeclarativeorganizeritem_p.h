@@ -157,6 +157,8 @@ class QDeclarativeOrganizerEvent : public QDeclarativeOrganizerItem
     Q_PROPERTY(QString location READ location WRITE setLocation NOTIFY valueChanged)
     Q_PROPERTY(QQmlListProperty<QDeclarativeOrganizerEventAttendee> attendees READ attendees NOTIFY valueChanged)
 
+    Q_PROPERTY(QString calendarName READ calendarName WRITE setCalendarName NOTIFY valueChanged)
+
 public:
     explicit QDeclarativeOrganizerEvent(QObject *parent = 0);
 
@@ -182,6 +184,9 @@ public:
     QString location() const;
 
     QDeclarativeOrganizerItemRecurrence *recurrence();
+
+    QString calendarName() const;
+    void setCalendarName(const QString& calendar_name);
 
 Q_SIGNALS:
     void valueChanged();

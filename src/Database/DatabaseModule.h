@@ -28,15 +28,15 @@ public:
     Q_INVOKABLE bool sqlSaveOrganizerMemoryDataIntoDb();
     Q_INVOKABLE bool sqlInitOrganizerMemoryDataFromDb();
     Q_INVOKABLE bool sqlInsertOrganizerCollection(QDeclarativeOrganizerCollection* p_collection);
-    Q_INVOKABLE bool sqlInsertOrganizerItem(QDeclarativeOrganizerItem* p_item);
+//    Q_INVOKABLE bool sqlInsertOrganizerItem(QDeclarativeOrganizerItem* p_item);
     Q_INVOKABLE bool sqlInsertOrganizerEvent(QDeclarativeOrganizerEvent* p_event);
-
-    // Event相关
-//    bool sql
 
 private:
     bool _sqlInsertOrganizerEvent(const QOrganizerEvent& event) const;
     bool _sqlInsertOrganizerItem(const QOrganizerItem& item) const;
+
+    bool _sqlSelectCalendarIdOfEventbyCalendarName(const QString& calendar_name,
+                                                   int* calendar_id) const;
 
     bool _sqlCreateOrganizerEventFromDb(const QSqlRecord& record, QOrganizerEvent* event);
 

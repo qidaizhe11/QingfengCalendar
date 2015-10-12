@@ -934,6 +934,51 @@ QDeclarativeOrganizerItemRecurrence *QDeclarativeOrganizerEvent::recurrence()
     return detail;
 }
 
+//-------------------------------------------------------------------------
+// my extended properties.
+// daizhe added 2015-10-12
+
+void QDeclarativeOrganizerEvent::setCalendarName(const QString &calendar_name)
+{
+    foreach (QDeclarativeOrganizerItemDetail* detail, m_details) {
+        if (QDeclarativeOrganizerItemDetail::ExtendedDetail == detail->type()) {
+            QDeclarativeOrganizerItemExtendedDetail* item_extended_detail =
+                    static_cast<QDeclarativeOrganizerItemExtendedDetail*>(detail);
+            if (item_extended_detail->name() == "CalendarName") {
+                if (item_extended_detail->data().toString() != calendar_name) {
+                    item_extended_detail->setData(QVariant(calendar_name));
+                    m_modified = true;
+                    emit valueChanged();
+                }
+                return;
+            }
+        }
+    }
+
+    QDeclarativeOrganizerItemExtendedDetail* item_extended_detail =
+            new QDeclarativeOrganizerItemExtendedDetail(this);
+    item_extended_detail->setName(QString("CalendarName"));
+    item_extended_detail->setData(QVariant(calendar_name));
+    m_details.append(item_extended_detail);
+    m_modified = true;
+    emit valueChanged();
+}
+
+QString QDeclarativeOrganizerEvent::calendarName() const
+{
+    foreach (QDeclarativeOrganizerItemDetail* detail, m_details) {
+        if (QDeclarativeOrganizerItemDetail::ExtendedDetail == detail->type()) {
+            QDeclarativeOrganizerItemExtendedDetail* item_extended_detail =
+                    static_cast<QDeclarativeOrganizerItemExtendedDetail*>(detail);
+            if (item_extended_detail->name() == "CalendarName") {
+                return item_extended_detail->data().toString();
+            }
+        }
+    }
+    return QString::null;
+}
+
+//-------------------------------------------------------------------------
 
 /*!
     \qmltype EventOccurrence

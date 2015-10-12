@@ -83,7 +83,7 @@ class QDeclarativeOrganizerModel : public QAbstractListModel, public QQmlParserS
     Q_PROPERTY(QQmlListProperty<QDeclarativeOrganizerCollection> collections READ collections NOTIFY collectionsChanged)
 
   Q_PROPERTY(QVariantList events READ events NOTIFY modelChanged)
-  Q_PROPERTY(QVariant calendars READ calendars NOTIFY collectionsChanged)
+  Q_PROPERTY(QVariantList calendars READ calendars NOTIFY collectionsChanged)
 
     Q_PROPERTY(QString error READ error NOTIFY errorChanged)
     Q_PROPERTY(int itemCount READ itemCount NOTIFY modelChanged)

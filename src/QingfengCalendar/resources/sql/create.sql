@@ -22,6 +22,7 @@ CREATE TABLE Events (
     --_id TEXT PRIMARY KEY,
     calendar_id INTEGER NOT NULL,
     --collection_id TEXT NOT NULL,
+    calendar_name TEXT,
     title TEXT,
     guid TEXT,
     eventLocation TEXT,
