@@ -207,10 +207,10 @@ QDeclarativeOrganizerModel::QDeclarativeOrganizerModel(QObject *parent) :
     QAbstractListModel(parent),
     d_ptr(new QDeclarativeOrganizerModelPrivate)
 {
-    //    QHash<int, QByteArray> roleNames;
-    //    roleNames = QAbstractItemModel::roleNames();
-    //    roleNames.insert(OrganizerItemRole, "item");
-    //    setRoleNames(roleNames);
+//    QHash<int, QByteArray> roleNames;
+//    roleNames = QAbstractItemModel::roleNames();
+//    roleNames.insert(OrganizerItemRole, "item");
+//    setRoleNames(roleNames);
 
     connect(this, SIGNAL(managerChanged()), SLOT(doUpdate()));
     connect(this, SIGNAL(filterChanged()), SLOT(doUpdateItems()));
@@ -219,7 +219,7 @@ QDeclarativeOrganizerModel::QDeclarativeOrganizerModel(QObject *parent) :
     connect(this, SIGNAL(startPeriodChanged()), SLOT(doUpdateItems()));
     connect(this, SIGNAL(endPeriodChanged()), SLOT(doUpdateItems()));
 
-    Q_D(QDeclarativeOrganizerModel);
+//    Q_D(QDeclarativeOrganizerModel);
 
 //    d->m_google_manager = new GoogleManager(this);
 

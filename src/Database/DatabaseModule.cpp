@@ -19,7 +19,7 @@ namespace
 //            " values (" + ":" + Calendars::NAME + ", :" + Calendars::ACCOUNT_NAME + ")");
 
     const QString insertCollectionSql(
-            "insert or ignore into Calendars "
+            "insert or replace into Calendars "
             "(collection_id, calendar_id, account_name, account_type, "
             " name, calendar_description, calendar_color, calendar_access_level, "
             "calendar_timezone) "
@@ -30,17 +30,17 @@ namespace
 
     const QString insertEventSql(
             "insert or replace into Events "
-            "(calendar_id, calendar_name, title, guid, eventLocation, description, allDay,"
-            "dtstart, dtend, rrule)"
+            "(calendar_id, title, guid, eventLocation, description, "
+            "dtstart, dtend, allDay, rrule, created, lastModified)"
             " values "
-            "(:calendar_id, :calendar_name, :title, :guid, :eventLocation, :description, "
-            ":allDay, :dtstart, :dtend, :rrule)");
+            "(:calendar_id, :title, :guid, :eventLocation, :description, "
+            ":dtstart, :dtend, :allDay, :rrule, :created, :lastModified)");
 
     const QString selectEventSql(
                 "select * from Events order by _id");
 
-    const QString selectCalendarIdOfEventByCalendarNameSql(
-                "select _id from Calendars c where c.calendar_id = :calendar_name");
+    const QString selectCalendarIdOfEventSql(
+                "select _id from Calendars c where c.calendar_id = :calendar_id_text");
 }
 
 DatabaseModule::DatabaseModule(QQuickItem *parent)
@@ -251,11 +251,11 @@ bool DatabaseModule::_sqlInsertOrganizerEvent(const QOrganizerEvent& event) cons
 
 //    const QString insertEventSql(
 //            "insert or replace into Events "
-//            "(calendar_id, calendar_name, title, guid, eventLocation, description, allDay,"
-//            "dtstart, dtend, rrule)"
+//            "(calendar_id, title, guid, eventLocation, description, "
+//            "dtstart, dtend, allDay, rrule, created, lastModified)"
 //            " values "
-//            "(:calendar_id, :calendar_name, :title, :guid, :eventLocation, :description, "
-//            ":allDay, :dtstart, :dtend, :rrule)");
+//            "(:calendar_id, :title, :guid, :eventLocation, :description, "
+//            ":dtstart, :dtend, :allDay, :rrule, :created, :lastModified)");
 
 //    QOrganizerEvent event = static_cast<QOrganizerEvent>(p_event->item());
 
@@ -269,25 +269,31 @@ bool DatabaseModule::_sqlInsertOrganizerEvent(const QOrganizerEvent& event) cons
 
     QSqlQuery query(db);
     query.prepare(insertEventSql);
-    //query.bindValue(":item_id", event.id().toString());
-    //query.bindValue(":collection_id", event.collectionId().toString());
-//    query.bindValue(":calendar_id", 0);
+
     int calendar_id = 0;
-//    QString calendar_name;
-    QOrganizerItemExtendedDetail extended_detail =
-            event.detail(QOrganizerItemDetail::TypeExtendedDetail);
-    if (extended_detail.name() == "CalendarName") {
-//        query.bindValue(":calendar_name", extended_detail.data().toString());
-        _sqlSelectCalendarIdOfEventbyCalendarName(extended_detail.data().toString(), &calendar_id);
+    QString created_datetime_str = QString();
+    QString updated_datetime_str = QString();
+    foreach (QOrganizerItemExtendedDetail detail,
+             event.details(QOrganizerItemDetail::TypeExtendedDetail)) {
+        if (detail.name() == "CalendarId") {
+            _sqlSelectCalendarIdOfEvent(detail.data().toString(), &calendar_id);
+        } else if (detail.name() == "CreatedDateTime") {
+            created_datetime_str = detail.data().toDateTime().toString(Qt::ISODate);
+        } else if (detail.name() == "UpdatedDateTime") {
+            updated_datetime_str = detail.data().toDateTime().toString(Qt::ISODate);
+        }
     }
+
     query.bindValue(":calendar_id", calendar_id);
     query.bindValue(":title", event.displayLabel());
     query.bindValue(":guid", event.guid());
     query.bindValue(":eventLocation", event.location());
     query.bindValue(":description", event.description());
+//    query.bindValue(":dtstart", event.startDateTime().toMSecsSinceEpoch());
+//    query.bindValue(":dtend", event.endDateTime().toMSecsSinceEpoch());
+    query.bindValue(":dtstart", event.startDateTime().toString(Qt::ISODate));
+    query.bindValue(":dtend", event.endDateTime().toString(Qt::ISODate));
     query.bindValue(":allDay", event.isAllDay() ? 1 : 0);
-    query.bindValue(":dtstart", event.startDateTime().toMSecsSinceEpoch());
-    query.bindValue(":dtend", event.endDateTime().toMSecsSinceEpoch());
 
     QString rrule_str = QString();
     if (!event.recurrenceRules().isEmpty()) {
@@ -297,6 +303,8 @@ bool DatabaseModule::_sqlInsertOrganizerEvent(const QOrganizerEvent& event) cons
         }
     }
     query.bindValue(":rrule", rrule_str);
+    query.bindValue(":created", created_datetime_str);
+    query.bindValue(":lastModified", updated_datetime_str);
 
     if (!query.exec()) {
         qDebug() << "SQL exec error, lastError:" << query.lastError().text();
@@ -306,7 +314,7 @@ bool DatabaseModule::_sqlInsertOrganizerEvent(const QOrganizerEvent& event) cons
     return true;
 }
 
-bool DatabaseModule::_sqlSelectCalendarIdOfEventbyCalendarName(const QString &calendar_name,
+bool DatabaseModule::_sqlSelectCalendarIdOfEvent(const QString &calendar_id_text,
                                                               int* calendar_id) const
 {
     QSqlDatabase db = QSqlDatabase::database();
@@ -327,9 +335,9 @@ bool DatabaseModule::_sqlSelectCalendarIdOfEventbyCalendarName(const QString &ca
 //                "select _id from Calendars c where c.calendar_id = :calendar_name");
 
     QSqlQuery query(db);
-    query.prepare(selectCalendarIdOfEventByCalendarNameSql);
+    query.prepare(selectCalendarIdOfEventSql);
 
-    query.bindValue(":calendar_name", calendar_name);
+    query.bindValue(":calendar_id_text", calendar_id_text);
 
     if (!query.exec()) {
         qDebug() << "SQL exec error, lastError:" << query.lastError().text();

@@ -35,8 +35,7 @@ private:
     bool _sqlInsertOrganizerEvent(const QOrganizerEvent& event) const;
     bool _sqlInsertOrganizerItem(const QOrganizerItem& item) const;
 
-    bool _sqlSelectCalendarIdOfEventbyCalendarName(const QString& calendar_name,
-                                                   int* calendar_id) const;
+    bool _sqlSelectCalendarIdOfEvent(const QString& calendar_id_text, int* calendar_id) const;
 
     bool _sqlCreateOrganizerEventFromDb(const QSqlRecord& record, QOrganizerEvent* event);
 

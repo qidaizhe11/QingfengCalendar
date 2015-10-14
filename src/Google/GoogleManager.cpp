@@ -194,36 +194,44 @@ void GoogleManager::parseEvent(QVariant event_var, QDeclarativeOrganizerEvent *o
         all_day = true;
     }
 
-    if (dt_start.isValid()) {
-        out_event->setAllDay(all_day);
-
-        QVariantMap end_var = event.value("end").toMap();
-        if (end_var.contains("dateTime")) {
-            dt_end = QDateTime::fromString(
-                        end_var.value("dateTime").toString(), Qt::ISODate);
-        } else if (end_var.contains("date")) {
-            dt_end = QDateTime::fromString(
-                        end_var.value("date").toString(), Qt::ISODate);
-        }
-        dt_start = dt_start.toLocalTime();
-        dt_end = dt_end.toLocalTime();
-        out_event->setStartDateTime(dt_start);
-        out_event->setEndDateTime(dt_end);
-
-        out_event->setDisplayLabel(event.value("summary").toString());
-        out_event->setLocation(event.value("location").toString());
-
-        out_event->setGuid(event.value("iCalUID").toString());
-
-        qDebug() << "OutEvent:" << out_event->displayLabel() <<
-                    out_event->startDateTime().toString("yyyy-MM-d hh:mm") <<
-                    " End:" <<
-                    out_event->endDateTime().toString("yyyy-MM-d hh:mm") <<
-                    out_event->collectionId() <<
-                    out_event->guid() <<
-                    out_event->isAllDay() <<
-                    out_event->location();
+    if (!dt_start.isValid()) {
+        return;
     }
+
+    out_event->setAllDay(all_day);
+
+    QVariantMap end_var = event.value("end").toMap();
+    if (end_var.contains("dateTime")) {
+        dt_end = QDateTime::fromString(
+                    end_var.value("dateTime").toString(), Qt::ISODate);
+    } else if (end_var.contains("date")) {
+        dt_end = QDateTime::fromString(
+                    end_var.value("date").toString(), Qt::ISODate);
+    }
+    dt_start = dt_start.toLocalTime();
+    dt_end = dt_end.toLocalTime();
+    out_event->setStartDateTime(dt_start);
+    out_event->setEndDateTime(dt_end);
+
+    out_event->setDisplayLabel(event.value("summary").toString());
+    out_event->setDescription(event.value("description").toString());
+    out_event->setLocation(event.value("location").toString());
+    out_event->setGuid(event.value("iCalUID").toString());
+    out_event->setCreatedDateTime(QDateTime::fromString(event.value("created").toString(),
+                                                        Qt::ISODate));
+    out_event->setUpdatedDateTime(QDateTime::fromString(event.value("updated").toString(),
+                                                        Qt::ISODate));
+
+    qDebug() << "OutEvent:" << out_event->displayLabel() <<
+                out_event->startDateTime().toString("yyyy-MM-d hh:mm") <<
+                " End:" <<
+                out_event->endDateTime().toString(Qt::ISODate) <<
+                out_event->collectionId() <<
+                out_event->guid() <<
+                out_event->isAllDay() <<
+                out_event->location() <<
+                out_event->createdDateTime().toString(Qt::ISODate) <<
+                out_event->updatedDateTime().toString(Qt::ISODate);
 }
 
 //

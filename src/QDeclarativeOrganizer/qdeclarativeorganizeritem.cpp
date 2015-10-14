@@ -938,15 +938,15 @@ QDeclarativeOrganizerItemRecurrence *QDeclarativeOrganizerEvent::recurrence()
 // my extended properties.
 // daizhe added 2015-10-12
 
-void QDeclarativeOrganizerEvent::setCalendarName(const QString &calendar_name)
+void QDeclarativeOrganizerEvent::setCalendarId(const QString &calendar_id)
 {
     foreach (QDeclarativeOrganizerItemDetail* detail, m_details) {
         if (QDeclarativeOrganizerItemDetail::ExtendedDetail == detail->type()) {
             QDeclarativeOrganizerItemExtendedDetail* item_extended_detail =
                     static_cast<QDeclarativeOrganizerItemExtendedDetail*>(detail);
-            if (item_extended_detail->name() == "CalendarName") {
-                if (item_extended_detail->data().toString() != calendar_name) {
-                    item_extended_detail->setData(QVariant(calendar_name));
+            if (item_extended_detail->name() == "CalendarId") {
+                if (item_extended_detail->data().toString() != calendar_id) {
+                    item_extended_detail->setData(QVariant(calendar_id));
                     m_modified = true;
                     emit valueChanged();
                 }
@@ -957,25 +957,105 @@ void QDeclarativeOrganizerEvent::setCalendarName(const QString &calendar_name)
 
     QDeclarativeOrganizerItemExtendedDetail* item_extended_detail =
             new QDeclarativeOrganizerItemExtendedDetail(this);
-    item_extended_detail->setName(QString("CalendarName"));
-    item_extended_detail->setData(QVariant(calendar_name));
+    item_extended_detail->setName(QString("CalendarId"));
+    item_extended_detail->setData(QVariant(calendar_id));
     m_details.append(item_extended_detail);
     m_modified = true;
     emit valueChanged();
 }
 
-QString QDeclarativeOrganizerEvent::calendarName() const
+QString QDeclarativeOrganizerEvent::calendarId() const
 {
     foreach (QDeclarativeOrganizerItemDetail* detail, m_details) {
         if (QDeclarativeOrganizerItemDetail::ExtendedDetail == detail->type()) {
             QDeclarativeOrganizerItemExtendedDetail* item_extended_detail =
                     static_cast<QDeclarativeOrganizerItemExtendedDetail*>(detail);
-            if (item_extended_detail->name() == "CalendarName") {
+            if (item_extended_detail->name() == "CalendarId") {
                 return item_extended_detail->data().toString();
             }
         }
     }
     return QString::null;
+}
+
+void QDeclarativeOrganizerEvent::setCreatedDateTime(const QDateTime &created_date_time)
+{
+    foreach (QDeclarativeOrganizerItemDetail* detail, m_details) {
+        if (QDeclarativeOrganizerItemDetail::ExtendedDetail == detail->type()) {
+            QDeclarativeOrganizerItemExtendedDetail* item_extended_detail =
+                    static_cast<QDeclarativeOrganizerItemExtendedDetail*>(detail);
+            if (item_extended_detail->name() == "CreatedDateTime") {
+                if (item_extended_detail->data().toDateTime() != created_date_time) {
+                    item_extended_detail->setData(created_date_time);
+                    m_modified = true;
+                    emit valueChanged();
+                }
+                return;
+            }
+        }
+    }
+
+    QDeclarativeOrganizerItemExtendedDetail* item_extended_detail =
+            new QDeclarativeOrganizerItemExtendedDetail(this);
+    item_extended_detail->setName("CreatedDateTime");
+    item_extended_detail->setData(created_date_time);
+    m_details.append(item_extended_detail);
+    m_modified = true;
+    emit valueChanged();
+}
+
+QDateTime QDeclarativeOrganizerEvent::createdDateTime() const
+{
+    foreach (QDeclarativeOrganizerItemDetail* detail, m_details) {
+        if (QDeclarativeOrganizerItemDetail::ExtendedDetail == detail->type()) {
+            QDeclarativeOrganizerItemExtendedDetail* item_extended_detail =
+                    static_cast<QDeclarativeOrganizerItemExtendedDetail*>(detail);
+            if (item_extended_detail->name() == "CreatedDateTime") {
+                return item_extended_detail->data().toDateTime();
+            }
+        }
+    }
+    return QDateTime();
+}
+
+void QDeclarativeOrganizerEvent::setUpdatedDateTime(const QDateTime &updated_date_time)
+{
+    foreach (QDeclarativeOrganizerItemDetail* detail, m_details) {
+        if (QDeclarativeOrganizerItemDetail::ExtendedDetail == detail->type()) {
+            QDeclarativeOrganizerItemExtendedDetail* item_extended_detail =
+                    static_cast<QDeclarativeOrganizerItemExtendedDetail*>(detail);
+            if (item_extended_detail->name() == "UpdatedDateTime") {
+                if (item_extended_detail->data().toDateTime() != updated_date_time) {
+                    item_extended_detail->setData(updated_date_time);
+                    m_modified = true;
+                    emit valueChanged();
+                }
+                return;
+            }
+        }
+    }
+
+    QDeclarativeOrganizerItemExtendedDetail* item_extended_detail =
+            new QDeclarativeOrganizerItemExtendedDetail(this);
+    item_extended_detail->setName("UpdatedDateTime");
+    item_extended_detail->setData(updated_date_time);
+    m_details.append(item_extended_detail);
+    m_modified = true;
+    emit valueChanged();
+}
+
+QDateTime QDeclarativeOrganizerEvent::updatedDateTime() const
+{
+    foreach (QDeclarativeOrganizerItemDetail* detail, m_details) {
+        if (QDeclarativeOrganizerItemDetail::ExtendedDetail == detail->type()) {
+            QDeclarativeOrganizerItemExtendedDetail* item_extended_detail =
+                    static_cast<QDeclarativeOrganizerItemExtendedDetail*>(detail);
+            if (item_extended_detail->name() == "UpdatedDateTime") {
+                return item_extended_detail->data().toDateTime();
+            }
+        }
+    }
+    return QDateTime();
 }
 
 //-------------------------------------------------------------------------

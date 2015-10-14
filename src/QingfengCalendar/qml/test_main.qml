@@ -165,7 +165,7 @@ Window {
                 google_manager.parseEvent(event_var, new_event);
 //                new_event.collectionId = cal_id;
                 new_event.collectionId = findCollectionIdByCalendarId(cal_id);
-                new_event.calendarName = cal_id;
+                new_event.calendarId = cal_id;
                 calendar.event_model.saveItem(new_event);
 //                database_module.sqlInsertOrganizerEvent(new_event);
             }
