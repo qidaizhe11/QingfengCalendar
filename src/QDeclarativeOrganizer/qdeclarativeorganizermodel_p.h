@@ -149,7 +149,7 @@ public:
     QVariantList events();
     QVariantList calendars();
 
-    QVariantList eventsForExport();
+    Q_INVOKABLE QVariantList eventsForExport();
 
     Q_INVOKABLE void removeItem(const QString& id);
     Q_INVOKABLE void removeItem(QDeclarativeOrganizerItem *item);

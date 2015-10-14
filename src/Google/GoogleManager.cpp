@@ -9,6 +9,8 @@
 #include "qdeclarativeorganizeritem_p.h"
 #include "qdeclarativeorganizercollection_p.h"
 
+#include "RecurrenceRuleParser.h"
+
 //-------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------
@@ -221,6 +223,19 @@ void GoogleManager::parseEvent(QVariant event_var, QDeclarativeOrganizerEvent *o
                                                         Qt::ISODate));
     out_event->setUpdatedDateTime(QDateTime::fromString(event.value("updated").toString(),
                                                         Qt::ISODate));
+
+    QOrganizerRecurrenceRule rrule;
+    QVariantList recurrence_var_list = event.value("recurrence").toList();
+    foreach (QVariant recurrence_var, recurrence_var_list) {
+        QString recurrence_str = recurrence_var.toString();
+        QStringList str_list = recurrence_str.split(":");
+        if (str_list.at(0) == "RRULE") {
+            RecurrenceRuleParser::parseRecurrenceRuleStr(str_list.at(1), &rrule);
+            QOrganizerEvent organizer_event = static_cast<QOrganizerEvent>(out_event->item());
+            organizer_event.setRecurrenceRule(rrule);
+            out_event->setItem(organizer_event);
+        }
+    }
 
     qDebug() << "OutEvent:" << out_event->displayLabel() <<
                 out_event->startDateTime().toString("yyyy-MM-d hh:mm") <<

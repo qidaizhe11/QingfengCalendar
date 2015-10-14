@@ -39,20 +39,6 @@ private:
 
     bool _sqlCreateOrganizerEventFromDb(const QSqlRecord& record, QOrganizerEvent* event);
 
-    bool parseRecurrenceRuleStr(const QString& str,
-                                QOrganizerRecurrenceRule* rule) const;
-    QString encodeRecurrenceRule(const QOrganizerRecurrenceRule& rule) const;
-
-
-    void parseRecurrenceFragment(const QString& key, const QString& value,
-                                 QOrganizerRecurrenceRule* rule) const;
-    QSet<int> parseInts(const QString& str, int min, int max) const;
-    int parseDayOfWeek(const QString& str) const;
-    QDateTime parseDateTime(QString str) const;
-
-    QString encodeInts(const QSet<int>& ints) const;
-    QString encodeWeekString(Qt::DayOfWeek day) const;
-
 private:
     QDeclarativeOrganizerModel* m_organizer_model;
 };

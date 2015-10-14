@@ -13,8 +13,10 @@ uri = MyCalendar.Database
 
 #INCLUDEPATH += ../../include/
 INCLUDEPATH += ../QDeclarativeOrganizer
+INCLUDEPATH += ../Base
 
 include(../QDeclarativeOrganizer/QDeclarativeOrganizer.pri)
+include(../Base/Base.pri)
 
 HEADERS += \
 #    CalendarContract.h \

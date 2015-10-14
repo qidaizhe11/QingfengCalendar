@@ -13,8 +13,10 @@ uri = MyCalendar.Google
 
 INCLUDEPATH += ../../include/
 INCLUDEPATH += ../QDeclarativeOrganizer
+INCLUDEPATH += ../Base
 
 include(../QDeclarativeOrganizer/QDeclarativeOrganizer.pri)
+include(../Base/Base.pri)
 
 HEADERS += \
     GoogleManager.h \
@@ -56,4 +58,3 @@ equals(QMAKE_HOST.os, Windows) {
 
 # Copy the qmldir file to the same folder as the plugin binary
 QMAKE_POST_LINK += $$QMAKE_COPY $$quote($$copyfile) $$quote($$copydest) $$escape_expand(\\n\\t)
-

@@ -170,19 +170,23 @@ Window {
 //                database_module.sqlInsertOrganizerEvent(new_event);
             }
 
-            calendar.refreshEvents();
-
             var organizer_events = [];
-            organizer_events = calendar.event_model.events;
+            organizer_events = calendar.event_model.eventsForExport();
             for (i = 0; i < organizer_events.length; ++i) {
                 var organizer_event = organizer_events[i];
-//                console.log("organizer_event.collectionId:", organizer_event.collectionId,
-//                            organizer_event.displayLabel);
-                database_module.sqlInsertOrganizerEvent(organizer_event);
-//                console.log("Create Event:", event.displayLabel,
-//                            event.startDateTime.toLocaleString(),
-//                            event.endDateTime.toLocaleString());
+//                console.log("organizer_event:", organizer_event.collectionId,
+//                            organizer_event.displayLabel, organizer_event.itemType);
+                if (organizer_event.itemType === Type.Event) {
+                    database_module.sqlInsertOrganizerEvent(organizer_event);
+                    //                console.log("Create Event:", event.displayLabel,
+                    //                            event.startDateTime.toLocaleString(),
+                    //                            event.endDateTime.toLocaleString());
+                } else {
+                    console.log("organizer_event.itemType:", organizer_event.itemType);
+                }
             }
+
+            calendar.refreshEvents();
         }
     }
 
